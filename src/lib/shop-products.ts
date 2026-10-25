@@ -78,6 +78,15 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   { name: "Snap 8", price: "$0.00", badge: null, image: "/images/cards/snap-8.jpg" },
   { name: "VIP", price: "$0.00", badge: null, image: "/images/cards/vip.jpg" },
   { name: "SS-31 + MOTS-c", price: "$0.00", badge: null, category: "Cellular Research", image: "/images/cards/ss-31-mots-c.jpg" },
+  { name: "GHK-Cu", price: "From $40.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/ghk-cu.jpg" },
+  { name: "AHK-Cu", price: "$0.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/ahk-cu.jpg" },
+  { name: "NAD+", price: "From $65.00", badge: null, category: "Cellular Research", image: "/images/cards/nad-plus.jpg" },
+  { name: "Glutathione", price: "$0.00", badge: null, category: "Cellular Research", image: "/images/cards/glutathione.jpg" },
+  { name: "KLOW", price: "$105.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/klow.jpg" },
+  { name: "GLOW", price: "$85.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/glow.jpg" },
+  { name: "DSIP", price: "From $45.00", badge: null, category: "Neuro Research", image: "/images/cards/dsip.jpg" },
+  { name: "ARA-290", price: "$70.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/ara-290.jpg" },
+  { name: "5-Amino-1MQ", price: "$0.00", badge: null, category: "Metabolic Research", image: "/images/cards/5-amino-1mq.jpg" },
 ];
 
 const byName = new Map(SHOP_PRODUCTS.map((p) => [p.name, p]));

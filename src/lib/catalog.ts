@@ -502,7 +502,7 @@ function ph(
   size = "10mg",
   price = 0,
 ): CatalogProduct {
-  const lot = "ASR-" + slug.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5) + "-001";
+  const lot = "ST-" + slug.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5) + "-001";
   const real = REAL_DESCRIPTIONS[slug];
   return {
     slug,
@@ -536,10 +536,10 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: glp3RtHero10,
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 65, lot: "ASR-G3-1024A", purity: "99.21%", testDate: "2026-02-14" },
-      { size: "20mg", price: 120, lot: "ASR-G3-1024B", purity: "99.34%", testDate: "2026-02-14" },
-      { size: "30mg", price: 150, lot: "ASR-G3-1024C", purity: "99.18%", testDate: "2026-02-14" },
-      { size: "60mg", price: 240, lot: "ASR-G3-1024D", purity: "99.27%", testDate: "2026-02-14" },
+      { size: "10mg", price: 65, lot: "ST-G3-1024A", purity: "99.21%", testDate: "2026-02-14" },
+      { size: "20mg", price: 120, lot: "ST-G3-1024B", purity: "99.34%", testDate: "2026-02-14" },
+      { size: "30mg", price: 150, lot: "ST-G3-1024C", purity: "99.18%", testDate: "2026-02-14" },
+      { size: "60mg", price: 240, lot: "ST-G3-1024D", purity: "99.27%", testDate: "2026-02-14" },
     ],
     description:
       "GLP-3 RT (RETA) is a high-purity research-grade peptide manufactured for advanced metabolic and receptor signaling studies. Synthesized under tightly controlled laboratory conditions for batch-level consistency.",
@@ -605,10 +605,10 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: glp2TzHero10,
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 60, lot: "ASR-G2-1124A", purity: "99.12%", testDate: "2026-03-02" },
-      { size: "20mg", price: 110, lot: "ASR-G2-1124B", purity: "99.28%", testDate: "2026-03-02" },
-      { size: "30mg", price: 140, lot: "ASR-G2-1124C", purity: "99.31%", testDate: "2026-03-02" },
-      { size: "60mg", price: 220, lot: "ASR-G2-1124D", purity: "99.35%", testDate: "2026-03-02" },
+      { size: "10mg", price: 60, lot: "ST-G2-1124A", purity: "99.12%", testDate: "2026-03-02" },
+      { size: "20mg", price: 110, lot: "ST-G2-1124B", purity: "99.28%", testDate: "2026-03-02" },
+      { size: "30mg", price: 140, lot: "ST-G2-1124C", purity: "99.31%", testDate: "2026-03-02" },
+      { size: "60mg", price: 220, lot: "ST-G2-1124D", purity: "99.35%", testDate: "2026-03-02" },
     ],
     description:
       "High-purity GLP-2 TZ supplied for advanced peptide research. Manufactured to exacting laboratory specifications for purity and consistency.",
@@ -674,8 +674,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: ghkCuHero50,
     badge: "BEST SELLING!",
     variants: [
-      { size: "50mg", price: 40, lot: "ASR-GHK-09A", purity: "99.05%", testDate: "2026-01-22" },
-      { size: "100mg", price: 55, lot: "ASR-GHK-09B", purity: "99.17%", testDate: "2026-01-22" },
+      { size: "50mg", price: 40, lot: "ST-GHK-09A", purity: "99.05%", testDate: "2026-01-22" },
+      { size: "100mg", price: 55, lot: "ST-GHK-09B", purity: "99.17%", testDate: "2026-01-22" },
     ],
     description:
       "GHK-Cu is a copper-binding tripeptide supplied for laboratory study of tissue and matrix-related research applications.",
@@ -740,8 +740,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: motsCHero10,
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 65, lot: "ASR-MTS-22A", purity: "99.41%", testDate: "2026-02-08" },
-      { size: "40mg", price: 160, lot: "ASR-MTS-22B", purity: "99.36%", testDate: "2026-02-08" },
+      { size: "10mg", price: 65, lot: "ST-MTS-22A", purity: "99.41%", testDate: "2026-02-08" },
+      { size: "40mg", price: 160, lot: "ST-MTS-22B", purity: "99.36%", testDate: "2026-02-08" },
     ],
     description:
       "MOTS-c is a mitochondrial-derived peptide supplied for advanced cellular and metabolic research applications.",
@@ -806,8 +806,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: cjcIpaHero10,
     badge: "SALE!",
     variants: [
-      { size: "10mg", price: 75, lot: "ASR-CJC-31A", purity: "99.08%", testDate: "2026-01-30" },
-      { size: "20mg", price: 120, lot: "ASR-CJC-31B", purity: "99.19%", testDate: "2026-01-30" },
+      { size: "10mg", price: 75, lot: "ST-CJC-31A", purity: "99.08%", testDate: "2026-01-30" },
+      { size: "20mg", price: 120, lot: "ST-CJC-31B", purity: "99.19%", testDate: "2026-01-30" },
     ],
     description:
       "Pre-blended CJC-1295 and Ipamorelin formulated for laboratory study of endocrine signaling pathways.",
@@ -877,9 +877,9 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialWolverine.url,
     heroImage: wolverineHero10,
     variants: [
-      { size: "10mg", price: 70, lot: "ASR-WLV-44A", purity: "99.14%", testDate: "2026-02-19" },
-      { size: "20mg", price: 120, lot: "ASR-WLV-44B", purity: "99.22%", testDate: "2026-02-19" },
-      { size: "40mg", price: 200, lot: "ASR-WLV-44C", purity: "99.31%", testDate: "2026-02-19" },
+      { size: "10mg", price: 70, lot: "ST-WLV-44A", purity: "99.14%", testDate: "2026-02-19" },
+      { size: "20mg", price: 120, lot: "ST-WLV-44B", purity: "99.22%", testDate: "2026-02-19" },
+      { size: "40mg", price: 200, lot: "ST-WLV-44C", purity: "99.31%", testDate: "2026-02-19" },
     ],
     description:
       "Co-formulated BPC-157 and TB-500 for tissue repair research workflows. Manufactured to high-purity standards.",
@@ -949,8 +949,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialNad.url,
     heroImage: nadPlusHero500,
     variants: [
-      { size: "500mg", price: 65, lot: "ASR-NAD-77A", purity: "99.46%", testDate: "2026-03-04" },
-      { size: "1000mg", price: 1000, lot: "ASR-NAD-77B", purity: "99.52%", testDate: "2026-03-04" },
+      { size: "500mg", price: 65, lot: "ST-NAD-77A", purity: "99.46%", testDate: "2026-03-04" },
+      { size: "1000mg", price: 1000, lot: "ST-NAD-77B", purity: "99.52%", testDate: "2026-03-04" },
     ],
     description:
       "High-purity NAD+ supplied for cellular metabolism and longevity research.",
@@ -1015,7 +1015,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/cards/tesamorelin.jpg",
     badge: "SALE!",
     variants: [
-      { size: "10mg", price: 85, originalPrice: 95, lot: "ASR-TSM-55A", purity: "99.24%", testDate: "2026-02-25" },
+      { size: "10mg", price: 85, originalPrice: 95, lot: "ST-TSM-55A", purity: "99.24%", testDate: "2026-02-25" },
     ],
     description:
       "Tesamorelin manufactured to high-purity laboratory specifications for endocrine research.",
@@ -1080,7 +1080,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.png",
     badge: "BEST SELLING!",
     variants: [
-      { size: "80mg", price: 105, lot: "ASR-KLW-90A", purity: "99.18%", testDate: "2026-02-11" },
+      { size: "80mg", price: 105, lot: "ST-KLW-90A", purity: "99.18%", testDate: "2026-02-11" },
     ],
     description:
       "KLOW combines GHK-Cu, TB-500, BPC-157, and KPV into a single research-grade master stack.",
@@ -1150,7 +1150,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: GLOW_VIAL_IMAGE,
     heroImage: GLOW_VIAL_IMAGE,
     variants: [
-      { size: "70mg", price: 85, lot: "ASR-GLW-66A", purity: "99.22%", testDate: "2026-02-12" },
+      { size: "70mg", price: 85, lot: "ST-GLW-66A", purity: "99.22%", testDate: "2026-02-12" },
     ],
     description:
       "GLOW combines GHK-Cu, TB-500, and BPC-157 into a single research-grade stack for matrix studies.",
@@ -1220,7 +1220,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialBacWater.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.png",
     variants: [
-      { size: "10ML", price: 20, lot: "ASR-BAC-12A", purity: "USP Grade", testDate: "2026-03-01" },
+      { size: "10ML", price: 20, lot: "ST-BAC-12A", purity: "USP Grade", testDate: "2026-03-01" },
     ],
     description:
       "Sterile bacteriostatic water with 0.9% benzyl alcohol for laboratory reconstitution of lyophilized research compounds.",
@@ -1286,7 +1286,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/cards/adamax.jpg",
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 65, lot: "ASR-ADX-18A", purity: "99.11%", testDate: "2026-02-03" },
+      { size: "10mg", price: 65, lot: "ST-ADX-18A", purity: "99.11%", testDate: "2026-02-03" },
     ],
     description:
       "Adamax is an enhanced derivative of the nootropic Semax — an N-acetylated, adamantane-modified ACTH(4-10) analog studied for neuroprotective and cognitive-signaling research.",
@@ -1350,7 +1350,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialGlutathione.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.png",
     variants: [
-      { size: "500mg", price: 60, lot: "ASR-GTH-41A", purity: "99.33%", testDate: "2026-02-17" },
+      { size: "1500mg", price: 0, lot: "ST-GTH-41A", purity: "99.33%", testDate: "2026-02-17" },
     ],
     description:
       "High-purity glutathione for oxidative-stress and cellular research applications.",
@@ -1414,7 +1414,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialMt1.url,
     heroImage: "/images/cards/mt1.jpg",
     variants: [
-      { size: "10mg", price: 50, lot: "ASR-MT1-05A", purity: "99.08%", testDate: "2026-01-29" },
+      { size: "10mg", price: 50, lot: "ST-MT1-05A", purity: "99.08%", testDate: "2026-01-29" },
     ],
     description:
       "MT-1 supplied for melanocortin receptor research at high laboratory purity.",
@@ -1478,7 +1478,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialMt2.url,
     heroImage: "/images/cards/melanotan-2.jpg",
     variants: [
-      { size: "10mg", price: 40, lot: "ASR-MT2-07A", purity: "99.14%", testDate: "2026-01-29" },
+      { size: "10mg", price: 40, lot: "ST-MT2-07A", purity: "99.14%", testDate: "2026-01-29" },
     ],
     description:
       "Melanotan 2 supplied for melanocortin receptor research at high laboratory purity.",
@@ -1542,8 +1542,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: "/images/hero-vials/simpletide-bpc157-10mg.png",
     heroImage: dsipHero5,
     variants: [
-      { size: "5mg", price: 45, lot: "ASR-DSIP-01A", purity: "99%+", testDate: "2026-03-01" },
-      { size: "10mg", price: 70, lot: "ASR-DSIP-01B", purity: "99%+", testDate: "2026-03-01" },
+      { size: "5mg", price: 45, lot: "ST-DSIP-01A", purity: "99%+", testDate: "2026-03-01" },
+      { size: "10mg", price: 70, lot: "ST-DSIP-01B", purity: "99%+", testDate: "2026-03-01" },
     ],
     description:
       "DSIP (delta sleep-inducing peptide) is a naturally occurring nonapeptide studied for sleep-cycle regulation and neuroendocrine signaling in research models.",
@@ -1571,7 +1571,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
   },
   // --- Remaining products (png-folder vials wired; $0 placeholder pricing) ---
   ph("ara-290", "ARA-290", "Compounds", "10mg", 70),
-  ph("5-amino-1mq", "5 Amino-1MQ", "Compounds", "50mg", 65),
+  ph("5-amino-1mq", "5-Amino-1MQ", "Compounds", "5mg", 0),
+  ph("ahk-cu", "AHK-Cu", "Compounds", "50mg", 0),
   ph("kpv", "KPV", "Compounds", "10mg", 55),
   {
     ...ph("trifecta", "Trifecta", "Bundles", "Stack", 140),
@@ -1860,6 +1861,15 @@ const ACTIVE_SLUGS = new Set([
   "elora",
   "snap-8",
   "vip",
+  "ghk-cu",
+  "ahk-cu",
+  "nad-plus",
+  "glutathione",
+  "klow",
+  "glow",
+  "dsip",
+  "ara-290",
+  "5-amino-1mq",
 ]);
 
 export const CATALOG: CatalogProduct[] = ALL_PRODUCTS.filter((p) => ACTIVE_SLUGS.has(p.slug)).map(
