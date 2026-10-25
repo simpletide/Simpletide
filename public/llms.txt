@@ -1,0 +1,8 @@
+# Simpletide
+
+> Premium research compounds and lab-tested chemicals for scientific innovation, manufactured in certified USA laboratories.
+
+## Pages
+
+- [Home](/): Brand overview, featured research compounds, and quality guarantees.
+- [Products](/products): Full catalog of high-purity research compounds with categories and pricing.
