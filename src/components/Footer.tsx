@@ -132,7 +132,7 @@ export function Footer({ light = false }: { light?: boolean }) {
                 fontFamily: '"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               }}
             >
-              SIMPLETIDE
+              <span className="bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">SIMPLE</span>TIDE
             </Link>
             <p className={`mt-4 max-w-xs text-sm leading-6 ${light ? "text-slate-500" : "text-white/60"}`}>
               Premium research-grade peptides for optimal controlled studies and performance. Third-party tested with Certificate of Analysis.

@@ -63,7 +63,9 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   { name: "GLOW", price: "$85.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/glow.jpg" },
   { name: "KLOW", price: "$105.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/klow.jpg" },
   { name: "KPV", price: "$55.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/kpv.jpg" },
+  { name: "KPV + GHK-Cu", price: "$0.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/kpv-ghk-cu.jpg" },
   { name: "Wolverine", price: "From $70.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/wolverine.jpg" },
+  { name: "Bac Water", price: "$20.00", badge: null, image: "/images/cards/bac-water.jpg" },
   { name: "CJC-1295 + Ipamorelin", price: "From $75.00", originalPrice: "$85.00", badge: "SALE!", category: "GH Research", image: "/images/cards/cjc-1295-ipamorelin.jpg" },
   { name: "NAD+", price: "From $65.00", badge: null, category: "Cellular Research", image: "/images/cards/nad-plus.jpg" },
   { name: "SS-31", price: "$60.00", badge: null, category: "Cellular Research", image: "/images/cards/ss-31.jpg" },
@@ -86,7 +88,12 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   { name: "IGF1-LR3", price: "$85.00", badge: null, category: "GH Research", image: "/images/cards/igf1-lr3.jpg" },
   { name: "Snap 8", price: "$0.00", badge: null, image: "/images/cards/snap-8.jpg" },
   { name: "Cagrilintide", price: "$90.00", badge: null, category: "Metabolic Research", image: "/images/cards/cagrilintide.jpg" },
+  { name: "Kisspeptin", price: "$50.00", badge: null, image: "/images/cards/kisspeptin.jpg" },
+  { name: "PT-141", price: "$60.00", badge: null, image: "/images/cards/pt-141.jpg" },
+  { name: "Thymosin Alpha-1", price: "$80.00", badge: null, category: "Cellular Research", image: "/images/cards/thymosin-alpha-1.jpg" },
   { name: "DSIP", price: "From $45.00", badge: null, category: "Neuro Research", image: "/images/cards/dsip.jpg" },
+  { name: "Sermorelin", price: "$65.00", badge: null, category: "GH Research", image: "/images/cards/sermorelin.jpg" },
+  { name: "Epithalon", price: "$55.00", badge: null, category: "Cellular Research", image: "/images/cards/epithalon.jpg" },
 ];
 
 const byName = new Map(SHOP_PRODUCTS.map((p) => [p.name, p]));
