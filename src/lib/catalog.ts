@@ -23,6 +23,51 @@ import vialBacWater from "@/assets/bac-water-10ml-v2.png.asset.json";
 
 export const GLOW_VIAL_IMAGE = "/images/hero-vials/simpletide-selank-semax-20mg.png";
 
+/**
+ * Tightly cropped transparent vial thumbnails (public/images/vial-thumbs),
+ * all generated with one shared crop so every vial renders at the same scale.
+ */
+const VIAL_THUMBS: Record<string, string> = {
+  "glp-3-rt": "simpletide_glp3_rt_10mg_transparent",
+  "glp-2-tz": "simpletide_glp2_tz_10mg_transparent",
+  "glp-1-sm": "simpletide_glp1_sm_10mg_transparent",
+  "ghk-cu": "simpletide_ghk_cu_50mg_transparent",
+  "ahk-cu": "simpletide_ahk_cu_50mg_transparent",
+  "mots-c": "simpletide_mots_c_10mg_transparent",
+  "cjc-1295-ipamorelin": "simpletide_cjc1295_ipamorelin_10mg_transparent",
+  wolverine: "simpletide_wolverine_10mg_transparent",
+  "nad-plus": "simpletide_nad_plus_500mg_transparent",
+  tesamorelin: "simpletide_tesamorelin_10mg_transparent",
+  klow: "simpletide_klow_80mg_transparent",
+  glow: "simpletide_glow_70mg_transparent",
+  adamax: "simpletide_adamax_10mg_transparent",
+  glutathione: "simpletide_glutathione_1500mg_transparent",
+  mt1: "simpletide_mt1_10mg_transparent",
+  "melanotan-2": "simpletide_mt2_10mg_transparent",
+  dsip: "simpletide_dsip_10mg_transparent",
+  "ara-290": "simpletide_ara_290_10mg_transparent",
+  "5-amino-1mq": "simpletide_5_amino_1mq_5mg_transparent",
+  kpv: "simpletide_kpv_10mg_transparent",
+  semax: "simpletide_semax_10mg_transparent",
+  selank: "simpletide_selank_10mg_glp3_matched",
+  "selank-semax": "simpletide_selank_semax_20mg_glp3_matched",
+  "ss-31": "simpletide_ss31_10mg_transparent",
+  "ss-31-mots-c": "simpletide_ss31_mots_c_40mg_transparent",
+  "bpc-157": "simpletide_bpc157_10mg_transparent",
+  "tb-500": "simpletide_tb500_10mg_transparent",
+  ipamorelin: "simpletide_ipamorelin_10mg_transparent",
+  "igf1-lr3": "simpletide_igf1_lr3_1mg_transparent",
+  cagrilintide: "simpletide_cagrilintide_10mg_glp3_matched",
+  elora: "simpletide_elora_10mg_transparent",
+  "snap-8": "simpletide_snap8_10mg_transparent",
+  vip: "simpletide_vip_10mg_transparent",
+};
+
+export function vialThumbFor(slug: string): string | null {
+  const file = VIAL_THUMBS[slug];
+  return file ? `/images/vial-thumbs/${file}.webp` : null;
+}
+
 export type CatalogVariant = {
   size: string;
   price: number;

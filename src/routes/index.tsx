@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import {
-  CheckCircle2,
   X,
   ArrowRight,
   MapPin,
@@ -10,8 +9,8 @@ import { useCart, parsePrice } from "@/lib/cart-context";
 import { Header } from "@/components/Header";
 import { slugFor, descriptorFor, seoProductSlug } from "@/lib/catalog";
 import { pageSeoHead } from "@/lib/site-seo";
-import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { NewsletterSection } from "@/components/NewsletterSection";
+import { QualityTestsCarousel } from "@/components/QualityTestsCarousel";
 import { useReveal, revealDelay } from "@/lib/use-reveal";
 
 const HERO_VIAL_CENTER = "/images/hero-vials/simpletide-selank-semax-20mg.png";
@@ -605,101 +604,7 @@ function SimpletideHome() {
       </div>
       </section>
 
-      {/* Reviews */}
-      <ReviewsMarquee light />
-
-      {/* Proven Quality. Fully Verified. */}
-      <section className="py-10 md:py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left column */}
-            <div data-reveal className="space-y-6">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-                <span className="text-slate-800">Quality You Can Trust, </span>
-                <span className="bg-gradient-to-r from-[#f472b6] via-[#a78bfa] to-[#38bdf8] bg-clip-text text-transparent">
-                  Verified to Prove It.
-                </span>
-              </h2>
-
-              <p className="text-slate-600 max-w-md leading-relaxed">
-                Each peptide we supply undergoes comprehensive multi-step analytical verification, including purity assessment and structural confirmation. From synthesis to delivery, we maintain strict adherence to exceptional research-grade quality standards at every checkpoint.
-              </p>
-
-              <div className="flex flex-wrap gap-10">
-                <div>
-                  <div className="text-2xl md:text-3xl font-bold text-slate-800">99%+</div>
-                  <div className="text-sm text-slate-500">Purity</div>
-                </div>
-                <div>
-                  <div className="text-2xl md:text-3xl font-bold text-slate-800">5</div>
-                  <div className="text-sm text-slate-500">Quality Checks</div>
-                </div>
-                <div>
-                  <div className="text-2xl md:text-3xl font-bold text-slate-800">100%</div>
-                  <div className="text-sm text-slate-500">U.S. Verified</div>
-                </div>
-              </div>
-
-              <div
-                data-card
-                onPointerDown={(e) => {
-                  if (e.pointerType !== "mouse") setActiveCard("potency");
-                }}
-                className={`rounded-2xl p-5 md:p-6 border transition-all duration-300 [-webkit-tap-highlight-color:transparent] ${
-                  activeCard === "potency"
-                    ? "bg-white/85 border-[#d8b4fe] shadow-[0_0_30px_rgba(216,180,254,0.45)] scale-[1.03]"
-                    : "bg-white/60 backdrop-blur-md border-white shadow-[0_8px_30px_rgba(167,139,250,0.12)] hover:bg-white/85 hover:border-[#d8b4fe] hover:shadow-[0_0_30px_rgba(216,180,254,0.45)] hover:scale-[1.03]"
-                }`}
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-slate-800 font-semibold">Potency Assured &amp; Documented</span>
-                  <span className="inline-flex items-center gap-1.5 bg-white/70 border border-slate-200 rounded-full px-3 py-1 text-xs text-slate-700">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" /> HPLC Analysis
-                  </span>
-                </div>
-                <p className="text-slate-600 text-sm mt-3 leading-relaxed">
-                  Every vial undergoes quantitative analysis to confirm that its contents match the stated label claim with microgram-level accuracy.
-                </p>
-                <div className="bg-white/70 border border-slate-200/70 rounded-xl p-4 mt-4">
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    <span className="font-bold text-slate-800">Why it matters:</span> Third-party laboratory testing verifies label-to-content agreement for every vial, ensuring consistent accuracy across all batches.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mt-2">
-                <Link
-                  to="/coa-archive"
-                  className="group inline-flex items-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] px-8 py-3 rounded-full font-bold transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(196,181,253,0.7)]"
-                >
-                  <span className="transition-transform duration-300 ease-in-out">View Full COA Library</span>
-                  <div className="w-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-5 group-hover:ml-2">
-                    <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0 flex-shrink-0" />
-                  </div>
-                </Link>
-              </div>
-            </div>
-
-            {/* Right column — floating vial (desktop only; on mobile it stacks awkwardly below the copy) */}
-            <div data-reveal style={revealDelay(150)} className="relative hidden lg:flex items-center justify-center bg-transparent">
-              <div
-                className="pointer-events-none absolute inset-0 -z-10"
-                style={{
-                  background:
-                    "radial-gradient(closest-side, rgba(216,180,254,0.35), rgba(216,180,254,0) 70%)",
-                }}
-              />
-              <img
-                src="/klow-proven.png"
-                alt="Simpletide KLOW research vial verified for purity and potency"
-                className="h-[420px] sm:h-[520px] lg:h-[600px] w-full object-contain bg-transparent animate-vial-proven"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <QualityTestsCarousel />
 
       {/* Explore — curated CTA banner with floating vials */}
       <section className="py-10 md:py-14">
@@ -707,23 +612,23 @@ function SimpletideHome() {
           <div className="relative">
             {/* Floating vials around the banner */}
             <img
-              src="/explore-tirz.png"
+              src="/images/vials/simpletide_glp2_tz_10mg_transparent.webp"
               alt="Simpletide Tirzepatide research vial"
-              className="pointer-events-none absolute z-20 w-[64px] md:w-[120px] lg:w-[160px] left-1 md:left-6 lg:left-12 bottom-1 top-auto md:bottom-auto md:top-2 lg:top-4 object-contain drop-shadow-2xl rotate-[10deg]"
+              className="pointer-events-none absolute z-20 w-[44px] md:w-[80px] lg:w-[104px] left-1 md:left-6 lg:left-12 bottom-1 top-auto md:bottom-auto md:top-2 lg:top-4 object-contain drop-shadow-2xl rotate-[10deg]"
               loading="lazy"
               decoding="async"
             />
             <img
-              src="/explore-nad.png"
+              src="/images/vials/simpletide_nad_plus_500mg_transparent.webp"
               alt="Simpletide NAD+ research vial"
-              className="pointer-events-none absolute z-20 w-[64px] md:w-[120px] lg:w-[160px] right-1 md:right-6 lg:right-12 top-1 md:top-2 lg:top-4 object-contain drop-shadow-2xl -rotate-[8deg]"
+              className="pointer-events-none absolute z-20 w-[44px] md:w-[80px] lg:w-[104px] right-1 md:right-6 lg:right-12 top-1 md:top-2 lg:top-4 object-contain drop-shadow-2xl -rotate-[8deg]"
               loading="lazy"
               decoding="async"
             />
             <img
-              src="/explore-wolverine.png"
+              src="/images/vials/simpletide_wolverine_10mg_transparent.webp"
               alt="Simpletide Wolverine research vial"
-              className="pointer-events-none absolute z-20 w-[64px] md:w-[120px] lg:w-[160px] right-1 md:right-6 lg:right-12 bottom-1 md:bottom-2 lg:bottom-4 object-contain drop-shadow-2xl rotate-[8deg]"
+              className="pointer-events-none absolute z-20 w-[44px] md:w-[80px] lg:w-[104px] right-1 md:right-6 lg:right-12 bottom-1 md:bottom-2 lg:bottom-4 object-contain drop-shadow-2xl rotate-[8deg]"
               loading="lazy"
               decoding="async"
             />

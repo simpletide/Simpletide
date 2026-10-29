@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, type ComponentType } from "react";
 import { Header } from "@/components/Header";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { useCart } from "@/lib/cart-context";
-import { getProductBySlug, BUNDLE_TIERS, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant } from "@/lib/catalog";
+import { getProductBySlug, BUNDLE_TIERS, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant, vialThumbFor } from "@/lib/catalog";
 import { CoaLightbox } from "@/components/CoaLightbox";
 import type { DescriptionSection } from "@/lib/catalog";
 import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
@@ -360,6 +360,7 @@ export function ProductDetail() {
   // Default to a single, standard vial (quantity = 1) with NO bundle tier
   // pre-selected. Bundle cards stay clickable and snap quantity to their tier.
   const tiers = product.bundleTiers ?? BUNDLE_TIERS;
+  const vialThumb = vialThumbFor(product.slug);
   const [quantity, setQuantity] = useState(1);
   const [qtyDraft, setQtyDraft] = useState<string | null>(null);
 
@@ -784,16 +785,33 @@ export function ProductDetail() {
                           {tile.badge}
                         </span>
                       )}
-                      <span className="hidden shrink-0 -space-x-3 sm:flex">
-                        {Array.from({ length: Math.min(tile.qty, 3) }).map((_, i) => (
-                          <img
-                            key={i}
-                            src={product.image}
-                            alt=""
-                            className="h-10 w-8 rounded-md object-cover ring-2 ring-white"
-                          />
-                        ))}
-                      </span>
+                      {vialThumb ? (
+                        <span className="flex shrink-0 items-end gap-0.5">
+                          {Array.from({ length: Math.min(tile.qty, 3) }).map((_, i) => (
+                            <img
+                              key={i}
+                              src={vialThumb}
+                              alt=""
+                              width={117}
+                              height={240}
+                              loading="lazy"
+                              decoding="async"
+                              className="h-8 w-auto object-contain drop-shadow-[0_1px_2px_rgba(15,23,42,0.15)]"
+                            />
+                          ))}
+                        </span>
+                      ) : (
+                        <span className="hidden shrink-0 -space-x-3 sm:flex">
+                          {Array.from({ length: Math.min(tile.qty, 3) }).map((_, i) => (
+                            <img
+                              key={i}
+                              src={product.image}
+                              alt=""
+                              className="h-10 w-8 rounded-md object-cover ring-2 ring-white"
+                            />
+                          ))}
+                        </span>
+                      )}
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center justify-between gap-2">
                           <span className="text-[13px] font-semibold text-slate-800">{tile.label}</span>
