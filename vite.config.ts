@@ -7,6 +7,10 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // Outside a Lovable sandbox the deploy plugin is skipped unless `nitro` is set
+  // explicitly, which leaves no server bundle for Vercel to run. In the sandbox
+  // this is overridden back to cloudflare-module, so Lovable builds are unaffected.
+  nitro: { preset: "vercel" },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
