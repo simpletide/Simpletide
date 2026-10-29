@@ -43,7 +43,7 @@ const ContextSchema = z
  * Returns prose plus any product slugs the client should render as cards.
  */
 export const askBot = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     z.object({
       messages: z.array(MessageSchema).min(1).max(40),
       context: ContextSchema,
