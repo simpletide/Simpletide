@@ -515,7 +515,7 @@ const PaymentAdmin: React.FC = () => {
       const ordersWithImages = (data || []).map((order: PaymentOrder) => {
         if (order.order_items && order.order_items.length > 0) {
           const itemsWithImages = order.order_items.map((item: any) => {
-            let imageUrl = 'https://simpletide.com/images/cards/glp-3-rt.jpg';
+            let imageUrl = 'https://simpletide.com/images/cards/glp-3-rt.webp';
 
             const pname = String(item.product_name || '').trim();
 
@@ -2639,12 +2639,12 @@ const PaymentAdmin: React.FC = () => {
                               background: 'rgba(255,255,255,0.05)',
                             }}>
                               <img 
-                                src={item.image || 'https://simpletide.com/images/cards/glp-3-rt.jpg'}
+                                src={item.image || 'https://simpletide.com/images/cards/glp-3-rt.webp'}
                                 alt={(item as any)._displayName || item.product_name}
                                 loading="lazy"
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 onError={(e) => {
-                                  (e.target as HTMLImageElement).src = 'https://simpletide.com/images/cards/glp-3-rt.jpg';
+                                  (e.target as HTMLImageElement).src = 'https://simpletide.com/images/cards/glp-3-rt.webp';
                                 }}
                               />
                             </div>

@@ -13,9 +13,9 @@ import { NewsletterSection } from "@/components/NewsletterSection";
 import { QualityTestsCarousel } from "@/components/QualityTestsCarousel";
 import { useReveal, revealDelay } from "@/lib/use-reveal";
 
-const HERO_VIAL_CENTER = "/images/hero-vials/simpletide-selank-semax-20mg.png";
-const HERO_VIAL_LEFT = "/images/hero-vials/simpletide-bpc157-10mg.png";
-const HERO_VIAL_RIGHT = "/images/hero-vials/simpletide-selank-10mg.png";
+const HERO_VIAL_CENTER = "/images/hero-vials/simpletide-selank-semax-20mg.webp";
+const HERO_VIAL_LEFT = "/images/hero-vials/simpletide-bpc157-10mg.webp";
+const HERO_VIAL_RIGHT = "/images/hero-vials/simpletide-selank-10mg.webp";
 
 // Home "feature" card icons
 // Peptora ships on their live homepage trust/feature cards
@@ -187,7 +187,7 @@ export const Route = createFileRoute("/")({
 
 type Variant = { size: string; price: number };
 const HOME_VARIANTS: Record<string, Variant[]> = {
-  "GLP-3 RT (RETA)": [
+  "GLP-3 RT": [
     { size: "10mg", price: 65 },
     { size: "20mg", price: 120 },
     { size: "30mg", price: 150 },
@@ -272,14 +272,14 @@ function SimpletideHome() {
   ];
 
   const products = [
-    { name: "GLP-3 RT (RETA)", tag: "Metabolic Research", price: "From $65.00", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.jpg" },
-    { name: "Tesamorelin", tag: "Growth Hormone Research", price: "$85.00", compareAt: "$95.00", badge: "SALE!", image: "/images/cards/tesamorelin.jpg" },
-    { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $60.00", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.jpg" },
-    { name: "CJC-1295 + Ipamorelin", tag: "Research Blend", price: "From $75.00", compareAt: "$85.00", badge: "SALE!", image: "/images/cards/cjc-1295-ipamorelin.jpg" },
-    { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $65.00", badge: "BEST SELLING!", image: "/images/cards/mots-c.jpg" },
-    { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $70.00", image: "/images/cards/wolverine.jpg" },
-    { name: "BPC-157", tag: "Tissue Repair Research", price: "$65.00", image: "/images/cards/bpc-157.jpg" },
-    { name: "Adamax", tag: "Neuro Research", price: "$65.00", badge: "BEST SELLING!", image: "/images/cards/adamax.jpg" },
+    { name: "GLP-3 RT", tag: "Metabolic Research", price: "From $65.00", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.webp" },
+    { name: "Tesamorelin", tag: "Growth Hormone Research", price: "$85.00", compareAt: "$95.00", badge: "SALE!", image: "/images/cards/tesamorelin.webp" },
+    { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $60.00", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.webp" },
+    { name: "CJC-1295 + Ipamorelin", tag: "Research Blend", price: "From $75.00", compareAt: "$85.00", badge: "SALE!", image: "/images/cards/cjc-1295-ipamorelin.webp" },
+    { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $65.00", badge: "BEST SELLING!", image: "/images/cards/mots-c.webp" },
+    { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $70.00", image: "/images/cards/wolverine.webp" },
+    { name: "BPC-157", tag: "Tissue Repair Research", price: "$65.00", image: "/images/cards/bpc-157.webp" },
+    { name: "Adamax", tag: "Neuro Research", price: "$65.00", badge: "BEST SELLING!", image: "/images/cards/adamax.webp" },
   ];
 
   return (

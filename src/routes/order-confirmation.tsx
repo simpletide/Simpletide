@@ -45,9 +45,9 @@ function vialFor(name: string, variant?: string | null): string | null {
 const fmt = (n: number) =>
   `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-const VIAL_SEMAX = "/images/hero-vials/simpletide-selank-semax-20mg.png";
-const VIAL_SELANK = "/images/hero-vials/simpletide-selank-10mg.png";
-const VIAL_ADAMAX = "/images/hero-vials/simpletide-bpc157-10mg.png";
+const VIAL_SEMAX = "/images/hero-vials/simpletide-selank-semax-20mg.webp";
+const VIAL_SELANK = "/images/hero-vials/simpletide-selank-10mg.webp";
+const VIAL_ADAMAX = "/images/hero-vials/simpletide-bpc157-10mg.webp";
 
 function FloatingVials() {
   return (

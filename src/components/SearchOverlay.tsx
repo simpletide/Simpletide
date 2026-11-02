@@ -11,7 +11,7 @@ import { ProductCard } from "@/components/ProductCard";
 type TrendItem = { label: string; product: string };
 
 const TRENDING: TrendItem[] = [
-  { label: "GLP-3 RT", product: "GLP-3 RT (RETA)" },
+  { label: "GLP-3 RT", product: "GLP-3 RT" },
   { label: "Tesamorelin", product: "Tesamorelin" },
   { label: "BPC-157", product: "BPC-157" },
   { label: "MOTS-c", product: "MOTS-c" },

@@ -35,7 +35,7 @@ type FloatVial = {
 
 const FLOAT_VIALS: FloatVial[] = [
   // Left side — staggered heights
-  { src: "/images/hero-vials/simpletide-selank-10mg.png", className: "top-[5%]  left-[9%]  w-[clamp(46px,6vw,118px)] rotate-[7deg] md:rotate-[-13deg]",            anim: "animate-vial-float-1", opacity: 0.68, delay: "0s" },
+  { src: "/images/hero-vials/simpletide-selank-10mg.webp", className: "top-[5%]  left-[9%]  w-[clamp(46px,6vw,118px)] rotate-[7deg] md:rotate-[-13deg]",            anim: "animate-vial-float-1", opacity: 0.68, delay: "0s" },
   { src: vialGhkCu.url,     className: "top-[22%] left-[3%]  w-[clamp(38px,5vw,86px)]  rotate-[24deg] hidden md:block",  anim: "animate-vial-left",    opacity: 0.5,  delay: "-1.5s" },
   { src: vialCjc.url,       className: "top-[30%] left-[21%] w-[clamp(30px,3.6vw,64px)] rotate-[-24deg] hidden lg:block", anim: "animate-vial-float-1", opacity: 0.42, delay: "-5s" },
   { src: vialGlp3Rt.url,    className: "top-[44%] left-[12%] w-[clamp(40px,5.5vw,92px)] rotate-[-7deg] hidden lg:block",  anim: "animate-vial-float-2", opacity: 0.55, delay: "-3s" },
@@ -48,11 +48,11 @@ const FLOAT_VIALS: FloatVial[] = [
   { src: vialKlow.url,      className: "bottom-[22%] right-[6%] w-[clamp(42px,5.5vw,100px)] rotate-[-9deg]",          anim: "animate-vial-left",    opacity: 0.6,  delay: "-1s" },
   { src: vialNadPlus.url,   className: "bottom-[6%] right-[12%] md:right-[16%] w-[clamp(54px,5.5vw,96px)] rotate-[23deg]",          anim: "animate-vial-float-2", opacity: 0.62, delay: "-4.5s" },
   // Center band — only at the extreme top/bottom, large screens only
-  { src: "/images/hero-vials/simpletide-bpc157-10mg.png", className: "top-[3%]  left-[47%] w-[clamp(34px,4vw,74px)]  rotate-[8deg] hidden lg:block",   anim: "animate-vial-float-3", opacity: 0.5,  delay: "-2s" },
+  { src: "/images/hero-vials/simpletide-bpc157-10mg.webp", className: "top-[3%]  left-[47%] w-[clamp(34px,4vw,74px)]  rotate-[8deg] hidden lg:block",   anim: "animate-vial-float-3", opacity: 0.5,  delay: "-2s" },
   { src: vialGhkCu.url,     className: "bottom-[4%] left-[41%] w-[clamp(32px,3.8vw,68px)] rotate-[-14deg] hidden lg:block", anim: "animate-vial-center",  opacity: 0.45, delay: "-3s" },
   // Mobile-only (md:hidden) — a single distant vial top-center and bottom-center.
   // Kept small + low opacity so they read as far away.
-  { src: "/images/hero-vials/simpletide-bpc157-10mg.png", className: "top-[6%]    left-1/2 -translate-x-1/2 w-[clamp(26px,7vw,42px)]  rotate-[6deg] md:hidden",  anim: "animate-vial-float-3", opacity: 0.35, delay: "-2s" },
+  { src: "/images/hero-vials/simpletide-bpc157-10mg.webp", className: "top-[6%]    left-1/2 -translate-x-1/2 w-[clamp(26px,7vw,42px)]  rotate-[6deg] md:hidden",  anim: "animate-vial-float-3", opacity: 0.35, delay: "-2s" },
   { src: vialMots.url,      className: "bottom-[7%] left-1/2 -translate-x-1/2 w-[clamp(24px,6.5vw,38px)] rotate-[-8deg] md:hidden", anim: "animate-vial-float-1", opacity: 0.32, delay: "-3.5s" },
 ];
 

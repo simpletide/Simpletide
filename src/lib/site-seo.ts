@@ -5,7 +5,8 @@ export const SITE_ORIGIN = (
   (import.meta.env.VITE_SITE_URL as string | undefined)?.trim() || "https://simpletide.com"
 ).replace(/\/$/, "");
 
-/** Default social preview (hosted on your domain). */
+/** Default social preview (hosted on your domain).
+ *  Stays JPEG: Facebook/X/iMessage link scrapers don't reliably render WebP. */
 export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/cards/glp-3-rt.jpg`;
 
 export function normalizePath(path: string): string {
@@ -63,7 +64,11 @@ export function productSeoHead(product: import("@/lib/catalog").CatalogProduct) 
   const description =
     product.description ??
     `${product.name} — premium research compound by Simpletide. Third-party lab tested.`;
-  const ogImage = product.image.startsWith("http") ? product.image : absoluteUrl(product.image);
+  // Art ships as WebP for page weight, but link scrapers don't reliably render
+  // it, so previews point at the original that still sits beside each file.
+  // Card art came from JPEG, hero vials from PNG.
+  const social = product.image.replace(/\.webp$/, product.image.includes("/hero-vials/") ? ".png" : ".jpg");
+  const ogImage = social.startsWith("http") ? social : absoluteUrl(social);
 
   return pageSeoHead({ path, title, description, ogImage });
 }

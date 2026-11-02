@@ -1,27 +1,27 @@
 import vialGlp3Rt from "@/assets/reta1.png.asset.json";
-const glp3RtHero10 = "/images/cards/glp-3-rt.jpg";
+const glp3RtHero10 = "/images/cards/glp-3-rt.webp";
 import vialGlp2Tz from "@/assets/glp-2-tz-new.png.asset.json";
-const glp2TzHero10 = "/images/cards/glp-2-tz.jpg";
+const glp2TzHero10 = "/images/cards/glp-2-tz.webp";
 import vialTesamorelin from "@/assets/vial-tesamorelin.png.asset.json";
 import vialMotsC from "@/assets/vial-mots-c.png.asset.json";
-const motsCHero10 = "/images/cards/mots-c.jpg";
+const motsCHero10 = "/images/cards/mots-c.webp";
 import vialGhkCu from "@/assets/vial-ghk-cu.png.asset.json";
-const ghkCuHero50 = "/images/hero-vials/simpletide-selank-10mg.png";
-const dsipHero5 = "/images/hero-vials/simpletide-bpc157-10mg.png";
+const ghkCuHero50 = "/images/hero-vials/simpletide-selank-10mg.webp";
+const dsipHero5 = "/images/hero-vials/simpletide-bpc157-10mg.webp";
 import vialKlow from "@/assets/vial-klow.png.asset.json";
 import vialWolverine from "@/assets/vial-wolverine.png.asset.json";
-const wolverineHero10 = "/images/cards/wolverine.jpg";
+const wolverineHero10 = "/images/cards/wolverine.webp";
 import vialCjcIpa from "@/assets/vial-cjc-ipa.png.asset.json";
-const cjcIpaHero10 = "/images/cards/cjc-1295-ipamorelin.jpg";
+const cjcIpaHero10 = "/images/cards/cjc-1295-ipamorelin.webp";
 import vialNad from "@/assets/vial-nad-plus.png.asset.json";
-const nadPlusHero500 = "/images/hero-vials/simpletide-selank-semax-20mg.png";
+const nadPlusHero500 = "/images/hero-vials/simpletide-selank-semax-20mg.webp";
 import vialMt1 from "@/assets/mt1-v2.png.asset.json";
 import vialMt2 from "@/assets/mt2-v2.png.asset.json";
 import vialAdamax from "@/assets/adamax-v2.png.asset.json";
 import vialGlutathione from "@/assets/glutathione-v2.png.asset.json";
 import vialBacWater from "@/assets/bac-water-10ml-v2.png.asset.json";
 
-export const GLOW_VIAL_IMAGE = "/images/hero-vials/simpletide-selank-semax-20mg.png";
+export const GLOW_VIAL_IMAGE = "/images/hero-vials/simpletide-selank-semax-20mg.webp";
 
 /**
  * Tightly cropped transparent vial thumbnails (public/images/vial-thumbs),
@@ -579,7 +579,7 @@ function ph(
 const ALL_PRODUCTS: CatalogProduct[] = [
   {
     slug: "glp-3-rt",
-    name: "GLP-3 RT (RETA)",
+    name: "GLP-3 RT",
     title: "GLP-3 RT",
     tagline: "Next-generation metabolic research compound.",
     subtitle: "Triple Agonist Research Peptide",
@@ -1064,7 +1064,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Growth-hormone releasing research compound.",
     category: "Compounds",
     image: vialTesamorelin.url,
-    heroImage: "/images/cards/tesamorelin.jpg",
+    heroImage: "/images/cards/tesamorelin.webp",
     badge: "SALE!",
     variants: [
       { size: "10mg", price: 85, originalPrice: 95, lot: "ST-TSM-55A", purity: "99.24%", testDate: "2026-02-25" },
@@ -1129,7 +1129,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Premium four-peptide master stack.",
     category: "Bundles",
     image: vialKlow.url,
-    heroImage: "/images/hero-vials/simpletide-bpc157-10mg.png",
+    heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     badge: "BEST SELLING!",
     variants: [
       { size: "80mg", price: 105, lot: "ST-KLW-90A", purity: "99.18%", testDate: "2026-02-11" },
@@ -1270,7 +1270,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Sterile diluent for laboratory reconstitution.",
     category: "Supplies",
     image: vialBacWater.url,
-    heroImage: "/images/hero-vials/simpletide-bpc157-10mg.png",
+    heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
       { size: "10ML", price: 20, lot: "ST-BAC-12A", purity: "USP Grade", testDate: "2026-03-01" },
     ],
@@ -1335,7 +1335,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Specialized research compound.",
     category: "Compounds",
     image: vialAdamax.url,
-    heroImage: "/images/cards/adamax.jpg",
+    heroImage: "/images/cards/adamax.webp",
     badge: "BEST SELLING!",
     variants: [
       { size: "10mg", price: 65, lot: "ST-ADX-18A", purity: "99.11%", testDate: "2026-02-03" },
@@ -1400,7 +1400,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Antioxidant research compound.",
     category: "Compounds",
     image: vialGlutathione.url,
-    heroImage: "/images/hero-vials/simpletide-bpc157-10mg.png",
+    heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
       { size: "1500mg", price: 0, lot: "ST-GTH-41A", purity: "99.33%", testDate: "2026-02-17" },
     ],
@@ -1464,7 +1464,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Melanocortin research compound.",
     category: "Compounds",
     image: vialMt1.url,
-    heroImage: "/images/cards/mt1.jpg",
+    heroImage: "/images/cards/mt1.webp",
     variants: [
       { size: "10mg", price: 50, lot: "ST-MT1-05A", purity: "99.08%", testDate: "2026-01-29" },
     ],
@@ -1528,7 +1528,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     tagline: "Melanocortin research compound.",
     category: "Compounds",
     image: vialMt2.url,
-    heroImage: "/images/cards/melanotan-2.jpg",
+    heroImage: "/images/cards/melanotan-2.webp",
     variants: [
       { size: "10mg", price: 40, lot: "ST-MT2-07A", purity: "99.14%", testDate: "2026-01-29" },
     ],
@@ -1591,7 +1591,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     title: "DSIP",
     tagline: "Delta sleep-inducing peptide for sleep-cycle research.",
     category: "Compounds",
-    image: "/images/hero-vials/simpletide-bpc157-10mg.png",
+    image: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     heroImage: dsipHero5,
     variants: [
       { size: "5mg", price: 45, lot: "ST-DSIP-01A", purity: "99%+", testDate: "2026-03-01" },
@@ -1876,12 +1876,12 @@ const ALL_PRODUCTS: CatalogProduct[] = [
   ph("cjc-1295-with-dac", "CJC-1295 With Dac", "Compounds"),
   ph("cjc-1295-no-dac", "CJC-1295 No Dac", "Compounds"),
   ph("aod-9604", "AOD-9604", "Compounds", "10mg", 55),
-  { ...ph("glp-1-sm", "GLP-1 SM", "Compounds"), heroImage: "/images/cards/glp-1-sm.jpg" },
-  { ...ph("elora", "Elora", "Compounds"), heroImage: "/images/cards/elora.jpg" },
-  { ...ph("selank-semax", "Selank + Semax", "Blends", "20mg"), heroImage: "/images/cards/selank-semax.jpg" },
-  { ...ph("snap-8", "Snap 8", "Compounds"), heroImage: "/images/cards/snap-8.jpg" },
-  { ...ph("vip", "VIP", "Compounds"), heroImage: "/images/cards/vip.jpg" },
-  { ...ph("ss-31-mots-c", "SS-31 + MOTS-c", "Blends", "40mg"), heroImage: "/images/cards/ss-31-mots-c.jpg" },
+  { ...ph("glp-1-sm", "GLP-1 SM", "Compounds"), heroImage: "/images/cards/glp-1-sm.webp" },
+  { ...ph("elora", "Elora", "Compounds"), heroImage: "/images/cards/elora.webp" },
+  { ...ph("selank-semax", "Selank + Semax", "Blends", "20mg"), heroImage: "/images/cards/selank-semax.webp" },
+  { ...ph("snap-8", "Snap 8", "Compounds"), heroImage: "/images/cards/snap-8.webp" },
+  { ...ph("vip", "VIP", "Compounds"), heroImage: "/images/cards/vip.webp" },
+  { ...ph("ss-31-mots-c", "SS-31 + MOTS-c", "Blends", "40mg"), heroImage: "/images/cards/ss-31-mots-c.webp" },
 ];
 
 /**
@@ -1944,6 +1944,8 @@ const NAME_TO_SLUG: Record<string, string> = CATALOG.reduce((acc, p) => {
 // Aliases for slight name variations across pages
 const ALIASES: Record<string, string> = {
   "GHK-CU": "ghk-cu",
+  // Former display name — keeps saved carts and past orders resolving.
+  "GLP-3 RT (RETA)": "glp-3-rt",
   "WOLVERINE (BPC-157 5MG, TB-500 5MG)": "wolverine",
   "WOLVERINE": "wolverine",
   "CJC-1295 + IPAMORELIN BLEND": "cjc-1295-ipamorelin",

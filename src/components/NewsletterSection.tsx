@@ -78,13 +78,13 @@ export function NewsletterSection({
           {showVials && (
             <>
               <img
-                src="/images/hero-vials/simpletide-bpc157-10mg.png"
+                src="/images/hero-vials/simpletide-bpc157-10mg.webp"
                 alt="Simpletide BPC-157 research vial"
                 className={`${vialsOnMobile ? "block" : "hidden"} md:block pointer-events-none absolute z-20 -left-8 -top-10 w-[92px] md:-left-10 md:-top-16 md:w-[120px] lg:-left-20 lg:-top-24 lg:w-[150px] object-contain drop-shadow-2xl rotate-[16deg]`}
                 loading="lazy"
               />
               <img
-                src="/images/hero-vials/simpletide-selank-10mg.png"
+                src="/images/hero-vials/simpletide-selank-10mg.webp"
                 alt="Simpletide Selank research vial"
                 className={`${vialsOnMobile ? "block" : "hidden"} md:block pointer-events-none absolute z-20 -right-8 -bottom-6 w-[92px] md:-right-10 md:-bottom-14 md:w-[120px] lg:-right-20 lg:-bottom-20 lg:w-[150px] object-contain drop-shadow-2xl rotate-[12deg] md:rotate-[20deg]`}
                 loading="lazy"
