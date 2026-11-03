@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type Review = {
   text: string;
@@ -232,8 +232,26 @@ export function ReviewsMarquee({ light = false }: { light?: boolean }) {
   const row1Paused = activeReview?.startsWith("r1-") ? "reviews-paused" : "";
   const row2Paused = activeReview?.startsWith("r2-") ? "reviews-paused" : "";
 
+  // These two rows sit well down the page and used to keep animating the whole
+  // time, even while scrolled past. Pausing them off-screen keeps 40 cards from
+  // being composited every frame for no visible benefit.
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        el.dataset.offscreen = entry.isIntersecting ? "false" : "true";
+      },
+      { rootMargin: "100px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section className="py-10 md:py-14 overflow-hidden">
+    <section ref={sectionRef} className="py-10 md:py-14 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
         <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight font-sans mb-4 ${light ? "text-slate-800" : "text-white"}`}>
           What Researchers Say About{" "}
@@ -267,6 +285,10 @@ export function ReviewsMarquee({ light = false }: { light?: boolean }) {
         .reviews-row-2 { animation: reviews-right 65s linear infinite; }
         .reviews-track:hover { animation-play-state: paused; }
         .reviews-track.reviews-paused { animation-play-state: paused; }
+        [data-offscreen="true"] .reviews-track { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) {
+          .reviews-row-1, .reviews-row-2 { animation: none; }
+        }
         .reviews-fade {
           -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
           mask-image: linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);

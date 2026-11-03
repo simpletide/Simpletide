@@ -5,6 +5,7 @@ import { SHOP_PRODUCTS, type ShopProduct } from "@/lib/shop-products";
 import { slugFor, seoProductSlug, descriptorFor } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
 import { ProductCard } from "@/components/ProductCard";
+import { useEntered } from "@/lib/use-overlay-mount";
 
 // Curated "Trending" chips. `product` must match a SHOP_PRODUCTS name so the
 // chip can deep-link to that product's detail page.
@@ -26,7 +27,12 @@ function trendingLink(name: string) {
     : null;
 }
 
-export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+  // This panel is code-split and mounted only once opened, so it arrives with
+  // `open` already true. `entered` delays the visible state by a frame so the
+  // drop-in transition still plays exactly as it did when it was always mounted.
+  const entered = useEntered(open);
+  const shown = open && entered;
   const { isOpen: cartOpen } = useCart();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [query, setQuery] = useState("");
@@ -90,7 +96,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
       <div
         onClick={onClose}
         className={`absolute inset-0 bg-black/40 transition-opacity duration-200 ${
-          open ? "opacity-100" : "opacity-0"
+          shown ? "opacity-100" : "opacity-0"
         }`}
       />
       {/* Centered floating popover that drops in just under the nav. */}
@@ -99,7 +105,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
         aria-modal="true"
         aria-label="Search products"
         className={`absolute left-1/2 top-[3rem] w-[calc(100%-1.5rem)] max-w-2xl -translate-x-1/2 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 transition-all duration-200 ease-out ${
-          open ? "opacity-100 translate-y-0" : "pointer-events-none -translate-y-3 opacity-0"
+          shown ? "opacity-100 translate-y-0" : "pointer-events-none -translate-y-3 opacity-0"
         }`}
       >
         <div className="flex max-h-[calc(100dvh-5rem)] flex-col overflow-y-auto">

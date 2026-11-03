@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { afterFirstPaint } from "@/lib/after-first-paint";
 
 type Particle = {
   x: number;
@@ -129,9 +130,17 @@ export function Starfield({ pastel = false }: { pastel?: boolean }) {
     resize();
     drawParticles(0);
 
+    // The field above is already painted, so holding the loop back until the
+    // page has settled costs nothing visually — the particles drift slowly
+    // enough that nobody notices motion starting a beat late — while leaving
+    // the main thread free for hydration instead of a canvas frame every 16ms.
+    let cancelStart = () => {};
     if (!reduceMotion) {
-      lastT = performance.now();
-      rafId = requestAnimationFrame(render);
+      cancelStart = afterFirstPaint(() => {
+        if (!isRunning) return;
+        lastT = performance.now();
+        rafId = requestAnimationFrame(render);
+      });
     }
 
     let resizeTimer: ReturnType<typeof setTimeout>;
@@ -159,6 +168,7 @@ export function Starfield({ pastel = false }: { pastel?: boolean }) {
 
     return () => {
       isRunning = false;
+      cancelStart();
       cancelAnimationFrame(rafId);
       clearTimeout(resizeTimer);
       window.removeEventListener("resize", onResize);

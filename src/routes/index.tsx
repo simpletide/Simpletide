@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { srcSetFor, CARD_SIZES } from "@/lib/responsive-image";
 import { useState, useEffect, useRef } from "react";
 import {
   X,
@@ -330,6 +331,10 @@ function SimpletideHome() {
         <div data-reveal="fade" style={revealDelay(200)} className="lg:hidden pointer-events-none absolute top-3 right-[12%] z-0 w-[22%] max-w-[96px] rotate-[10deg]">
           <img
             src={HERO_VIAL_CENTER}
+            srcSet={srcSetFor(HERO_VIAL_CENTER)}
+            sizes="(min-width: 1024px) 1px, 96px"
+            width={1200}
+            height={1500}
             alt=""
             aria-hidden="true"
             className="w-full object-contain animate-vial-center"
@@ -347,10 +352,13 @@ function SimpletideHome() {
             <div data-reveal style={revealDelay(220)} className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] w-[60%] z-10 bg-transparent border-none p-0 m-0">
               <img
                 src={HERO_VIAL_CENTER}
+                srcSet={srcSetFor(HERO_VIAL_CENTER)}
+                sizes="(min-width: 1024px) 40vw, 1px"
+                width={1200}
+                height={1500}
                 alt="Simpletide Selank + Semax research vial"
                 className="w-full object-contain bg-transparent border-none animate-vial-center"
                 loading="eager"
-                fetchPriority="high"
                 decoding="async"
               />
             </div>
@@ -358,10 +366,13 @@ function SimpletideHome() {
             <div data-reveal style={revealDelay(320)} className="absolute left-[-3%] lg:left-[-5%] top-1/2 -translate-y-[40%] w-[48%] lg:w-[50%] z-20 bg-transparent border-none p-0 m-0">
               <img
                 src={HERO_VIAL_LEFT}
+                srcSet={srcSetFor(HERO_VIAL_LEFT)}
+                sizes="(min-width: 1024px) 33vw, 48vw"
+                width={1200}
+                height={1500}
                 alt="Simpletide BPC-157 research vial"
                 className="w-full object-contain bg-transparent border-none animate-vial-left"
                 loading="eager"
-                fetchPriority="high"
                 decoding="async"
               />
             </div>
@@ -371,10 +382,13 @@ function SimpletideHome() {
             <div data-reveal style={revealDelay(400)} className="absolute right-[-3%] lg:right-[-5%] top-1/2 -translate-y-[40%] rotate-[16deg] lg:rotate-0 w-[48%] lg:w-[50%] z-20 bg-transparent border-none p-0 m-0">
               <img
                 src={HERO_VIAL_RIGHT}
+                srcSet={srcSetFor(HERO_VIAL_RIGHT)}
+                sizes="(min-width: 1024px) 33vw, 48vw"
+                width={1200}
+                height={1500}
                 alt="Simpletide Selank research vial"
                 className="w-full object-contain bg-transparent border-none animate-vial-right"
                 loading="eager"
-                fetchPriority="high"
                 decoding="async"
               />
             </div>
@@ -444,8 +458,10 @@ function SimpletideHome() {
               <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-xl">
                 <img
                   src={product.image}
-                  srcSet={(product as { srcSet?: string }).srcSet}
-                  sizes={(product as { sizes?: string }).sizes}
+                  srcSet={srcSetFor(product.image)}
+                  sizes={CARD_SIZES}
+                  width={960}
+                  height={1200}
                   alt={product.name}
                   className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
@@ -613,6 +629,10 @@ function SimpletideHome() {
             {/* Floating vials around the banner */}
             <img
               src="/images/vials/simpletide_glp2_tz_10mg_transparent.webp"
+              srcSet={srcSetFor("/images/vials/simpletide_glp2_tz_10mg_transparent.webp")}
+              sizes="(min-width: 1024px) 104px, (min-width: 768px) 80px, 44px"
+              width={800}
+              height={1200}
               alt="Simpletide Tirzepatide research vial"
               className="pointer-events-none absolute z-20 w-[44px] md:w-[80px] lg:w-[104px] left-1 md:left-6 lg:left-12 bottom-1 top-auto md:bottom-auto md:top-2 lg:top-4 object-contain drop-shadow-2xl rotate-[10deg]"
               loading="lazy"
@@ -620,6 +640,10 @@ function SimpletideHome() {
             />
             <img
               src="/images/vials/simpletide_nad_plus_500mg_transparent.webp"
+              srcSet={srcSetFor("/images/vials/simpletide_nad_plus_500mg_transparent.webp")}
+              sizes="(min-width: 1024px) 104px, (min-width: 768px) 80px, 44px"
+              width={800}
+              height={1200}
               alt="Simpletide NAD+ research vial"
               className="pointer-events-none absolute z-20 w-[44px] md:w-[80px] lg:w-[104px] right-1 md:right-6 lg:right-12 top-1 md:top-2 lg:top-4 object-contain drop-shadow-2xl -rotate-[8deg]"
               loading="lazy"
@@ -627,6 +651,10 @@ function SimpletideHome() {
             />
             <img
               src="/images/vials/simpletide_wolverine_10mg_transparent.webp"
+              srcSet={srcSetFor("/images/vials/simpletide_wolverine_10mg_transparent.webp")}
+              sizes="(min-width: 1024px) 104px, (min-width: 768px) 80px, 44px"
+              width={800}
+              height={1200}
               alt="Simpletide Wolverine research vial"
               className="pointer-events-none absolute z-20 w-[44px] md:w-[80px] lg:w-[104px] right-1 md:right-6 lg:right-12 bottom-1 md:bottom-2 lg:bottom-4 object-contain drop-shadow-2xl rotate-[8deg]"
               loading="lazy"

@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { discountedLine } from "@/lib/catalog";
+// Catalog-free so the cart doesn't pull the product data into every page's
+// first-load bundle. Correct for all products today (none override tiers); the
+// drawer and checkout use catalog.discountedLine, which honours overrides.
+import { discountedLineDefault } from "@/lib/bundle-pricing";
 import { trackAddToCart } from "@/lib/pixel-tracking";
 
 export type CartItem = {
@@ -69,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const baseSubtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const subtotal = items.reduce(
-    (s, i) => s + discountedLine(i.name, i.price, i.qty).lineTotal,
+    (s, i) => s + discountedLineDefault(i.price, i.qty).lineTotal,
     0,
   );
 

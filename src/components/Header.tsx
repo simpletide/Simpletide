@@ -1,12 +1,21 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Search, User, ShoppingCart, Menu, X, LogOut } from "lucide-react";
+import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useAuth, displayNameFor, profileInitialsFor } from "@/lib/auth-context";
 import { MarqueeBanner } from "@/components/MarqueeBanner";
-import { SearchOverlay } from "@/components/SearchOverlay";
 import { AVATAR_GRADIENT } from "@/lib/account-ui";
 import { preloadAuthHeroImages } from "@/lib/auth-hero";
-import { useState, useEffect } from "react";
+import { useOverlayMount } from "@/lib/use-overlay-mount";
+import { useState, useEffect, lazy, Suspense } from "react";
+
+// Both overlays are code-split: the search panel carries the product catalog
+// and card components, which is the bulk of what used to sit in the header
+// chunk on every page. Neither is needed until the user opens it.
+const SearchOverlay = lazy(() => import("@/components/SearchOverlay"));
+const MobileMenu = lazy(() => import("@/components/MobileMenu"));
+
+const preloadSearch = () => void import("@/components/SearchOverlay");
+const preloadMobileMenu = () => void import("@/components/MobileMenu");
 
 export function Header({ opaque = false, light = true }: { opaque?: boolean; light?: boolean }) {
   const { openCart, count: cartCount } = useCart();
@@ -17,6 +26,9 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
   const [searchOpen, setSearchOpen] = useState(false);
 
   const profileInitials = profileInitialsFor(user);
+
+  const searchMounted = useOverlayMount(searchOpen, 250);
+  const mobileMounted = useOverlayMount(mobileOpen, 350);
 
   const handleLogout = async () => {
     setMobileOpen(false);
@@ -30,27 +42,6 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // Lock body scroll while the mobile drawer is open. This only ever fires on
-  // mobile because the toggle that sets `mobileOpen` is `md:hidden`.
-  useEffect(() => {
-    if (!mobileOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [mobileOpen]);
-
-  const mobileLinks = [
-    { to: "/", label: "Home", exact: true },
-    { to: "/products", label: "Shop", exact: false },
-    { to: "/coa-archive", label: "COA", exact: false },
-    { to: "/track-order", label: "Track My Order", exact: false },
-    { to: "/about", label: "About Us", exact: false },
-    { to: "/contact", label: "Contact Us", exact: false },
-    { to: "/account", label: "My Account", exact: false },
-  ] as const;
 
   const navLinkClass = light
     ? "relative cursor-pointer text-base font-semibold tracking-wide text-slate-700 hover:text-slate-900 transition-colors duration-200 after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#f472b6] after:via-[#a78bfa] after:to-[#38bdf8] after:transition-all after:duration-300 hover:after:w-full"
@@ -100,6 +91,9 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
       <button
         type="button"
         onClick={() => setSearchOpen(true)}
+        onMouseEnter={preloadSearch}
+        onFocus={preloadSearch}
+        onTouchStart={preloadSearch}
         aria-label="Search"
         className={`block ${iconClass}`}
       >
@@ -140,6 +134,8 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
 
       <button
         onClick={() => setMobileOpen((o) => !o)}
+        onTouchStart={preloadMobileMenu}
+        onMouseEnter={preloadMobileMenu}
         className={`md:hidden ${iconClass}`}
         aria-label="Toggle menu"
       >
@@ -160,71 +156,22 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
       </div>
 
       {/* Mobile slide-in drawer (Peptora-style). Hidden entirely on md+. */}
-      <div
-        onClick={() => setMobileOpen(false)}
-        aria-hidden="true"
-        className={`md:hidden fixed inset-0 z-[60] cursor-pointer bg-black/40 transition-opacity duration-300 ${
-          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      />
-      <aside
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menu"
-        className={`md:hidden fixed right-0 top-0 z-[70] flex h-full w-[280px] max-w-[80%] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
-          mobileOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex h-[4.25rem] items-center justify-between border-b border-slate-200 px-5">
-          <span className="text-xs font-semibold tracking-[0.2em] text-slate-500">MENU</span>
-          <button
-            onClick={() => setMobileOpen(false)}
-            aria-label="Close menu"
-            className="text-slate-500 transition-colors hover:text-slate-900"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+      {mobileMounted && (
+        <Suspense fallback={null}>
+          <MobileMenu
+            open={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+            signedIn={!!user}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      )}
 
-        <nav className="flex flex-col gap-1 px-3 py-4">
-          {mobileLinks.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              onClick={() => setMobileOpen(false)}
-              activeOptions={{ exact: item.exact }}
-              className="block rounded-lg px-4 py-3 text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-100"
-              activeProps={{ className: "bg-slate-100" }}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="mt-auto border-t border-slate-200 px-3 py-4">
-          {user ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-left text-[15px] font-semibold text-red-600 transition-colors hover:bg-red-50"
-            >
-              <LogOut className="h-4 w-4 -scale-x-100" strokeWidth={1.75} /> Log Out
-            </button>
-          ) : (
-            <Link
-              to="/auth/login"
-              onClick={() => setMobileOpen(false)}
-              onMouseEnter={preloadAuthHeroImages}
-              onFocus={preloadAuthHeroImages}
-              className="flex items-center gap-2 rounded-lg px-4 py-3 text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-100"
-            >
-              <User className="h-4 w-4" /> Log In
-            </Link>
-          )}
-        </div>
-      </aside>
-
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {searchMounted && (
+        <Suspense fallback={null}>
+          <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+        </Suspense>
+      )}
     </header>
   );
 }

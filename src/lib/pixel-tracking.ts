@@ -9,8 +9,6 @@
  *  - Purchase (Meta) + CompletePayment (TikTok)      — order confirmation, once per order
  */
 
-import { slugFor, baseProductName } from "@/lib/catalog";
-
 type Fbq = (...args: unknown[]) => void;
 type Ttq = {
   page?: () => void;
@@ -29,14 +27,27 @@ function getTtq(): Ttq | undefined {
 }
 
 /**
+ * The catalog is loaded on demand rather than imported: this module is reached
+ * from the cart context on every page, and a static import pulled the whole
+ * product catalog into the first-load bundle. Pixel events are fire-and-forget,
+ * so resolving the slug a microtask later keeps the reported ids identical.
+ */
+let catalogPromise: Promise<typeof import("@/lib/catalog")> | null = null;
+function loadCatalog() {
+  catalogPromise ??= import("@/lib/catalog");
+  return catalogPromise;
+}
+
+/**
  * Resolve a stable content id for Meta/TikTok from a cart/order item. Prefers
  * the catalog slug (matches the product page URL + Meta catalog), falls back to
  * the raw cart id.
  */
-function contentIdFor(item: { id?: string; name?: string }): string {
+async function contentIdFor(item: { id?: string; name?: string }): Promise<string> {
   try {
     const name = String(item.name || "").trim();
     if (name) {
+      const { slugFor, baseProductName } = await loadCatalog();
       const slug = slugFor(baseProductName(name));
       if (slug) return slug;
     }
@@ -59,22 +70,24 @@ export function trackAddToCart(product: AddToCartPixelProduct, quantity: number)
   if (!Number.isFinite(qty) || qty <= 0) return;
   const price = Number(product.price);
   if (!Number.isFinite(price) || price < 0) return;
-  const id = contentIdFor(product);
-  if (!id) return;
-  try {
-    const fbq = getFbq();
-    if (fbq) {
-      fbq("track", "AddToCart", {
-        value: price * qty,
-        currency: "USD",
-        content_ids: [id],
-        content_type: "product",
-        contents: [{ id, quantity: qty }],
-      });
+  void (async () => {
+    const id = await contentIdFor(product);
+    if (!id) return;
+    try {
+      const fbq = getFbq();
+      if (fbq) {
+        fbq("track", "AddToCart", {
+          value: price * qty,
+          currency: "USD",
+          content_ids: [id],
+          content_type: "product",
+          contents: [{ id, quantity: qty }],
+        });
+      }
+    } catch {
+      /* ignore */
     }
-  } catch {
-    /* ignore */
-  }
+  })();
 }
 
 /** Meta PageView + TikTok ttq.page() — fired on each SPA route change. */
@@ -149,23 +162,29 @@ export function trackPurchaseOnce(order: PurchasePixelOrder): void {
   const trackKey = `pixel_tracked_${orderId}`;
   try {
     if (sessionStorage.getItem(trackKey)) return;
+    // Claimed up front rather than at the end: slug resolution below is async
+    // now, and a second call must not slip through before the guard is written.
+    sessionStorage.setItem(trackKey, "1");
   } catch {
     /* ignore */
   }
 
+  void (async () => {
   const rawItems = order.items || [];
-  const contents = rawItems
-    .map((item) => {
-      const quantity = Number(item.quantity ?? item.qty ?? 1);
-      if (!Number.isFinite(quantity) || quantity < 1) return null;
-      return {
-        id: contentIdFor(item),
-        quantity,
-        name: String(item.name || "").trim(),
-        price: Number(item.price ?? 0),
-      };
-    })
-    .filter((c): c is { id: string; quantity: number; name: string; price: number } => c != null);
+  const contents = (
+    await Promise.all(
+      rawItems.map(async (item) => {
+        const quantity = Number(item.quantity ?? item.qty ?? 1);
+        if (!Number.isFinite(quantity) || quantity < 1) return null;
+        return {
+          id: await contentIdFor(item),
+          quantity,
+          name: String(item.name || "").trim(),
+          price: Number(item.price ?? 0),
+        };
+      }),
+    )
+  ).filter((c): c is { id: string; quantity: number; name: string; price: number } => c != null);
 
   const num_items = contents.reduce((s, c) => s + c.quantity, 0);
 
@@ -209,10 +228,5 @@ export function trackPurchaseOnce(order: PurchasePixelOrder): void {
   } catch {
     /* ignore */
   }
-
-  try {
-    sessionStorage.setItem(trackKey, "1");
-  } catch {
-    /* ignore */
-  }
+  })();
 }

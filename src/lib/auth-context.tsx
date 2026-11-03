@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase, hasStoredSession, onSupabaseLoaded } from "@/lib/supabase-lazy";
+import { afterFirstPaint } from "@/lib/after-first-paint";
 
 type AuthValue = {
   user: User | null;
@@ -17,30 +18,90 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    let started = false;
+    let unsubscribe: (() => void) | undefined;
 
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
+    const start = async () => {
+      // Both the same-tab load hook and the cross-tab storage event can fire;
+      // only one auth listener should ever be attached.
+      if (started) return;
+      started = true;
+
+      let supabase;
+      try {
+        supabase = await getSupabase();
+      } catch {
+        // Missing env vars or a failed chunk fetch must not wedge the UI in a
+        // permanent loading state; the rest of the site works signed out.
+        if (mounted) setLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await supabase.auth.getSession();
         if (!mounted) return;
         setSession(data.session);
         setLoading(false);
-      })
-      .catch(() => {
+      } catch {
         if (mounted) setLoading(false);
+      }
+
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+        setSession(nextSession);
+        setLoading(false);
+      });
+      unsubscribe = () => sub.subscription.unsubscribe();
+
+      // The listener is attached after the await above, so a sign-in that
+      // landed in between would be missed without this re-read.
+      if (!mounted) {
+        unsubscribe();
+        return;
+      }
+      const { data: latest } = await supabase.auth.getSession();
+      if (mounted) setSession((prev) => prev ?? latest.session);
+    };
+
+    // A signed-in visitor has a persisted token, so load the SDK right after
+    // first paint and restore/refresh the session as before. A signed-out
+    // visitor has nothing to restore, so the SDK is left for whenever a feature
+    // actually needs it (login, checkout, newsletter, account).
+    if (!hasStoredSession()) {
+      setLoading(false);
+
+      // Logging in on this tab loads the client through the login form, so
+      // follow along and start tracking the session from there.
+      const offLoad = onSupabaseLoaded(() => {
+        if (mounted) void start();
       });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setLoading(false);
+      // Signing in from another tab writes the token; pick it up here so this
+      // tab doesn't stay logged out until a reload.
+      const onStorage = (e: StorageEvent) => {
+        if (e.key && /^sb-.+-auth-token$/.test(e.key) && e.newValue) void start();
+      };
+      window.addEventListener("storage", onStorage);
+      return () => {
+        mounted = false;
+        offLoad();
+        window.removeEventListener("storage", onStorage);
+        unsubscribe?.();
+      };
+    }
+
+    const cancel = afterFirstPaint(() => {
+      void start();
     });
 
     return () => {
       mounted = false;
-      sub.subscription.unsubscribe();
+      cancel();
+      unsubscribe?.();
     };
   }, []);
 
   const signOut = async () => {
+    const supabase = await getSupabase();
     await supabase.auth.signOut();
     setSession(null);
   };

@@ -22,10 +22,17 @@ export function RainbowMist() {
           66%  { transform: translate3d(-5vw, 4vh, 0) scale(0.94); }
           100% { transform: translate3d(0, 0, 0) scale(1); }
         }
+        /*
+         * The soft edge comes from the gradient stops below rather than a
+         * a blur filter. Seven blurred 40-55vmax layers were the single most
+         * expensive thing on the page: each one forced an offscreen pass, and
+         * every frosted (backdrop-filter) element on top had to resample them.
+         * Gaussian-blurring a radial gradient just yields a smoother radial
+         * gradient, so the stops reproduce it directly and cost nothing.
+         */
         .rainbow-mist-blob {
           position: absolute;
           border-radius: 9999px;
-          filter: blur(70px);
           opacity: 0.75;
           will-change: transform;
           animation: rainbow-mist-drift linear infinite;
@@ -43,7 +50,9 @@ export function RainbowMist() {
             height: b.size,
             top: b.top,
             left: b.left,
-            background: `radial-gradient(circle, ${b.color} 0%, ${b.color}00 70%)`,
+            background:
+              `radial-gradient(circle, ${b.color} 0%, ${b.color}e6 15%, ${b.color}bf 30%,` +
+              ` ${b.color}8c 45%, ${b.color}59 60%, ${b.color}2b 75%, ${b.color}00 92%)`,
             animationDuration: b.duration,
             animationDelay: b.delay,
           }}

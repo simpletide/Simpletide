@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCart, parsePrice } from "@/lib/cart-context";
 import { descriptorFor, slugFor, seoProductSlug } from "@/lib/catalog";
 import { SHOP_VARIANTS, shopProductId, type ShopProduct } from "@/lib/shop-products";
+import { srcSetFor, intrinsicSizeFor, CARD_SIZES } from "@/lib/responsive-image";
 type ProductCardProps = {
   product: ShopProduct;
   /** Tighter layout for dense grids (e.g. the search dropdown): square image,
@@ -45,6 +46,10 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
       <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-xl">
         <img
           src={product.image}
+          srcSet={srcSetFor(product.image)}
+          sizes={CARD_SIZES}
+          width={intrinsicSizeFor(product.image)?.width}
+          height={intrinsicSizeFor(product.image)?.height}
           alt={product.name}
           className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
           loading="lazy"

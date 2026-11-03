@@ -1,23 +1,10 @@
 import { CATALOG, getProductBySlug, seoProductSlug, resolveCatalogSlug } from "@/lib/catalog";
+import { SITE_ORIGIN, DEFAULT_OG_IMAGE, normalizePath, absoluteUrl } from "@/lib/site-config";
 
-/** Production site origin — override with VITE_SITE_URL in deploy env. */
-export const SITE_ORIGIN = (
-  (import.meta.env.VITE_SITE_URL as string | undefined)?.trim() || "https://simpletide.com"
-).replace(/\/$/, "");
-
-/** Default social preview (hosted on your domain).
- *  Stays JPEG: Facebook/X/iMessage link scrapers don't reliably render WebP. */
-export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/cards/glp-3-rt.jpg`;
-
-export function normalizePath(path: string): string {
-  const p = path.startsWith("/") ? path : `/${path}`;
-  if (p.length > 1 && p.endsWith("/")) return p.slice(0, -1);
-  return p;
-}
-
-export function absoluteUrl(path: string): string {
-  return `${SITE_ORIGIN}${normalizePath(path)}`;
-}
+// Re-exported so existing `from "@/lib/site-seo"` imports keep working. Modules
+// that only need these (like the root layout) should import `site-config`
+// directly to avoid pulling in the catalog.
+export { SITE_ORIGIN, DEFAULT_OG_IMAGE, normalizePath, absoluteUrl };
 
 export function productPath(catalogOrLegacySlug: string): string {
   const product = getProductBySlug(catalogOrLegacySlug);

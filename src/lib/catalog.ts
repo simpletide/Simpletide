@@ -1,3 +1,4 @@
+import { BUNDLE_TIERS, tierForQty, lineForTiers, type BundleTier } from "@/lib/bundle-pricing";
 import vialGlp3Rt from "@/assets/reta1.png.asset.json";
 const glp3RtHero10 = "/images/cards/glp-3-rt.webp";
 import vialGlp2Tz from "@/assets/glp-2-tz-new.png.asset.json";
@@ -84,28 +85,11 @@ export type CatalogVariant = {
   testDate: string;
 };
 
-/**
- * A multi-unit "bundle" discount tier. Generic + data-driven so the same
- * product template can offer bundle pricing across the whole catalog.
- * `minQty` is the number of vials the tier represents (and the quantity a
- * card click snaps to); `discountPct` is applied to the per-unit price.
- */
-export type BundleTier = {
-  id: string;
-  label: string;
-  minQty: number;
-  discountPct: number;
-  badge?: string;
-  /** When true, this tier is the default selection (e.g. "best value"). */
-  highlight?: boolean;
-};
-
-/** Default bundle tiers shared by every product unless overridden per-product. */
-export const BUNDLE_TIERS: BundleTier[] = [
-  { id: "duo", label: "2 Vials", minQty: 2, discountPct: 5 },
-  { id: "trio", label: "3 Vials", minQty: 3, discountPct: 7 },
-  { id: "quad", label: "5+ Vials", minQty: 5, discountPct: 10, badge: "BEST VALUE", highlight: true },
-];
+// Tier data and line math live in `bundle-pricing` so the cart can import them
+// without pulling in this file's product data. Re-exported so every existing
+// `from "@/lib/catalog"` import keeps working unchanged.
+export { BUNDLE_TIERS, tierForQty, lineForTiers };
+export type { BundleTier };
 
 /** A single bullet in a description section: a primary line + optional sub-note. */
 export type DescriptionItem = { text: string; note?: string };
@@ -2061,9 +2045,13 @@ export function baseProductName(name: string): string {
  * Mirrors the product page: per-product tiers when defined, else the global set.
  */
 export function bundleTierForQty(name: string, qty: number): BundleTier | null {
+  return tierForQty(tiersForCartName(name), qty);
+}
+
+/** Per-product tiers when the product defines them, else the shared set. */
+function tiersForCartName(name: string): BundleTier[] {
   const slug = slugFor(baseProductName(name));
-  const tiers = (slug ? getProductBySlug(slug)?.bundleTiers : undefined) ?? BUNDLE_TIERS;
-  return [...tiers].reverse().find((t) => qty >= t.minQty) ?? null;
+  return (slug ? getProductBySlug(slug)?.bundleTiers : undefined) ?? BUNDLE_TIERS;
 }
 
 /**
@@ -2075,9 +2063,5 @@ export function discountedLine(
   unitPrice: number,
   qty: number,
 ): { pct: number; unit: number; lineTotal: number; baseTotal: number; savings: number } {
-  const pct = bundleTierForQty(name, qty)?.discountPct ?? 0;
-  const unit = Number((unitPrice * (1 - pct / 100)).toFixed(2));
-  const lineTotal = Number((unit * qty).toFixed(2));
-  const baseTotal = Number((unitPrice * qty).toFixed(2));
-  return { pct, unit, lineTotal, baseTotal, savings: Number((baseTotal - lineTotal).toFixed(2)) };
+  return lineForTiers(tiersForCartName(name), unitPrice, qty);
 }

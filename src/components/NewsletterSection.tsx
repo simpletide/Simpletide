@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase, preloadSupabase } from "@/lib/supabase-lazy";
 
 /**
  * Shared "Subscribe to our Newsletter" banner.
@@ -48,6 +48,7 @@ export function NewsletterSection({
     setStatus("loading");
     setMessage("");
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.functions.invoke("send-newsletter-welcome-email", {
         body: { email: trimmed },
       });
@@ -134,6 +135,9 @@ export function NewsletterSection({
                   <input
                     type="email"
                     value={email}
+                    // Warms the Supabase chunk while the visitor is still
+                    // typing, so submitting doesn't wait on a network fetch.
+                    onFocus={preloadSupabase}
                     onChange={(e) => {
                       setEmail(e.target.value);
                       if (status !== "idle") {

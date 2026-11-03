@@ -14,14 +14,14 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth-context";
 import { CartProvider } from "@/lib/cart-context";
-import { CartDrawer } from "@/components/CartDrawer";
 import { ResearcherGate } from "@/components/ResearcherGate";
 import { Starfield } from "@/components/Starfield";
 import { RainbowMist } from "@/components/RainbowMist";
 import { Footer } from "@/components/Footer";
-import { ChatBot } from "@/components/ChatBot";
-import { DEFAULT_OG_IMAGE, SITE_ORIGIN } from "@/lib/site-seo";
-import { Toaster } from "@/components/ui/sonner";
+import { DEFAULT_OG_IMAGE, SITE_ORIGIN } from "@/lib/site-config";
+// Cart drawer, chat widget and toast host are code-split and mounted after
+// first paint; see DeferredWidgets.
+import { DeferredWidgets } from "@/components/DeferredWidgets";
 
 
 // Intercom messenger is parked while the in-house AI ChatBot owns the
@@ -112,11 +112,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      // Inter is self-hosted (see @font-face in styles.css). Only the weight
+      // used for body copy is preloaded; the rest are fetched as needed.
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap",
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href: "/fonts/inter-latin-400.woff2",
+        crossOrigin: "anonymous",
       },
     ],
     scripts: [
@@ -191,10 +194,8 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           {showFooter && <Footer light />}
-          <CartDrawer />
           <ResearcherGate />
-          <ChatBot />
-          <Toaster position="top-center" richColors closeButton />
+          <DeferredWidgets />
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
