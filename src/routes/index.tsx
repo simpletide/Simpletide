@@ -189,29 +189,28 @@ export const Route = createFileRoute("/")({
 type Variant = { size: string; price: number };
 const HOME_VARIANTS: Record<string, Variant[]> = {
   "GLP-3 RT": [
-    { size: "10mg", price: 65 },
-    { size: "20mg", price: 120 },
-    { size: "30mg", price: 150 },
-    { size: "60mg", price: 240 },
+    { size: "10mg", price: 45 },
+    { size: "20mg", price: 85 },
+    { size: "30mg", price: 110 },
+    { size: "60mg", price: 175 },
   ],
   "GLP-2 TZ": [
-    { size: "10mg", price: 60 },
-    { size: "20mg", price: 110 },
-    { size: "30mg", price: 140 },
-    { size: "60mg", price: 220 },
+    { size: "10mg", price: 35 },
+    { size: "20mg", price: 65 },
+    { size: "30mg", price: 105 },
+    { size: "60mg", price: 170 },
   ],
   "CJC-1295 + Ipamorelin": [
-    { size: "10mg", price: 75 },
-    { size: "20mg", price: 120 },
+    { size: "10mg", price: 45 },
   ],
   "MOTS-c": [
-    { size: "10mg", price: 65 },
-    { size: "40mg", price: 160 },
+    { size: "10mg", price: 40 },
+    { size: "40mg", price: 110 },
   ],
   "Wolverine": [
-    { size: "10mg", price: 70 },
-    { size: "20mg", price: 120 },
-    { size: "40mg", price: 200 },
+    { size: "10mg", price: 40 },
+    { size: "20mg", price: 60 },
+    { size: "40mg", price: 90 },
   ],
 };
 
@@ -273,14 +272,14 @@ function SimpletideHome() {
   ];
 
   const products = [
-    { name: "GLP-3 RT", tag: "Metabolic Research", price: "From $65.00", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.webp" },
+    { name: "GLP-3 RT", tag: "Metabolic Research", price: "From $45.00", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.webp" },
     { name: "Tesamorelin", tag: "Growth Hormone Research", price: "$85.00", compareAt: "$95.00", badge: "SALE!", image: "/images/cards/tesamorelin.webp" },
-    { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $60.00", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.webp" },
-    { name: "CJC-1295 + Ipamorelin", tag: "Research Blend", price: "From $75.00", compareAt: "$85.00", badge: "SALE!", image: "/images/cards/cjc-1295-ipamorelin.webp" },
-    { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $65.00", badge: "BEST SELLING!", image: "/images/cards/mots-c.webp" },
-    { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $70.00", image: "/images/cards/wolverine.webp" },
-    { name: "BPC-157", tag: "Tissue Repair Research", price: "$65.00", image: "/images/cards/bpc-157.webp" },
-    { name: "Adamax", tag: "Neuro Research", price: "$65.00", badge: "BEST SELLING!", image: "/images/cards/adamax.webp" },
+    { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $35.00", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.webp" },
+    { name: "CJC-1295 + Ipamorelin", tag: "Research Blend", price: "$45.00", image: "/images/cards/cjc-1295-ipamorelin.webp" },
+    { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $40.00", badge: "BEST SELLING!", image: "/images/cards/mots-c.webp" },
+    { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $40.00", image: "/images/cards/wolverine.webp" },
+    { name: "BPC-157", tag: "Tissue Repair Research", price: "$30.00", image: "/images/cards/bpc-157.webp" },
+    { name: "Adamax", tag: "Neuro Research", price: "$35.00", badge: "BEST SELLING!", image: "/images/cards/adamax.webp" },
   ];
 
   return (
