@@ -6,6 +6,7 @@ import { slugFor, seoProductSlug, descriptorFor } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
 import { ProductCard } from "@/components/ProductCard";
 import { useEntered } from "@/lib/use-overlay-mount";
+import { OverlayPortal } from "@/components/OverlayPortal";
 
 // Curated "Trending" chips. `product` must match a SHOP_PRODUCTS name so the
 // chip can deep-link to that product's detail page.
@@ -91,7 +92,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
       .slice(0, MAX_RESULTS);
   }, [q]);
 
-  return (
+  const overlay = (
     <div className={`fixed inset-0 z-[80] ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
       <div
         onClick={onClose}
@@ -177,4 +178,6 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
       </div>
     </div>
   );
+
+  return <OverlayPortal>{overlay}</OverlayPortal>;
 }

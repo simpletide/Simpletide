@@ -3,6 +3,7 @@ import { X, LogOut, User } from "lucide-react";
 import { useEffect } from "react";
 import { preloadAuthHeroImages } from "@/lib/auth-hero";
 import { useEntered } from "@/lib/use-overlay-mount";
+import { OverlayPortal } from "@/components/OverlayPortal";
 
 const MOBILE_LINKS = [
   { to: "/", label: "Home", exact: true },
@@ -43,11 +44,12 @@ export default function MobileMenu({
   }, [open]);
 
   return (
-    <>
+    <OverlayPortal>
       <div
         onClick={onClose}
         aria-hidden="true"
-        className={`md:hidden fixed inset-0 z-[60] cursor-pointer bg-black/40 transition-opacity duration-300 ${
+        data-testid="mobile-menu-scrim"
+        className={`md:hidden fixed inset-0 z-[60] cursor-pointer bg-black/50 transition-opacity duration-300 ${
           shown ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       />
@@ -55,7 +57,7 @@ export default function MobileMenu({
         role="dialog"
         aria-modal="true"
         aria-label="Menu"
-        className={`md:hidden fixed right-0 top-0 z-[70] flex h-full w-[280px] max-w-[80%] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed inset-y-0 right-0 z-[70] flex w-[300px] max-w-[85%] flex-col overflow-y-auto overscroll-contain bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
           shown ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -64,7 +66,7 @@ export default function MobileMenu({
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="text-slate-500 transition-colors hover:text-slate-900"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 transition-colors hover:text-slate-900 active:bg-slate-100"
           >
             <X className="h-5 w-5" />
           </button>
@@ -77,20 +79,21 @@ export default function MobileMenu({
               to={item.to}
               onClick={onClose}
               activeOptions={{ exact: item.exact }}
-              className="block rounded-lg px-4 py-3 text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-100"
-              activeProps={{ className: "bg-slate-100" }}
+              className="block rounded-lg px-4 py-3.5 text-base font-semibold text-slate-900 transition-colors hover:bg-slate-100 active:bg-slate-200"
+              activeProps={{ className: "bg-slate-100 text-violet-700" }}
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="mt-auto border-t border-slate-200 px-3 py-4">
+        {/* Safe-area padding keeps the last button clear of the iOS home bar. */}
+        <div className="mt-auto border-t border-slate-200 px-3 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {signedIn ? (
             <button
               type="button"
               onClick={onLogout}
-              className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-left text-[15px] font-semibold text-red-600 transition-colors hover:bg-red-50"
+              className="flex w-full items-center gap-2 rounded-lg px-4 py-3.5 text-left text-base font-semibold text-red-600 transition-colors hover:bg-red-50 active:bg-red-100"
             >
               <LogOut className="h-4 w-4 -scale-x-100" strokeWidth={1.75} /> Log Out
             </button>
@@ -100,13 +103,13 @@ export default function MobileMenu({
               onClick={onClose}
               onMouseEnter={preloadAuthHeroImages}
               onFocus={preloadAuthHeroImages}
-              className="flex items-center gap-2 rounded-lg px-4 py-3 text-[15px] font-semibold text-slate-800 transition-colors hover:bg-slate-100"
+              className="flex items-center gap-2 rounded-lg px-4 py-3.5 text-base font-semibold text-slate-900 transition-colors hover:bg-slate-100 active:bg-slate-200"
             >
               <User className="h-4 w-4" /> Log In
             </Link>
           )}
         </div>
       </aside>
-    </>
+    </OverlayPortal>
   );
 }
