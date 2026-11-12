@@ -5,6 +5,7 @@ import { NewsletterSection } from "@/components/NewsletterSection";
 import { useCart } from "@/lib/cart-context";
 import { getProductBySlug, BUNDLE_TIERS, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant, vialThumbFor } from "@/lib/catalog";
 import { CoaLightbox } from "@/components/CoaLightbox";
+import { coaReports, coaPanel } from "@/lib/coa-data";
 import type { DescriptionSection } from "@/lib/catalog";
 import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
 import { heroImageForVariant } from "@/lib/product-vial-variants";
@@ -25,39 +26,6 @@ import {
   Headphones,
   Lock,
 } from "lucide-react";
-
-// Compound abbreviations used in COA batch numbers (e.g. GLP-3 RT → "Reta").
-const COA_ABBR: Record<string, string> = {
-  "glp-3-rt": "Reta",
-  "glp-2-tz": "TIRZ",
-  tesamorelin: "Tesa",
-  "cjc-1295-ipamorelin": "CIP",
-  "cjc-1295-no-dac": "Cjc",
-  "melanotan-2": "Mt2",
-  "ghk-cu": "Ghk",
-  "mots-c": "Mots",
-  wolverine: "Wolv",
-  "nad-plus": "Nad",
-  klow: "Klow",
-  glow: "Glow",
-  "igf1-lr3": "Igf",
-};
-
-// Batch number for a COA card: AS-<abbr>-<two digits><letter>, e.g. "AS-Reta-22B".
-// The two digits are deterministic per product+size (stable across renders) and
-// the trailing letter advances per variant (A, B, C, …) so a product's batches
-// read as a series.
-function coaBatch(slug: string, size: string, index: number): string {
-  const abbr =
-    COA_ABBR[slug] ??
-    (slug.split("-")[0].charAt(0).toUpperCase() + slug.split("-")[0].slice(1) || "AS");
-  const key = `${slug}|${size}`;
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
-  const num = (h % 90) + 10; // 10–99 → always two digits
-  const letter = String.fromCharCode(65 + (index % 26)); // A, B, C, …
-  return `AS-${abbr}-${num}${letter}`;
-}
 
 // Bundles/blends that should not show a Certificate of Analysis section at all.
 const COA_HIDDEN = new Set([
@@ -165,14 +133,6 @@ function frequentlyBoughtFor(slug: string): (typeof CATALOG)[number][] {
     if (out.length >= 8) break;
   }
   return out;
-}
-
-// Tested date shown on a COA card. Most COAs share a 05/09/26 test date; a few
-// products carry their own dates.
-function coaTested(slug: string, size: string): string {
-  if ((slug === "glp-3-rt" && size === "10mg") || slug === "igf1-lr3") return "02/12/26";
-  if (slug === "cjc-1295-no-dac" || slug === "melanotan-2") return "02/04/26";
-  return "05/09/26";
 }
 
 // "Why Choose Simpletide" benefit icons — exact SVG path data extracted
@@ -383,8 +343,9 @@ export function ProductDetail() {
   // tapping elsewhere or scrolling). Desktop relies on :hover via CSS.
   const [activeCoaCard, setActiveCoaCard] = useState<string | null>(null);
 
-  // COA scan preview (lightbox). Opened from a card's "View COA" button.
-  const [coaPreview, setCoaPreview] = useState<{ name: string; url: string } | null>(null);
+  // COA preview (lightbox). Opened from a card's "View COA" button on the size
+  // that was asked for; the viewer then offers this product's other sizes.
+  const [coaPreview, setCoaPreview] = useState<{ size: string } | null>(null);
   useEffect(() => {
     if (!coaPreview) return;
     const onKey = (e: KeyboardEvent) => {
@@ -457,7 +418,7 @@ export function ProductDetail() {
   const openSelectedCoa = () => {
     const url = coaUrlForVariant(product.slug, variant.size, product.variants.indexOf(variant));
     if (url) {
-      setCoaPreview({ name: `${product.name} ${variant.size}`, url });
+      setCoaPreview({ size: variant.size });
       return;
     }
     setCoaOpen(true);
@@ -519,16 +480,17 @@ export function ProductDetail() {
   const featured = frequentlyBoughtFor(product.slug);
 
   // --- COA cards: one card per product variant -----------------------------
-  // Every variant gets its own card so each size is represented. Variants with
-  // a genuine size-specific scan open the real certificate; variants we don't
-  // have a scan for yet still render a matching card (the "View COA" button just
-  // doesn't open a preview). Bundles are excluded from the section entirely
-  // (see COA_HIDDEN below).
-  const coaCards = product.variants.map((v, i) => ({
-    v,
-    i,
-    url: coaUrlForVariant(product.slug, v.size, i),
-  }));
+  // One card per variant that has a certificate on file, showing that
+  // certificate's own figures. Sizes with no certificate are left out rather
+  // than shown with a batch number nothing backs. Bundles are excluded from the
+  // section entirely (see COA_HIDDEN above).
+  const coaCards = product.variants
+    .map((v, i) => ({ v, i, url: coaUrlForVariant(product.slug, v.size, i), panel: coaPanel(product.slug, v.size) }))
+    .filter((c): c is typeof c & { panel: NonNullable<typeof c.panel> } => !!c.panel);
+
+  // Nothing to show for a product with no certificate yet, so the section and
+  // the hero's CoA shortcut both come off rather than opening an empty panel.
+  const showCoa = !COA_HIDDEN.has(product.slug) && coaCards.length > 0;
 
   // --- Why Choose Simpletide (Peptora-style feature + stat band) -----
   const whyCards: {
@@ -834,7 +796,7 @@ export function ProductDetail() {
               </div>
 
               <div className="mt-5 flex gap-2.5">
-                {!COA_HIDDEN.has(product.slug) && (
+                {showCoa && (
                   <button
                     type="button"
                     onClick={openSelectedCoa}
@@ -958,7 +920,7 @@ export function ProductDetail() {
           {/* CERTIFICATE OF ANALYSIS — collapsible accordion (matches the
               Product Description dropdown). Shown for every product except the
               multi-compound bundles/blends in COA_HIDDEN. */}
-          {!COA_HIDDEN.has(product.slug) && (
+          {showCoa && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 md:pt-3" data-reveal>
             <button
               type="button"
@@ -984,11 +946,11 @@ export function ProductDetail() {
               <div className="overflow-hidden">
                 <div className="pt-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
-                    <p className="text-sm text-slate-500">Independently Third-Party Tested by Freedom Diagnostics</p>
+                    <p className="text-sm text-slate-500">Independently Third-Party Tested by ILS Laboratories</p>
                   </div>
 
                   <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    {coaCards.map(({ v, i, url: coaUrl }) => (
+                    {coaCards.map(({ v, url: coaUrl, panel }) => (
                       <div
                         key={v.size}
                         data-coa-card
@@ -1005,7 +967,7 @@ export function ProductDetail() {
                           Latest
                         </span>
                         <div className="text-center mt-2 mb-2">
-                          <div className="text-sm font-bold tracking-tight text-slate-900 whitespace-nowrap">Exceeds 99%</div>
+                          <div className="text-sm font-bold tracking-tight text-slate-900 whitespace-nowrap">{panel.purity}</div>
                           <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-0.5">Purity</div>
                         </div>
                         <dl className="space-y-1 text-[11px] mb-3">
@@ -1015,7 +977,7 @@ export function ProductDetail() {
                           </div>
                           <div className="flex items-center justify-between">
                             <dt className="text-slate-500">Batch #</dt>
-                            <dd className="font-semibold text-slate-900">{coaBatch(product.slug, v.size, i)}</dd>
+                            <dd className="font-semibold text-slate-900">{panel.lot}</dd>
                           </div>
                           <div className="flex items-center justify-between">
                             <dt className="text-slate-500">Batch:</dt>
@@ -1023,16 +985,16 @@ export function ProductDetail() {
                           </div>
                           <div className="flex items-center justify-between">
                             <dt className="text-slate-500">Endotoxins:</dt>
-                            <dd className="font-semibold text-slate-900">Pass</dd>
+                            <dd className="font-semibold text-slate-900">{panel.endotoxin}</dd>
                           </div>
                           <div className="flex items-center justify-between">
                             <dt className="text-slate-500">Tested:</dt>
-                            <dd className="font-semibold text-slate-900">{coaTested(product.slug, v.size)}</dd>
+                            <dd className="font-semibold text-slate-900">{panel.tested}</dd>
                           </div>
                         </dl>
                         <button
                           type="button"
-                          onClick={coaUrl ? () => setCoaPreview({ name: `${product.name} ${v.size}`, url: coaUrl }) : undefined}
+                          onClick={coaUrl ? () => setCoaPreview({ size: v.size }) : undefined}
                           className="mt-auto inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-full bg-[#141414] hover:bg-[#2A2A2A] text-white text-[11px] font-bold px-3 py-2 transition-colors"
                         >
                           <FileText className="w-3 h-3" /> View COA
@@ -1348,7 +1310,9 @@ export function ProductDetail() {
 
       {coaPreview && (
         <CoaLightbox
-          coa={{ name: coaPreview.name, url: coaPreview.url, file: "" }}
+          name={product.name}
+          reports={coaReports(product.slug)}
+          initialSize={coaPreview.size}
           onClose={() => setCoaPreview(null)}
         />
       )}

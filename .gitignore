@@ -37,8 +37,9 @@ dist-ssr
 .env.*
 
 
-# Screenshots written by scripts/verify-mobile-menu.mjs
+# Screenshots written by the verify-* scripts
 .menu-shots*/
+.coa-shots*/
 
 # Full-size original product photos (web copies live in public/images/cards)
 public/images/simple product image/
