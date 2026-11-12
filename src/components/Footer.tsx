@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { SHIPPING_SHORT } from "@/lib/site-copy";
 
 // Footer trust-badge icons — exact SVG path data from Peptora's footer
 // (peptoralabs.com /icons/social/*.svg), recolored to currentColor so the
@@ -82,7 +83,7 @@ const COLUMNS: FooterColumn[] = [
 const TRUST_BADGES = [
   { icon: SecurityCheckIcon, label: "SSL Secured" },
   { icon: TestTubeIcon, label: "99%+ Purity" },
-  { icon: TruckDeliveryIcon, label: "Same Day Shipping" },
+  { icon: TruckDeliveryIcon, label: SHIPPING_SHORT },
 ];
 
 function FooterNavLink({ link, light }: { link: FooterLink; light: boolean }) {
@@ -135,7 +136,7 @@ export function Footer({ light = false }: { light?: boolean }) {
               <span className="bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">SIMPLE</span>TIDE
             </Link>
             <p className={`mt-4 max-w-xs text-sm leading-6 ${light ? "text-slate-500" : "text-white/60"}`}>
-              Premium research-grade peptides for optimal controlled studies and performance. Third-party tested with Certificate of Analysis.
+              Premium research-grade peptides for laboratory research use only. Third-party tested with Certificate of Analysis.
             </p>
           </div>
 

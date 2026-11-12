@@ -6,6 +6,8 @@ import { useCart } from "@/lib/cart-context";
 import { getProductBySlug, BUNDLE_TIERS, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant, vialThumbFor } from "@/lib/catalog";
 import { CoaLightbox } from "@/components/CoaLightbox";
 import { coaReports, coaPanel } from "@/lib/coa-data";
+import { CoaThumbnail } from "@/components/CoaThumbnail";
+import { SHIPPING_PROMISE, SHIPPING_SHORT } from "@/lib/site-copy";
 import type { DescriptionSection } from "@/lib/catalog";
 import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
 import { heroImageForVariant } from "@/lib/product-vial-variants";
@@ -409,7 +411,7 @@ export function ProductDetail() {
   ];
 
   const heroInfoRows = [
-    { icon: Clock, title: "Same-day dispatch", note: "Orders placed before the daily cutoff ship the same business day." },
+    { icon: Clock, title: "Same-day dispatch", note: SHIPPING_PROMISE },
     { icon: Truck, title: "Free priority shipping", note: "On every order — most arrive within 2–3 days." },
     { icon: ShieldCheck, title: "Third-party tested · 99%+ purity", note: "Every batch ships with its Certificate of Analysis." },
     { icon: Headphones, title: "Research support", note: "Call, text, or email us anytime with questions." },
@@ -447,7 +449,7 @@ export function ProductDetail() {
   // --- Quick verification stats (Peptora-style band) --------------------
   const stats = [
     { value: "99%+", label: "Purity Rate", note: "HPLC-verified research grade" },
-    { value: "24hr", label: "Avg Ship Time", note: "Same-day processing available" },
+    { value: "24hr", label: "Avg Ship Time", note: SHIPPING_SHORT },
     { value: "100%", label: "U.S. Verified", note: "Accredited independent labs" },
     { value: "5", label: "Quality Checks", note: "From synthesis to delivery" },
   ];
@@ -492,6 +494,10 @@ export function ProductDetail() {
   // the hero's CoA shortcut both come off rather than opening an empty panel.
   const showCoa = !COA_HIDDEN.has(product.slug) && coaCards.length > 0;
 
+  // The certificate for the size currently selected, for the inline preview.
+  const selectedPanel = coaPanel(product.slug, variant.size);
+  const selectedCoaUrl = coaUrlForVariant(product.slug, variant.size, product.variants.indexOf(variant));
+
   // --- Why Choose Simpletide (Peptora-style feature + stat band) -----
   const whyCards: {
     icon: ComponentType<{ className?: string }>;
@@ -516,7 +522,7 @@ export function ProductDetail() {
     {
       icon: TruckDeliveryIcon,
       title: "Same-Day Dispatch",
-      desc: "Orders placed before the daily cutoff ship the same business day.",
+      desc: SHIPPING_PROMISE,
     },
     {
       icon: HeadsetIcon,
@@ -525,28 +531,19 @@ export function ProductDetail() {
     },
   ];
 
+  // Order counts and review totals were invented numbers with nothing behind
+  // them, so they're gone until something real feeds them. These two are
+  // backed by the certificates and the published shipping cutoff.
   const whyStats = [
     {
       value: (
         <>
-          99.87<span className="align-super text-[0.5em] font-semibold ml-0.5">%</span>
+          99<span className="align-super text-[0.5em] font-semibold ml-0.5">%+</span>
         </>
       ),
       label: "PURITY RATE",
-      note: "HPLC-verified pharmaceutical grade",
+      note: "HPLC-verified research grade",
       fill: 0.97,
-    },
-    {
-      value: "100K+",
-      label: "ORDERS SHIPPED",
-      note: "Trusted by researchers worldwide",
-      fill: 0.8,
-    },
-    {
-      value: "2,632+",
-      label: "5-STAR REVIEWS",
-      note: "Verified customer feedback",
-      fill: 0.75,
     },
     {
       value: (
@@ -555,7 +552,7 @@ export function ProductDetail() {
         </>
       ),
       label: "AVG SHIP TIME",
-      note: "Same-day processing available",
+      note: SHIPPING_SHORT,
       fill: 0.7,
     },
   ];
@@ -915,6 +912,33 @@ export function ProductDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Inline COA preview for the selected size — the certificate is
+                the strongest proof on the page, so it shows the document
+                itself rather than only a link to it. */}
+            {showCoa && selectedPanel && selectedCoaUrl && (
+              <button
+                type="button"
+                onClick={() => setCoaPreview({ size: variant.size })}
+                className="group mt-5 flex w-full max-w-2xl cursor-pointer items-center gap-4 rounded-2xl border border-slate-200 bg-white p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[rgba(167,139,250,0.6)] hover:shadow-[0_10px_30px_rgba(167,139,250,0.22)]"
+              >
+                <CoaThumbnail
+                  url={selectedCoaUrl}
+                  className="h-24 w-[72px] shrink-0 rounded-lg border border-slate-200 shadow-sm"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-bold text-slate-900">
+                    Certificate of Analysis — {variant.size}
+                  </span>
+                  <span className="mt-0.5 block text-[13px] text-slate-500">
+                    {selectedPanel.purity} purity · Lot {selectedPanel.lot} · Tested {selectedPanel.tested}
+                  </span>
+                  <span className="mt-1.5 inline-flex items-center gap-1 text-[13px] font-semibold text-violet-700 group-hover:underline">
+                    View full COA <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </span>
+              </button>
+            )}
           </section>
 
           {/* CERTIFICATE OF ANALYSIS — collapsible accordion (matches the
@@ -1061,7 +1085,7 @@ export function ProductDetail() {
             </div>
 
             {/* ROW 2 — circular-gauge stat cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div className="grid grid-cols-2 gap-4 mt-4 max-w-2xl mx-auto">
               {whyStats.map((s, i) => {
                 const R = 40;
                 const C = 2 * Math.PI * R;

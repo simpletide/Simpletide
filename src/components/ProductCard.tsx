@@ -5,6 +5,9 @@ import { useCart, parsePrice } from "@/lib/cart-context";
 import { descriptorFor, slugFor, seoProductSlug } from "@/lib/catalog";
 import { SHOP_VARIANTS, shopProductId, type ShopProduct } from "@/lib/shop-products";
 import { srcSetFor, intrinsicSizeFor, CARD_SIZES } from "@/lib/responsive-image";
+import { ProductBadge } from "@/components/ProductBadge";
+import { CTA_CARD } from "@/lib/cta";
+import { BUNDLE_SAVINGS_LINE } from "@/lib/site-copy";
 type ProductCardProps = {
   product: ShopProduct;
   /** Tighter layout for dense grids (e.g. the search dropdown): square image,
@@ -42,8 +45,9 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
   }, [isOpen]);
 
   return (
-    <div className="relative bg-white rounded-2xl border border-slate-200 text-slate-900 group flex flex-col h-full hover:shadow-xl hover:border-slate-300 transition-all overflow-hidden shadow-sm">
+    <div className="relative bg-white rounded-2xl border border-slate-200 text-slate-900 group flex flex-col h-full overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl">
       <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-xl">
+        <ProductBadge badge={product.outOfStock ? "OUT OF STOCK" : product.badge} />
         <img
           src={product.image}
           srcSet={srcSetFor(product.image)}
@@ -77,9 +81,12 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
           <span className={`font-bold text-gray-900 whitespace-nowrap ${compact ? "text-[13px]" : "text-[13px] sm:text-base"}`}>{product.price}</span>
         </div>
         {!compact && (
-          <p className="text-[11px] tracking-wider text-gray-500 mb-2 sm:mb-2.5">
-            {descriptorFor(product.name) ?? product.category ?? "Research Compound"}
-          </p>
+          <>
+            <p className="text-[11px] tracking-wider text-gray-500">
+              {descriptorFor(product.name) ?? product.category ?? "Research Compound"}
+            </p>
+            <p className="text-[11px] font-semibold text-violet-600 mb-2 sm:mb-2.5">{BUNDLE_SAVINGS_LINE}</p>
+          </>
         )}
         {product.outOfStock ? (
           <button
@@ -107,7 +114,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
                 openCart();
               }
             }}
-                      className={`group/cart w-full mt-auto inline-flex cursor-pointer items-center justify-center rounded-full border border-[#1A1A1A] bg-[#1A1A1A] font-bold text-white transition-all duration-300 hover:bg-white hover:text-[#1A1A1A] hover:shadow-[0_0_20px_4px_rgba(167,139,250,0.20),0_0_40px_8px_rgba(167,139,250,0.10)] ${compact ? "py-2 text-xs" : "py-2.5 sm:py-3 text-sm"}`}
+            className={`group/cart mt-auto ${compact ? "py-2 text-xs" : "py-2.5 sm:py-3 text-sm"} ${CTA_CARD}`}
           >
             <span>Add to cart</span>
             <div className="w-0 overflow-hidden transition-all duration-200 ease-out group-hover/cart:ml-2 group-hover/cart:w-4">
@@ -200,11 +207,11 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
               setIsOpen(false);
               openCart();
             }}
-            className={`group/cart w-full inline-flex items-center justify-center rounded-full border border-[#1A1A1A] bg-[#1A1A1A] font-bold text-white transition-all duration-300 hover:bg-white hover:text-[#1A1A1A] hover:shadow-[0_0_20px_4px_rgba(167,139,250,0.20),0_0_40px_8px_rgba(167,139,250,0.10)] ${
+            className={`group/cart ${
               compact
                 ? "flex-row gap-1 py-2 text-[11px] whitespace-nowrap"
                 : "flex-col sm:flex-row gap-0.5 sm:gap-1.5 leading-tight py-2.5 sm:py-3 text-sm"
-            }`}
+            } ${CTA_CARD}`}
           >
             <span>Add to cart</span>
             {!compact && <span className="hidden sm:inline">—</span>}

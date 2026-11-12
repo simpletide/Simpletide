@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { getSupabase, preloadSupabase } from "@/lib/supabase-lazy";
+import { CTA_PRIMARY } from "@/lib/cta";
 
 /**
  * Shared "Subscribe to our Newsletter" banner.
@@ -108,23 +109,22 @@ export function NewsletterSection({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
               <div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
-                  <span className={light ? "text-slate-900" : "text-white"}>Subscribe to our </span>
+                  <span className={light ? "text-slate-900" : "text-white"}>Get </span>
                   <span
                     className={
-                      onMist
-                        ? "inline-block bg-gradient-to-r from-[#f472b6] via-[#a78bfa] to-[#38bdf8] bg-clip-text text-transparent"
-                        : light
+                      light
                         ? "inline-block bg-gradient-to-r from-[#f472b6] via-[#a78bfa] to-[#38bdf8] bg-clip-text text-transparent"
                         : "inline-block bg-gradient-to-r from-[#a78bfa] via-[#8cc6fa] to-[#c2e2ff] bg-clip-text text-transparent"
                     }
                   >
-                    Newsletter
+                    10% off
                   </span>
+                  <span className={light ? "text-slate-900" : "text-white"}> your first order</span>
                 </h2>
                 <p
                   className={`text-sm md:text-base mt-3 ${light ? "text-slate-500" : "text-white/90"}`}
                 >
-                  Subscribe to our newsletter to get daily insights, news, updates.
+                  Join our newsletter and we'll email your discount code, plus new batch releases and restock alerts.
                 </p>
               </div>
               <div>
@@ -155,14 +155,7 @@ export function NewsletterSection({
                   <button
                     type="submit"
                     disabled={status === "loading"}
-                    className={
-                      (onMist
-                        ? "group inline-flex items-center justify-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] px-7 py-3 rounded-full font-bold transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(196,181,253,0.7)] whitespace-nowrap"
-                        : light
-                        ? "group inline-flex items-center justify-center bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] text-white px-7 py-3 rounded-full font-bold transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(167,139,250,0.45)] whitespace-nowrap"
-                        : "group inline-flex items-center justify-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] text-white px-7 py-3 rounded-full font-bold transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(167,139,250,0.45)] whitespace-nowrap") +
-                      " disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-                    }
+                    className={`group whitespace-nowrap ${CTA_PRIMARY} disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
                   >
                     <span className="transition-transform duration-300 ease-in-out">
                       {status === "loading" ? "Subscribing..." : "Subscribe"}

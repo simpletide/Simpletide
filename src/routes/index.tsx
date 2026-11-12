@@ -7,6 +7,10 @@ import {
   MapPin,
 } from "lucide-react";
 import { useCart, parsePrice } from "@/lib/cart-context";
+import { CTA_PRIMARY, CTA_CARD } from "@/lib/cta";
+import { SHIPPING_SHORT, BUNDLE_SAVINGS_LINE } from "@/lib/site-copy";
+import { ProductBadge } from "@/components/ProductBadge";
+import type { ShopBadge } from "@/lib/shop-products";
 import { Header } from "@/components/Header";
 import { slugFor, descriptorFor, seoProductSlug } from "@/lib/catalog";
 import { pageSeoHead } from "@/lib/site-seo";
@@ -14,9 +18,22 @@ import { NewsletterSection } from "@/components/NewsletterSection";
 import { QualityTestsCarousel } from "@/components/QualityTestsCarousel";
 import { useReveal, revealDelay } from "@/lib/use-reveal";
 
-const HERO_VIAL_CENTER = "/images/hero-vials/simpletide-selank-semax-20mg.webp";
-const HERO_VIAL_LEFT = "/images/hero-vials/simpletide-bpc157-10mg.webp";
-const HERO_VIAL_RIGHT = "/images/hero-vials/simpletide-selank-10mg.webp";
+/**
+ * The three hero vials, each linking to its own product page.
+ *
+ * Limited to the compounds we have hero-resolution transparent art for
+ * (1200x1500). The rest of the catalog only exists as 117x240 thumbnails,
+ * which blur badly at the hero's render width.
+ */
+const HERO_VIALS = {
+  center: { name: "Selank + Semax", image: "/images/hero-vials/simpletide-selank-semax-20mg.webp" },
+  left: { name: "BPC-157", image: "/images/hero-vials/simpletide-bpc157-10mg.webp" },
+  right: { name: "Selank", image: "/images/hero-vials/simpletide-selank-10mg.webp" },
+} as const;
+
+/** Lifts and tilts a vial toward the viewer on hover, over its idle float. */
+const VIAL_HOVER =
+  "transition-transform duration-500 ease-out group-hover/vial:scale-[1.07] group-hover/vial:-rotate-3";
 
 // Home "feature" card icons
 // Peptora ships on their live homepage trust/feature cards
@@ -100,27 +117,6 @@ function LaurelWreathIcon({ className }: { className?: string }) {
   );
 }
 
-// /icons/trust-star-award.svg — star medal with ribbon tails (lab testing award).
-function StarAwardIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 40 40"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M19.447 8.68712C19.677 8.21581 20.3217 8.21582 20.5517 8.68712L21.9075 11.4663C21.9975 11.6508 22.1665 11.7792 22.3624 11.8118L25.3097 12.3021C25.8092 12.3852 26.0083 13.0246 25.651 13.3987L23.541 15.6086C23.4014 15.755 23.3369 15.9623 23.3677 16.1666L23.8327 19.2507C23.9115 19.773 23.3902 20.1684 22.939 19.9284L20.2807 18.5139C20.104 18.4197 19.8947 18.4197 19.718 18.5139L17.0597 19.9284C16.6086 20.1684 16.0872 19.773 16.1659 19.2507L16.631 16.1666C16.6618 15.9623 16.5974 15.755 16.4576 15.6086L14.3476 13.3987C13.9904 13.0246 14.1895 12.3852 14.689 12.3021L17.6363 11.8118C17.8322 11.7792 18.0012 11.6508 18.0912 11.4663L19.447 8.68712Z" />
-      <path d="M31.6673 15C31.6673 21.4433 26.444 26.6667 20.0007 26.6667C13.5573 26.6667 8.33398 21.4433 8.33398 15C8.33398 8.55669 13.5573 3.33334 20.0007 3.33334C26.444 3.33334 31.6673 8.55669 31.6673 15Z" />
-      <path d="M21.666 27.2373L24.3767 34.4188C24.9228 35.8658 25.196 36.5893 25.671 36.6667C26.1472 36.5963 26.7305 35.8007 27.3007 34.362C27.709 33.3318 27.913 32.8168 28.3335 32.5392C28.4625 32.454 28.6035 32.3867 28.7527 32.3392C29.2387 32.1847 29.7977 32.3358 30.9155 32.638C32.1108 32.9612 32.9412 32.871 33.269 32.638C33.3655 32.5695 33.269 32.6328 33.269 32.6328C33.462 32.2905 33.2015 31.7565 32.6807 30.6885L29.0928 23.3333" />
-      <path d="M18.3327 27.2368L15.622 34.4172C15.0759 35.8638 14.5355 36.5893 14.0605 36.6667C13.5843 36.5963 13.2992 35.8772 12.729 34.4387C12.3208 33.4088 12.0856 32.8155 11.6652 32.5377C11.5362 32.4525 11.3951 32.3853 11.2461 32.3378C10.76 32.1833 10.201 32.3345 9.08314 32.6367C7.88782 32.9597 7.05752 32.8643 6.7296 32.6313C6.53664 32.2892 6.79712 31.7552 7.31807 30.6873L10.9058 23.3333" />
-    </svg>
-  );
-}
-
 // Hero "trust pill" icons — exact SVG path data extracted VERBATIM from the
 // icons Peptora ships on their live homepage hero pills (peptoralabs.com
 // /icons/*.svg), matched to our pills by the corresponding Peptora pill:
@@ -175,6 +171,55 @@ function TestTubeIcon({ className }: { className?: string }) {
   );
 }
 
+/**
+ * A floating hero vial that links to its product page.
+ *
+ * The idle float animates `transform`; the hover tilt uses Tailwind's
+ * independent `scale`/`rotate` properties, so the two compose instead of one
+ * cancelling the other.
+ */
+function HeroVial({
+  vial,
+  wrapperClass,
+  sizes,
+  animation,
+  fetchPriority,
+}: {
+  vial: { name: string; image: string };
+  wrapperClass: string;
+  sizes: string;
+  animation: string;
+  fetchPriority?: "high";
+}) {
+  const slug = slugFor(vial.name);
+  const image = (
+    <img
+      src={vial.image}
+      srcSet={srcSetFor(vial.image)}
+      sizes={sizes}
+      width={1200}
+      height={1500}
+      alt={`Simpletide ${vial.name} research vial`}
+      className={`w-full object-contain ${animation} ${VIAL_HOVER}`}
+      loading="eager"
+      fetchPriority={fetchPriority}
+      decoding="async"
+    />
+  );
+
+  if (!slug) return <div className={`pointer-events-none ${wrapperClass}`}>{image}</div>;
+  return (
+    <Link
+      to="/product/$slug"
+      params={{ slug: seoProductSlug(slug) }}
+      aria-label={`Shop ${vial.name}`}
+      className={`group/vial block ${wrapperClass}`}
+    >
+      {image}
+    </Link>
+  );
+}
+
 export const Route = createFileRoute("/")({
   head: () =>
     pageSeoHead({
@@ -221,26 +266,6 @@ function SimpletideHome() {
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
-  // Card "sticky" highlight: a tapped feature/product card stays highlighted
-  // until the user taps another card, taps elsewhere, or scrolls (mirrors the
-  // desktop hover glow). Cards are keyed as `feature-N` / `product-N`.
-  const [activeCard, setActiveCard] = useState<string | null>(null);
-  useEffect(() => {
-    const clear = (e?: Event) => {
-      if (e && e.type === "pointerdown") {
-        const target = e.target as HTMLElement | null;
-        if (target && target.closest("[data-card]")) return; // tap on a card → keep
-      }
-      setActiveCard(null);
-    };
-    document.addEventListener("pointerdown", clear, { passive: true });
-    window.addEventListener("scroll", clear, { passive: true });
-    return () => {
-      document.removeEventListener("pointerdown", clear);
-      window.removeEventListener("scroll", clear);
-    };
-  }, []);
-
   // Peptora-style entrance + scroll reveals (see useReveal / styles.css).
   useReveal();
 
@@ -262,16 +287,16 @@ function SimpletideHome() {
 
 
 
-  const features = [
-    { icon: TruckDeliveryIcon, title: "Fast Shipping", desc: "Orders processed and shipped within 24 hours with full tracking." },
-    { icon: CheckmarkBadgeIcon, title: "100% Safe Payments", desc: "All transactions are secured with industry-standard encryption." },
-    { icon: LaurelWreathIcon, title: "Premium Research Grade Quality", desc: "Every compound undergoes extensive third party testing for guaranteed quality and consistency." },
-    { icon: StarAwardIcon, title: "Verified in Accredited U.S. Laboratories", desc: "Every batch is screened by independent labs, so purity and potency are never left to chance." },
-    { icon: CheckmarkBadgeIcon, title: "24/7 Support", desc: "Our in-house research experts are available to guide you with any questions." },
-    { icon: LaurelWreathIcon, title: "Our Promise to You", desc: "We stand behind every product, so you can buy with confidence." },
+  // One compact strip instead of six cards, so Featured Products lands within
+  // the first scroll rather than below a screenful of reassurance.
+  const trustStrip = [
+    { icon: TestTubeIcon, label: "Third-party tested" },
+    { icon: LaurelWreathIcon, label: "99%+ purity" },
+    { icon: TruckDeliveryIcon, label: SHIPPING_SHORT },
+    { icon: CheckmarkBadgeIcon, label: "Secure checkout" },
   ];
 
-  const products = [
+  const products: { name: string; tag: string; price: string; compareAt?: string; badge?: ShopBadge; image: string }[] = [
     { name: "GLP-3 RT", tag: "Metabolic Research", price: "From $45.00", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.webp" },
     { name: "Tesamorelin", tag: "Growth Hormone Research", price: "$85.00", compareAt: "$95.00", badge: "SALE!", image: "/images/cards/tesamorelin.webp" },
     { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $35.00", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.webp" },
@@ -294,25 +319,28 @@ function SimpletideHome() {
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[124px] md:pt-4 lg:pt-6 pb-2 md:pb-4 lg:pb-6 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4 lg:gap-12 items-center">
 
         <div className="relative z-10 space-y-6 lg:max-w-2xl text-center lg:text-left">
-          <h1 data-reveal style={revealDelay(0)} className="text-[34px] sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left text-slate-800 max-md:-mt-2 md:mt-0">
+          {/* No `data-reveal` anywhere above the fold: it starts at opacity 0 and
+              waits on JS, which delayed the headline, CTA and vials past first
+              paint. These render with the document instead. */}
+          <h1 className="text-[34px] sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left text-slate-800 max-md:-mt-2 md:mt-0">
             <span className="text-slate-800">Keep it</span>{" "}
             <span className="inline-block bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">
               Simple.
             </span>
           </h1>
-          <p data-reveal style={revealDelay(90)} className="text-sm lg:text-lg text-slate-600 max-w-md mx-auto lg:mx-0">
+          <p className="text-sm lg:text-lg text-slate-600 max-w-md mx-auto lg:mx-0">
             High-purity molecular compounds manufactured for advanced research and innovation in certified USA laboratories.
           </p>
-          <div data-reveal style={revealDelay(180)}>
-            <Link to="/products" className="group inline-flex items-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] px-8 py-3 rounded-full font-bold transition-all duration-300 ease-in-out hover:scale-[1.02] shadow-[0_0_20px_rgba(196,181,253,0.7)]">
-              <span className="transition-transform duration-300 ease-in-out">Shop Products</span>
+          <div>
+            <Link to="/products" className={`group ${CTA_PRIMARY}`}>
+              <span>Shop Products</span>
               <div className="w-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-5 group-hover:ml-2">
                 <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0 flex-shrink-0" />
               </div>
             </Link>
           </div>
 
-          <div data-reveal style={revealDelay(260)} className="flex flex-wrap justify-center lg:justify-start gap-1.5 lg:gap-4 text-[11px] lg:text-xs font-medium text-slate-700 pt-2">
+          <div className="flex flex-wrap justify-center lg:justify-start gap-1.5 lg:gap-4 text-[11px] lg:text-xs font-medium text-slate-700 pt-2">
             <div className="flex items-center gap-1 lg:gap-1.5 bg-white/60 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(167,139,250,0.12)] rounded-full px-2.5 py-1 lg:px-4 lg:py-1.5">
               <TestTubeIcon className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-violet-400" /> Lab-Tested & Documented
             </div>
@@ -327,98 +355,52 @@ function SimpletideHome() {
 
         {/* Mobile-only vial floating up by the header — mirrors Peptora's mobile hero
             (one vial up top + two at the bottom). Hidden on lg where the 3-vial cluster is used. */}
-        <div data-reveal="fade" style={revealDelay(200)} className="lg:hidden pointer-events-none absolute top-3 right-[12%] z-0 w-[22%] max-w-[96px] rotate-[10deg]">
-          <img
-            src={HERO_VIAL_CENTER}
-            srcSet={srcSetFor(HERO_VIAL_CENTER)}
-            sizes="(min-width: 1024px) 1px, 96px"
-            width={1200}
-            height={1500}
-            alt=""
-            aria-hidden="true"
-            className="w-full object-contain animate-vial-center"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
-        </div>
+        <HeroVial
+          vial={HERO_VIALS.center}
+          wrapperClass="lg:hidden absolute top-3 right-[12%] z-0 w-[22%] max-w-[96px] rotate-[10deg]"
+          sizes="(min-width: 1024px) 1px, 96px"
+          animation="animate-vial-center"
+          fetchPriority="high"
+        />
 
         {/* Hero Image — Three Independently Floating Vials */}
         <div className="relative z-10 -mt-14 sm:mt-0 h-[200px] sm:h-[520px] lg:h-[600px] flex items-start sm:items-center justify-center overflow-visible">
           <div className="relative w-full h-full bg-transparent border-none overflow-visible scale-95 lg:scale-[1.3]">
-            {/* Center vial — GLP-3 RT, tallest, back layer (desktop only; on mobile the
-                GLP-3 vial floats up by the header instead, leaving two vials at the bottom) */}
-            <div data-reveal style={revealDelay(220)} className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] w-[60%] z-10 bg-transparent border-none p-0 m-0">
-              <img
-                src={HERO_VIAL_CENTER}
-                srcSet={srcSetFor(HERO_VIAL_CENTER)}
-                sizes="(min-width: 1024px) 40vw, 1px"
-                width={1200}
-                height={1500}
-                alt="Simpletide Selank + Semax research vial"
-                className="w-full object-contain bg-transparent border-none animate-vial-center"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-            {/* Left vial — Adamax, tilted left, foreground */}
-            <div data-reveal style={revealDelay(320)} className="absolute left-[-3%] lg:left-[-5%] top-1/2 -translate-y-[40%] w-[48%] lg:w-[50%] z-20 bg-transparent border-none p-0 m-0">
-              <img
-                src={HERO_VIAL_LEFT}
-                srcSet={srcSetFor(HERO_VIAL_LEFT)}
-                sizes="(min-width: 1024px) 33vw, 48vw"
-                width={1200}
-                height={1500}
-                alt="Simpletide BPC-157 research vial"
-                className="w-full object-contain bg-transparent border-none animate-vial-left"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-            {/* Right vial — MOTS-c, tilted right, foreground. Extra clockwise tilt
-                on mobile only (lg:rotate-0 keeps the desktop cluster unchanged)
-                to mirror Peptora's dynamic diagonal vial. */}
-            <div data-reveal style={revealDelay(400)} className="absolute right-[-3%] lg:right-[-5%] top-1/2 -translate-y-[40%] rotate-[16deg] lg:rotate-0 w-[48%] lg:w-[50%] z-20 bg-transparent border-none p-0 m-0">
-              <img
-                src={HERO_VIAL_RIGHT}
-                srcSet={srcSetFor(HERO_VIAL_RIGHT)}
-                sizes="(min-width: 1024px) 33vw, 48vw"
-                width={1200}
-                height={1500}
-                alt="Simpletide Selank research vial"
-                className="w-full object-contain bg-transparent border-none animate-vial-right"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
+            {/* Center vial — tallest, back layer (desktop only; on mobile it
+                floats up by the header instead, leaving two vials at the bottom) */}
+            <HeroVial
+              vial={HERO_VIALS.center}
+              wrapperClass="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] w-[60%] z-10"
+              sizes="(min-width: 1024px) 40vw, 1px"
+              animation="animate-vial-center"
+            />
+            {/* Left vial — tilted left, foreground */}
+            <HeroVial
+              vial={HERO_VIALS.left}
+              wrapperClass="absolute left-[-3%] lg:left-[-5%] top-1/2 -translate-y-[40%] w-[48%] lg:w-[50%] z-20"
+              sizes="(min-width: 1024px) 33vw, 48vw"
+              animation="animate-vial-left"
+            />
+            {/* Right vial — tilted right, foreground. Extra clockwise tilt on
+                mobile only (lg:rotate-0 keeps the desktop cluster unchanged). */}
+            <HeroVial
+              vial={HERO_VIALS.right}
+              wrapperClass="absolute right-[-3%] lg:right-[-5%] top-1/2 -translate-y-[40%] rotate-[16deg] lg:rotate-0 w-[48%] lg:w-[50%] z-20"
+              sizes="(min-width: 1024px) 33vw, 48vw"
+              animation="animate-vial-right"
+            />
           </div>
         </div>
 
       </section>
 
-      {/* Feature Grid (Glassmorphism) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 md:pt-0 md:pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-          {features.map((feature, idx) => (
-            <div
-              key={idx}
-              data-card
-              data-reveal
-              style={revealDelay(idx * 70)}
-              onPointerDown={(e) => {
-                // Desktop (mouse): no click effect — glow is hover-only via CSS.
-                // Touch/pen: sticky tap-glow that mirrors hover.
-                if (e.pointerType !== "mouse") setActiveCard(`feature-${idx}`);
-              }}
-              className={`rounded-[12px] md:rounded-[20px] border p-3.5 md:py-5 md:px-6 transition-all duration-200 [-webkit-tap-highlight-color:transparent] text-center md:text-left ${
-                activeCard === `feature-${idx}`
-                  ? "bg-white/85 border-[#d8b4fe] shadow-[0_0_30px_rgba(216,180,254,0.45)] scale-[1.03]"
-                  : "bg-white/60 backdrop-blur-md border-white shadow-[0_8px_30px_rgba(167,139,250,0.12)] hover:bg-white/85 hover:border-[#d8b4fe] hover:shadow-[0_0_30px_rgba(216,180,254,0.45)] hover:scale-[1.03]"
-              }`}
-            >
-              <feature.icon className="w-7 h-7 text-violet-400 mb-3 mx-auto md:mx-0" />
-              <h2 className="text-base font-semibold mb-1.5">{feature.title}</h2>
-              <p className="text-[13px] text-slate-600 leading-relaxed">{feature.desc}</p>
+      {/* Trust strip */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2 md:pt-0 md:pb-4">
+        <div data-reveal className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-2xl border border-white bg-white/60 px-4 py-3.5 backdrop-blur-md shadow-[0_8px_30px_rgba(167,139,250,0.12)] sm:grid-cols-4 sm:gap-x-2 md:px-6">
+          {trustStrip.map((item) => (
+            <div key={item.label} className="flex items-center justify-center gap-2 text-center">
+              <item.icon className="w-5 h-5 shrink-0 text-violet-400" />
+              <span className="text-[12px] md:text-[13px] font-semibold leading-tight text-slate-700">{item.label}</span>
             </div>
           ))}
         </div>
@@ -451,10 +433,11 @@ function SimpletideHome() {
               key={idx}
               data-reveal
               style={revealDelay((idx % 4) * 80)}
-              className="relative bg-white/60 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(167,139,250,0.12)] rounded-2xl text-slate-800 group flex flex-col h-full hover:bg-white/80 transition-colors overflow-hidden"
+              className="relative bg-white/60 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(167,139,250,0.12)] rounded-2xl text-slate-800 group flex flex-col h-full overflow-hidden transition-all duration-300 hover:bg-white/80 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(167,139,250,0.3)]"
             >
               {/* Product Image */}
               <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-xl">
+                {product.badge && <ProductBadge badge={product.badge} />}
                 <img
                   src={product.image}
                   srcSet={srcSetFor(product.image)}
@@ -490,7 +473,8 @@ function SimpletideHome() {
                   })()}
                   <span className="font-bold text-[13px] sm:text-base text-slate-800 whitespace-nowrap">{product.price}</span>
                 </div>
-                <p className="text-[11px] tracking-wider text-slate-500 mb-2 sm:mb-2.5">{descriptorFor(product.name) ?? product.tag}</p>
+                <p className="text-[11px] tracking-wider text-slate-500">{descriptorFor(product.name) ?? product.tag}</p>
+                <p className="text-[11px] font-semibold text-violet-600 mb-2 sm:mb-2.5">{BUNDLE_SAVINGS_LINE}</p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -516,7 +500,7 @@ function SimpletideHome() {
                       openCart();
                     }
                   }}
-                  className="group/cart w-full mt-auto inline-flex items-center justify-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] py-2.5 sm:py-3 rounded-full text-sm font-semibold transition-all hover:opacity-90 hover:shadow-[0_0_18px_rgba(196,181,253,0.7)]"
+                  className={`group/cart mt-auto py-2.5 sm:py-3 text-sm ${CTA_CARD}`}
                 >
                   <span>Add to cart</span>
                   <div className="w-0 overflow-hidden transition-all duration-200 ease-out group-hover/cart:ml-2 group-hover/cart:w-4">
@@ -563,7 +547,7 @@ function SimpletideHome() {
                           onClick={(e) => { e.stopPropagation(); e.preventDefault(); setSelectedSizes((s) => ({ ...s, [id]: v.size })); }}
                           className={`flex w-full min-w-0 flex-col items-center justify-center rounded-xl border px-2 py-2.5 text-xs font-semibold transition-all sm:min-w-[64px] sm:w-auto sm:px-3 sm:py-2 ${
                             active
-                              ? "border-[#c4b5fd] bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)]"
+                              ? "border-slate-900 bg-slate-900 text-white"
                               : "border-slate-200 bg-white text-slate-800 hover:border-[#c4b5fd]"
                           }`}
                         >
@@ -590,7 +574,7 @@ function SimpletideHome() {
                       setOpenVariantId(null);
                       openCart();
                     }}
-                    className="group/cart w-full inline-flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 leading-tight ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] py-2.5 sm:py-3 rounded-full text-sm font-bold transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(196,181,253,0.7)]"
+                    className={`group/cart flex-col sm:flex-row gap-0.5 sm:gap-1.5 leading-tight py-2.5 sm:py-3 text-sm ${CTA_CARD}`}
                   >
                     <span>Add to cart</span>
                     <span className="hidden sm:inline">—</span>
@@ -608,7 +592,7 @@ function SimpletideHome() {
         <div className="mt-10 text-center">
           <Link
             to="/products"
-            className="group inline-flex items-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] px-8 py-3 rounded-full font-bold transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(196,181,253,0.7)]"
+            className={`group ${CTA_PRIMARY}`}
           >
             <span className="transition-transform duration-300 ease-in-out">See all products</span>
             <div className="w-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-5 group-hover:ml-2">
@@ -679,7 +663,7 @@ function SimpletideHome() {
               <div className="mt-8 flex justify-center">
                 <Link
                   to="/products"
-                  className="group inline-flex items-center ring-1 ring-white/70 bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] px-8 py-3 rounded-full font-bold transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(196,181,253,0.7)]"
+                  className={`group ${CTA_PRIMARY}`}
                 >
                   <span className="transition-transform duration-300 ease-in-out">See all products</span>
                   <div className="w-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-5 group-hover:ml-2">

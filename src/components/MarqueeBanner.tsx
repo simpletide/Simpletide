@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { SHIPPING_PROMISE } from "@/lib/site-copy";
 
 /**
  * Scrolling announcement bar.
@@ -12,7 +13,7 @@ import React, { useEffect, useRef } from "react";
 const REPEATS = 3;
 
 export function MarqueeBanner({ light = false }: { light?: boolean }) {
-  const sentenceOne = "Free Priority Shipping On All Orders";
+  const sentenceOne = SHIPPING_PROMISE;
   const sentenceTwo = "Third Party Tested | 99% Purity Guaranteed";
   const items = Array.from({ length: REPEATS });
   const trackRef = useRef<HTMLDivElement>(null);
