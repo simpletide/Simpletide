@@ -1,4 +1,4 @@
-import { apiUrl } from "@/lib/api";
+import { getSupabase } from "@/lib/supabase-lazy";
 
 export type TrackedOrder = {
   orderNumber: string;
@@ -105,14 +105,16 @@ export function formatTrackDate(iso: string): string {
 }
 
 export async function fetchOrderTrack(orderNumber: string, email: string): Promise<TrackedOrder> {
-  const res = await fetch(apiUrl("/api/order-track"), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ orderNumber: orderNumber.trim(), email: email.trim() }),
+  const supabase = await getSupabase();
+  const { data, error } = await supabase.functions.invoke<TrackOrderResponse>("track-order", {
+    body: { orderNumber: orderNumber.trim(), email: email.trim() },
   });
-  const json = (await res.json()) as TrackOrderResponse;
-  if (!res.ok || !json.success || !json.order) {
-    throw new Error(json.error || "We could not find your order. Please check your details and try again.");
+  if (error || !data?.success || !data.order) {
+    throw new Error(
+      data?.error ||
+        error?.message ||
+        "We could not find your order. Please check your details and try again.",
+    );
   }
-  return json.order;
+  return data.order;
 }

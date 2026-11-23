@@ -65,7 +65,7 @@ export function TrackOrderPanel({
             type="text"
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
-            placeholder="e.g. AS-104839"
+            placeholder="e.g. ST-104839"
             autoComplete="off"
             className={INPUT}
           />

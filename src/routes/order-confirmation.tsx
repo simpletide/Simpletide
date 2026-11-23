@@ -66,7 +66,7 @@ function FloatingVials() {
 }
 
 const DEMO_ORDER: ConfirmedOrder = {
-  orderNumber: "AS-482917",
+  orderNumber: "ST-482917",
   items: [
     {
       id: "demo-glp3",

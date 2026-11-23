@@ -1,11 +1,12 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { ArrowRight, ShieldCheck, Lock, ChevronLeft, MapPin } from "lucide-react";
+import { ArrowRight, ShieldCheck, Lock, ChevronLeft, MapPin, Clock } from "lucide-react";
+import { toast } from "sonner";
 import { Header } from "@/components/Header";
 import { useCart } from "@/lib/cart-context";
 import { discountedLine } from "@/lib/catalog";
 import { vialImageForProduct } from "@/lib/product-vial-variants";
-import { apiUrl } from "@/lib/api";
+import { CARD_PROCESSING_LIVE, ORDER_PREFIX } from "@/lib/payment-config";
 import { supabase } from "@/integrations/supabase/client";
 import {
   loadGoogleMaps,
@@ -58,8 +59,7 @@ function parseExpiry(v: string): { mm: string; yyyy: string } {
 }
 
 function CheckoutPage() {
-  const navigate = useNavigate();
-  const { items, subtotal, baseSubtotal, bundleSavings, removeItem } = useCart();
+  const { items, subtotal, baseSubtotal, bundleSavings } = useCart();
 
   // Re-run once the cart hydrates so the heading/summary reveal nodes animate.
   useReveal(items.length);
@@ -71,7 +71,6 @@ function CheckoutPage() {
 
   const [placing, setPlacing] = useState(false);
   const [cardError, setCardError] = useState<string | null>(null);
-  const [payMethod, setPayMethod] = useState<"card" | "venmo">("card");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -134,108 +133,17 @@ function CheckoutPage() {
     return null;
   };
 
-  // Venmo: create the pending order in the backend *now* so it appears in the
-  // Payment Admin dashboard with the real order number the customer must put in
-  // their Venmo note. The backend then sends the new Simpletide "Order
-  // Placed" email. Finally, send them to the pending page to complete payment.
-  const handleVenmo = async () => {
-    const err = validateShipping();
-    if (err) {
-      setCardError(err);
-      toast.error(err);
-      return;
-    }
-    setCardError(null);
-    setPlacing(true);
-
-    try {
-      // Link the order to the signed-in account (production Supabase). Guests stay null.
-      let userId: string | null = null;
-      try {
-        const { data } = await supabase.auth.getSession();
-        userId = data.session?.user?.id ?? null;
-      } catch {
-        /* not logged in — guest checkout */
-      }
-
-      const orderItems = items.map((it) => {
-        const line = discountedLine(it.name, it.price, it.qty);
-        const unit = round2(line.lineTotal / it.qty);
-        const img = vialFor(it.name, it.variant);
-        return {
-          product_id: it.id,
-          product_name: it.name,
-          variant_spec: it.variant || "",
-          quantity: it.qty,
-          price: unit,
-          ...(img ? { image: img } : {}),
-        };
-      });
-
-      const shippingAddress = {
-        firstName,
-        lastName,
-        street: addr.line1,
-        apartment: addr.apt,
-        city: addr.city,
-        state: addr.region,
-        zipCode: addr.zip,
-        country: addr.country || "US",
-        phone: phone.replace(/\D/g, ""),
-        email,
-      };
-
-      const res = await fetch(apiUrl("/api/create-venmo-order"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          shipping_address: shippingAddress,
-          items: orderItems,
-          subtotal: round2(subtotal),
-          shipping_cost: 0,
-          total: round2(total),
-          user_id: userId,
-          shipping_method: "priority",
-          estimated_delivery: "2-3 business days",
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "We couldn't place your Venmo order. Please try again.");
-      }
-
-      const orderNumber = String(data.orderNumber || data.order?.order_number || "");
-
-      const pending = {
-        orderNumber,
-        items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, variant: i.variant })),
-        baseSubtotal,
-        subtotal,
-        bundleSavings,
-        total,
-      };
-      try {
-        window.localStorage.setItem("simpletide_pending_order", JSON.stringify(pending));
-      } catch {
-        /* ignore */
-      }
-
-      window.open("https://www.venmo.com/u/REPLACE-WITH-SIMPLETIDE-VENMO", "_blank", "noopener,noreferrer");
-      items.forEach((i) => removeItem(i.id));
-      navigate({ to: "/order-pending" });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "We couldn't place your Venmo order. Please try again.";
+  // Credit / debit card via Simpletide's Supabase Edge Function (`create-card-order`).
+  // Blocked until `CARD_PROCESSING_LIVE` is enabled in `src/lib/payment-config.ts`.
+  const handleCardPayment = async () => {
+    if (!CARD_PROCESSING_LIVE) {
+      const msg =
+        "Online card checkout is being finalized. Please email support@simpletide.com if you need assistance.";
       setCardError(msg);
       toast.error(msg);
-    } finally {
-      setPlacing(false);
+      return;
     }
-  };
 
-  // Credit / debit card via the existing KeyBilling backend (/api/keybilling/pay).
-  const handleCardPayment = async () => {
     const err = validateCard();
     if (err) {
       setCardError(err);
@@ -246,10 +154,10 @@ function CheckoutPage() {
     setPlacing(true);
 
     try {
-      const orderId = `AS-${Date.now().toString(36).toUpperCase()}`;
+      const orderId = `${ORDER_PREFIX}-${Date.now().toString(36).toUpperCase()}`;
       const exp = parseExpiry(card.exp);
 
-      // Link the order to the signed-in account (production Supabase). Guests stay null.
+      // Link the order to the signed-in account (Simpletide Supabase). Guests stay null.
       let userId: string | null = null;
       try {
         const { data } = await supabase.auth.getSession();
@@ -290,52 +198,41 @@ function CheckoutPage() {
         shipping_cost: 0,
         total: round2(total),
         user_id: userId,
-        affiliate_code: null,
-        affiliate_id: null,
-        affiliate_commission_rate: null,
-        affiliate_discount: 0,
-        credits_redeemed: 0,
-        credits_discount: 0,
-        credits_earned: 0,
-        processing_fee: 0,
         shipping_method: "priority",
         estimated_delivery: "2-3 business days",
       };
 
-      const res = await fetch(apiUrl("/api/keybilling/pay"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke("create-card-order", {
+        body: {
           amount: total.toFixed(2),
           currency: "USD",
-          merchantReference: orderId,
           orderId,
           firstName,
           lastName,
           email,
           phone: phone.replace(/\D/g, "").slice(0, 15) || "5555555555",
-          address: addr.line1 || "123 Main St",
+          address: addr.line1,
           country: (addr.country || "US").toUpperCase().slice(0, 2),
-          state: addr.region || "CA",
-          city: addr.city || "Los Angeles",
-          zip: addr.zip || "90028",
+          state: addr.region,
+          city: addr.city,
+          zip: addr.zip,
           cardHolderName: (card.name || `${firstName} ${lastName}`).trim().toUpperCase(),
           cardNumber: card.number.replace(/\D/g, ""),
           dateExpiryMonth: exp.mm,
           dateExpiryYear: exp.yyyy,
           cvc2: card.cvc.replace(/\D/g, ""),
           orderData,
-        }),
+        },
       });
 
-      const data = await res.json();
+      if (error) {
+        throw new Error(error.message || "Payment failed. Please try again.");
+      }
 
-      // 3-D Secure required: stash order + confirmation snapshot, then redirect.
-      if (data.requires3DS && data.redirectUrl) {
+      if (data?.requires3DS && data?.redirectUrl) {
         try {
-          sessionStorage.setItem("keybilling_pending_order", JSON.stringify(orderData));
-          sessionStorage.setItem("keybilling_pending_confirmed", JSON.stringify(buildConfirmed(orderId)));
-          sessionStorage.setItem("pendingKeyBilling3DS", "true");
+          sessionStorage.setItem("simpletide_pending_order", JSON.stringify(orderData));
+          sessionStorage.setItem("simpletide_pending_confirmed", JSON.stringify(buildConfirmed(orderId)));
         } catch {
           /* ignore */
         }
@@ -343,12 +240,10 @@ function CheckoutPage() {
         return;
       }
 
-      // Approved immediately (no 3DS) — order already created server-side.
-      if (data.success && (data.orderNumber || data.orderId)) {
+      if (data?.success && (data?.orderNumber || data?.orderId)) {
         const confirmed = buildConfirmed(String(data.orderNumber || data.orderId));
         try {
           window.localStorage.setItem("simpletide_confirmed_order", JSON.stringify(confirmed));
-          // Clear the cart (storage key from cart-context) before the full reload.
           window.localStorage.setItem("simpletide_cart_v1", JSON.stringify([]));
         } catch {
           /* ignore */
@@ -358,8 +253,8 @@ function CheckoutPage() {
       }
 
       const msg =
-        (data.error as string) ||
-        "Your bank did not approve this charge. Please try another card or use Venmo.";
+        (data?.error as string) ||
+        "Your bank did not approve this charge. Please double-check your card details or try another card.";
       setCardError(msg);
       toast.error(msg);
     } catch (e) {
@@ -374,10 +269,6 @@ function CheckoutPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0 || placing) return;
-    if (payMethod === "venmo") {
-      void handleVenmo();
-      return;
-    }
     void handleCardPayment();
   };
 
@@ -495,117 +386,82 @@ function CheckoutPage() {
                 <p className="mb-2.5 inline-flex items-center gap-1.5 text-xs text-slate-500">
                   <Lock className="h-3.5 w-3.5" /> All transactions are secure and encrypted.
                 </p>
-                <div className="space-y-3">
-                  {/* Credit / debit card */}
-                  <div
-                    className={`rounded-xl border transition-colors ${
-                      payMethod === "card" ? "border-st-cyan bg-st-cyan/[0.04]" : "border-slate-200"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setPayMethod("card")}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-left"
-                    >
-                      <PayRadio active={payMethod === "card"} />
-                      <span className="text-sm font-semibold text-slate-900">Credit / Debit Card</span>
-                      <AcceptedCardLogos order="checkout" className="ml-auto flex items-center gap-2.5" />
-                    </button>
-                    {payMethod === "card" && (
-                      <div className="space-y-3 px-4 pb-4">
-                        <Field label="Name on card" htmlFor="cardName">
-                          <input
-                            id="cardName"
-                            autoComplete="cc-name"
-                            value={card.name}
-                            onChange={(e) => setCard((c) => ({ ...c, name: e.target.value }))}
-                            className={INPUT}
-                          />
-                        </Field>
-                        <Field label="Card number" htmlFor="card">
-                          <input
-                            id="card"
-                            inputMode="numeric"
-                            autoComplete="cc-number"
-                            placeholder="1234 5678 9012 3456"
-                            value={card.number}
-                            onChange={(e) => setCard((c) => ({ ...c, number: formatCardNumber(e.target.value) }))}
-                            className={INPUT}
-                          />
-                        </Field>
-                        <div className="grid grid-cols-2 gap-3">
-                          <Field label="Expiration (MM/YY)" htmlFor="exp">
-                            <input
-                              id="exp"
-                              inputMode="numeric"
-                              autoComplete="cc-exp"
-                              placeholder="MM/YY"
-                              value={card.exp}
-                              onChange={(e) => setCard((c) => ({ ...c, exp: formatExpiry(e.target.value) }))}
-                              className={INPUT}
-                            />
-                          </Field>
-                          <Field label="CVC" htmlFor="cvc">
-                            <input
-                              id="cvc"
-                              inputMode="numeric"
-                              autoComplete="cc-csc"
-                              placeholder="123"
-                              value={card.cvc}
-                              onChange={(e) => setCard((c) => ({ ...c, cvc: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
-                              className={INPUT}
-                            />
-                          </Field>
-                        </div>
-                        {cardError && (
-                          <p className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
-                            {cardError}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                <div className="rounded-xl border border-st-cyan bg-st-cyan/[0.04]">
+                  <div className="flex w-full items-center gap-3 px-4 py-3">
+                    <span className="text-sm font-semibold text-slate-900">Credit / Debit Card</span>
+                    <AcceptedCardLogos order="checkout" className="ml-auto flex items-center gap-2.5" />
                   </div>
 
-                  {/* Venmo */}
-                  <div
-                    className={`rounded-xl border transition-colors ${
-                      payMethod === "venmo" ? "border-st-cyan bg-st-cyan/[0.04]" : "border-slate-200"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setPayMethod("venmo")}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-left"
-                    >
-                      <PayRadio active={payMethod === "venmo"} />
-                      <span className="text-sm font-semibold text-slate-900">Venmo</span>
-                      <img
-                        src="/images/assets/venmo%20logo.png"
-                        alt="Venmo"
-                        className="ml-auto h-9 w-auto rounded object-contain"
-                      />
-                    </button>
-                    {payMethod === "venmo" && (
-                      <div className="px-4 pb-4 text-sm text-slate-600">
-                        <ol className="list-decimal space-y-1 pl-5 text-[13px]">
-                          <li>
-                            Click <span className="font-semibold text-slate-900">“Place Order”</span>.
-                          </li>
-                          <li>
-                            Send the <span className="font-semibold text-slate-900">Order Summary Total</span> (
-                            {fmt(total)}) to our verified business profile.
-                          </li>
-                          <li>
-                            Add your <span className="font-semibold text-slate-900">Order Number</span> in the payment
-                            notes.
-                          </li>
-                        </ol>
-                        <p className="mt-2 text-[11px] leading-snug text-slate-400">
-                          Our Venmo is a Verified Business Profile which offers the customer purchase protection.
-                        </p>
+                  {!CARD_PROCESSING_LIVE ? (
+                    <div className="px-4 pb-4">
+                      <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/90 px-3.5 py-3 text-xs leading-relaxed text-amber-900">
+                        <Clock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                        <div>
+                          <p className="font-semibold text-amber-950">Card processing is being finalized</p>
+                          <p className="mt-0.5 text-amber-800">
+                            Online checkout will open shortly once merchant processing goes live. Need help with an
+                            order? Contact{" "}
+                            <a href="mailto:support@simpletide.com" className="font-semibold underline">
+                              support@simpletide.com
+                            </a>
+                            .
+                          </p>
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 px-4 pb-4">
+                      <Field label="Name on card" htmlFor="cardName">
+                        <input
+                          id="cardName"
+                          autoComplete="cc-name"
+                          value={card.name}
+                          onChange={(e) => setCard((c) => ({ ...c, name: e.target.value }))}
+                          className={INPUT}
+                        />
+                      </Field>
+                      <Field label="Card number" htmlFor="card">
+                        <input
+                          id="card"
+                          inputMode="numeric"
+                          autoComplete="cc-number"
+                          placeholder="1234 5678 9012 3456"
+                          value={card.number}
+                          onChange={(e) => setCard((c) => ({ ...c, number: formatCardNumber(e.target.value) }))}
+                          className={INPUT}
+                        />
+                      </Field>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Field label="Expiration (MM/YY)" htmlFor="exp">
+                          <input
+                            id="exp"
+                            inputMode="numeric"
+                            autoComplete="cc-exp"
+                            placeholder="MM/YY"
+                            value={card.exp}
+                            onChange={(e) => setCard((c) => ({ ...c, exp: formatExpiry(e.target.value) }))}
+                            className={INPUT}
+                          />
+                        </Field>
+                        <Field label="CVC" htmlFor="cvc">
+                          <input
+                            id="cvc"
+                            inputMode="numeric"
+                            autoComplete="cc-csc"
+                            placeholder="123"
+                            value={card.cvc}
+                            onChange={(e) => setCard((c) => ({ ...c, cvc: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
+                            className={INPUT}
+                          />
+                        </Field>
+                      </div>
+                      {cardError && (
+                        <p className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+                          {cardError}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
@@ -673,10 +529,14 @@ function CheckoutPage() {
 
               <button
                 type="submit"
-                disabled={placing}
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] py-3 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
+                disabled={placing || !CARD_PROCESSING_LIVE}
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
               >
-                {placing ? "Processing…" : (
+                {!CARD_PROCESSING_LIVE ? (
+                  "Checkout Opening Soon"
+                ) : placing ? (
+                  "Processing…"
+                ) : (
                   <>
                     Place Order — {fmt(total)} <ArrowRight className="h-4 w-4" />
                   </>
@@ -696,18 +556,6 @@ function CheckoutPage() {
 
 const INPUT =
   "w-full rounded-md border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:outline-none focus:border-st-cyan focus:ring-2 focus:ring-st-cyan/30";
-
-function PayRadio({ active }: { active: boolean }) {
-  return (
-    <span
-      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
-        active ? "border-st-cyan" : "border-slate-300"
-      }`}
-    >
-      {active && <span className="h-2 w-2 rounded-full bg-st-cyan" />}
-    </span>
-  );
-}
 
 type AddrParts = { line1: string; city: string; state: string; zip: string };
 type Suggestion = { label: string; placeId?: string; parts?: AddrParts };

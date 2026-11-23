@@ -315,13 +315,13 @@ export function AuthForm({
                         />
                         <span>
                           I agree to the{" "}
-                          <a href="#" className="font-medium text-[#8b5cf6] hover:underline">
+                          <Link to="/terms-of-service" className="font-medium text-[#8b5cf6] hover:underline">
                             Terms of Service
-                          </a>{" "}
+                          </Link>{" "}
                           and{" "}
-                          <a href="#" className="font-medium text-[#8b5cf6] hover:underline">
+                          <Link to="/privacy-policy" className="font-medium text-[#8b5cf6] hover:underline">
                             Privacy Policy
-                          </a>
+                          </Link>
                         </span>
                       </label>
                       <label className="flex cursor-pointer items-start gap-2.5 text-[14px] leading-snug text-neutral-500">
