@@ -63,7 +63,7 @@ export function CoaCard({
             <img
               src={product.image}
               alt={product.name}
-              className="h-full w-full object-contain object-center drop-shadow-[0_10px_20px_rgba(8,20,46,0.18)]"
+              className="h-full w-full object-cover object-center"
               loading="lazy"
               decoding="async"
             />
