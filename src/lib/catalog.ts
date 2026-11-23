@@ -1120,7 +1120,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     badge: "BEST SELLING!",
     variants: [
-      { size: "80mg", price: 99.99, lot: "S-Klow80", purity: "99.64%", testDate: "Oct 14, 2026" },
+      { size: "80mg", price: 94.99, lot: "S-Klow80", purity: "99.64%", testDate: "Oct 14, 2026" },
     ],
     description:
       "KLOW combines GHK-Cu, TB-500, BPC-157, and KPV into a single research-grade master stack.",
@@ -1190,7 +1190,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: GLOW_VIAL_IMAGE,
     heroImage: GLOW_VIAL_IMAGE,
     variants: [
-      { size: "70mg", price: 79.99, lot: "S-GLOW70", purity: "99.88%", testDate: "Jun 10, 2026" },
+      { size: "70mg", price: 74.99, lot: "S-GLOW70", purity: "99.88%", testDate: "Jun 10, 2026" },
     ],
     description:
       "GLOW combines GHK-Cu, TB-500, and BPC-157 into a single research-grade stack for matrix studies.",
@@ -1260,7 +1260,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialBacWater.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
-      { size: "10ML", price: 19.99, lot: "S-BW10ML", purity: "99.90%", testDate: "Oct 15, 2026" },
+      { size: "10ML", price: 24.99, lot: "S-BW10ML", purity: "99.90%", testDate: "Oct 15, 2026" },
     ],
     description:
       "Sterile bacteriostatic water with 0.9% benzyl alcohol for laboratory reconstitution of lyophilized research compounds.",
@@ -1390,7 +1390,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialGlutathione.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
-      { size: "1500mg", price: 69.99, lot: "S-GLUTA1500", purity: "99.90%", testDate: "Jun 10, 2026" },
+      { size: "1500mg", price: 59.99, lot: "S-GLUTA1500", purity: "99.90%", testDate: "Jun 10, 2026" },
     ],
     description:
       "High-purity glutathione for oxidative-stress and cellular research applications.",
@@ -1582,7 +1582,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     heroImage: dsipHero5,
     variants: [
-      { size: "10mg", price: 49.99, lot: "S-DSIP10", purity: "99.41%", testDate: "Jul 30, 2026" },
+      { size: "10mg", price: 44.99, lot: "S-DSIP10", purity: "99.41%", testDate: "Jul 30, 2026" },
     ],
     description:
       "DSIP (delta sleep-inducing peptide) is a naturally occurring nonapeptide studied for sleep-cycle regulation and neuroendocrine signaling in research models.",
@@ -1845,8 +1845,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
       },
     ],
   },
-  ph("semax", "Semax", "Compounds", "10mg", 49.99),
-  ph("selank", "Selank", "Compounds", "10mg", 49.99),
+  ph("semax", "Semax", "Compounds", "10mg", 45.99),
+  ph("selank", "Selank", "Compounds", "10mg", 45.99),
   ph("ss-31", "SS-31", "Compounds", "10mg", 49.99),
   ph("ll-37", "LL-37", "Compounds", "10mg", 139.99),
   ph("bpc-157", "BPC-157", "Compounds", "10mg", 45.99),

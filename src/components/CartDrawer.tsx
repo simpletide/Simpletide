@@ -10,7 +10,7 @@ import { FREE_SHIPPING_THRESHOLD, shippingFeeForSubtotal } from "@/lib/site-copy
 import { imageForTitle, sizeForTitle, formatVariant, splitNameVariant } from "@/lib/drawer-product-image";
 import { useEntered } from "@/lib/use-overlay-mount";
 
-const BAC_PRICE = 19.99;
+const BAC_PRICE = 24.99;
 
 export function CartDrawer() {
   const {
