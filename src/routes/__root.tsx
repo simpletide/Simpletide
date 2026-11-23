@@ -113,6 +113,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       {
+        rel: "icon",
+        href: "/favicon.ico",
+        sizes: "48x48",
+      },
+      {
+        rel: "icon",
+        href: "/favicon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        rel: "icon",
+        href: "/favicon-96x96.png",
+        type: "image/png",
+        sizes: "96x96",
+      },
+      {
+        rel: "icon",
+        href: "/favicon-48x48.png",
+        type: "image/png",
+        sizes: "48x48",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/apple-touch-icon.png",
+        sizes: "180x180",
+      },
+      {
+        rel: "manifest",
+        href: "/site.webmanifest",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
@@ -139,6 +170,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@type": "Organization",
               name: "Simpletide",
               url: SITE_ORIGIN,
+              logo: `${SITE_ORIGIN}/icon-512.png`,
               description: "Premium research compounds and lab-tested chemicals for scientific innovation.",
             },
             {

@@ -20,6 +20,12 @@ export function renderAgeGateHtml(rawReturn: string | null): string {
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="description" content="Simpletide researcher verification." />
   <title>Researcher Verification | Simpletide</title>
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+  <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+  <link rel="manifest" href="/site.webmanifest" />
   <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-400.woff2" crossorigin="anonymous" />
   <style>
     @font-face {
