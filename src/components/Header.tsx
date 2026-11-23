@@ -3,6 +3,7 @@ import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useAuth, displayNameFor, profileInitialsFor } from "@/lib/auth-context";
 import { MarqueeBanner } from "@/components/MarqueeBanner";
+import { BogoPromoBar } from "@/components/BogoPromoBar";
 import { AVATAR_GRADIENT } from "@/lib/account-ui";
 import { preloadAuthHeroImages } from "@/lib/auth-hero";
 import { useOverlayMount } from "@/lib/use-overlay-mount";
@@ -154,6 +155,7 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
           {headerActions}
         </div>
       </div>
+      <BogoPromoBar />
 
       {/* Mobile slide-in drawer (Peptora-style). Hidden entirely on md+. */}
       {mobileMounted && (

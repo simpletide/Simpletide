@@ -6,7 +6,6 @@ import {
   ArrowRight,
   MapPin,
   Check,
-  Copy,
   Sparkles,
 } from "lucide-react";
 import { useCart, parsePrice } from "@/lib/cart-context";
@@ -278,7 +277,6 @@ function SimpletideHome() {
   const { openCart, addItem, promoCode, applyPromoCode } = useCart();
   const stockOverrides = useStockOverrides();
   const bogoActive = promoCode === BOGO_CODE;
-  const [bogoJustCopied, setBogoJustCopied] = useState(false);
 
   const activateBogo = (scrollToFeatured = false) => {
     applyPromoCode(BOGO_CODE);
@@ -287,8 +285,6 @@ function SimpletideHome() {
     } catch {
       /* clipboard unavailable */
     }
-    setBogoJustCopied(true);
-    window.setTimeout(() => setBogoJustCopied(false), 2600);
     if (scrollToFeatured) {
       document.getElementById("featured-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -350,43 +346,11 @@ function SimpletideHome() {
       {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[124px] md:pt-4 lg:pt-6 pb-2 md:pb-4 lg:pb-6 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4 lg:gap-12 items-center">
 
-        <div className="relative z-10 space-y-5 lg:space-y-6 lg:max-w-2xl text-center lg:text-left">
-          {/* Above-the-fold BOGO pill — one click applies code BOGO to cart & copies it */}
-          <div className="flex justify-center lg:justify-start">
-            <button
-              type="button"
-              onClick={() => activateBogo(false)}
-              className={`group inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all duration-200 cursor-pointer ${
-                bogoActive
-                  ? "border-violet-300 bg-violet-50/90 text-violet-900 shadow-[0_6px_24px_rgba(124,58,237,0.18)]"
-                  : "border-white bg-white/80 text-slate-800 shadow-[0_8px_28px_rgba(167,139,250,0.2)] hover:border-violet-200 hover:bg-white hover:-translate-y-0.5"
-              }`}
-            >
-              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ec4899] via-[#8b5cf6] to-[#3b82f6] px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white">
-                <Sparkles className="h-2.5 w-2.5" /> BOGO
-              </span>
-              {bogoActive ? (
-                <span className="inline-flex items-center gap-1.5 text-violet-800">
-                  <Check className="h-3.5 w-3.5 text-violet-600" />
-                  <span>
-                    {bogoJustCopied ? "Copied & active in cart" : "Buy 1 Get 1 Free active in cart"}
-                  </span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5">
-                  <span>Buy 1 Get 1 Free</span>
-                  <span className="text-slate-300">&middot;</span>
-                  <span className="font-bold text-violet-700">Code: {BOGO_CODE}</span>
-                  <Copy className="h-3 w-3 text-violet-500 transition-transform group-hover:scale-110" />
-                </span>
-              )}
-            </button>
-          </div>
-
+        <div className="relative z-10 space-y-6 lg:max-w-2xl text-center lg:text-left">
           {/* No `data-reveal` anywhere above the fold: it starts at opacity 0 and
               waits on JS, which delayed the headline, CTA and vials past first
               paint. These render with the document instead. */}
-          <h1 className="text-[34px] sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left text-slate-800 max-md:-mt-1 md:mt-0">
+          <h1 className="text-[34px] sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left text-slate-800 max-md:-mt-2 md:mt-0">
             <span className="text-slate-800">Keep it</span>{" "}
             <span className="inline-block bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">
               Simple.
