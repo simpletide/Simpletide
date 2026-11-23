@@ -287,10 +287,16 @@ function OrderConfirmationPage() {
                       )}
                     </div>
                     <div className="text-right whitespace-nowrap">
-                      {line.pct > 0 && (
-                        <span className="block text-[11px] text-slate-400 line-through">{fmt(line.baseTotal)}</span>
+                      {item.price === 0 ? (
+                        <span className="text-sm font-bold text-emerald-600">FREE</span>
+                      ) : (
+                        <>
+                          {line.pct > 0 && (
+                            <span className="block text-[11px] text-slate-400 line-through">{fmt(line.baseTotal)}</span>
+                          )}
+                          <span className="text-sm font-semibold text-slate-900">{fmt(line.lineTotal)}</span>
+                        </>
                       )}
-                      <span className="text-sm font-semibold text-slate-900">{fmt(line.lineTotal)}</span>
                     </div>
                   </li>
                 );

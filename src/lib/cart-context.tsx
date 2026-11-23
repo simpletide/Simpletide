@@ -8,6 +8,9 @@ import {
   type BogoSummary,
 } from "@/lib/promo-codes";
 
+export const FREE_BAC_WATER_THRESHOLD = 150;
+export const FREE_BAC_WATER_ID = "free-bac-water-10ml";
+
 export type CartItem = {
   id: string;
   name: string;
@@ -15,9 +18,20 @@ export type CartItem = {
   price: number;
   qty: number;
   variant?: string;
+  isFreeGift?: boolean;
 };
 
-type AddItemInput = Omit<CartItem, "qty"> & { qty?: number };
+const FREE_BAC_WATER_ITEM: CartItem = {
+  id: FREE_BAC_WATER_ID,
+  name: "BAC Water - 10ML",
+  tag: "Free Gift",
+  price: 0,
+  qty: 1,
+  variant: "10ML",
+  isFreeGift: true,
+};
+
+type AddItemInput = Omit<CartItem, "qty" | "isFreeGift"> & { qty?: number };
 
 type CartContextValue = {
   items: CartItem[];
@@ -28,6 +42,8 @@ type CartContextValue = {
   promoCode: string | null;
   promoDiscount: number;
   bogoPreview: BogoSummary;
+  hasFreeBacWater: boolean;
+  freeBacWaterRemaining: number;
   applyPromoCode: (raw: string) => { ok: boolean; message: string };
   clearPromoCode: () => void;
   addItem: (item: AddItemInput) => void;
@@ -42,8 +58,12 @@ const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "simpletide_cart_v1";
 const PROMO_STORAGE_KEY = "simpletide_promo_v1";
 
+function isFreeGiftItem(item: CartItem): boolean {
+  return Boolean(item.isFreeGift) || item.id === FREE_BAC_WATER_ID;
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [rawItems, setRawItems] = useState<CartItem[]>([]);
   const [promoCode, setPromoCode] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -52,7 +72,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       if (typeof window !== "undefined") {
         const raw = window.localStorage.getItem(STORAGE_KEY);
-        if (raw) setItems(JSON.parse(raw));
+        if (raw) {
+          const parsed = JSON.parse(raw) as CartItem[];
+          if (Array.isArray(parsed)) {
+            setRawItems(parsed.filter((i) => !isFreeGiftItem(i)));
+          }
+        }
         const savedPromo = window.localStorage.getItem(PROMO_STORAGE_KEY);
         if (savedPromo && isSupportedPromoCode(savedPromo)) {
           setPromoCode(normalizePromoCode(savedPromo));
@@ -65,9 +90,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(rawItems));
     } catch {}
-  }, [items, hydrated]);
+  }, [rawItems, hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -86,7 +111,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore */
     }
-    setItems((prev) => {
+    setRawItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
@@ -97,10 +122,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const baseSubtotal = Number(items.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2));
-  const bogoPreview = calculateBogo(items);
+  // All financials & BOGO pairing operate strictly on paid items so the $0 auto-gift never skews BOGO.
+  const paidItems = rawItems.filter((i) => !isFreeGiftItem(i));
+  const baseSubtotal = Number(paidItems.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2));
+  const bogoPreview = calculateBogo(paidItems);
   const promoDiscount = promoCode === BOGO_CODE ? bogoPreview.discount : 0;
   const subtotal = Math.max(0, Number((baseSubtotal - promoDiscount).toFixed(2)));
+
+  const hasFreeBacWater = subtotal >= FREE_BAC_WATER_THRESHOLD;
+  const freeBacWaterRemaining = Math.max(
+    0,
+    Number((FREE_BAC_WATER_THRESHOLD - subtotal).toFixed(2)),
+  );
+  const items: CartItem[] = hasFreeBacWater ? [...paidItems, FREE_BAC_WATER_ITEM] : paidItems;
 
   const applyPromoCode: CartContextValue["applyPromoCode"] = (raw) => {
     const code = normalizePromoCode(raw);
@@ -132,14 +166,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     promoCode,
     promoDiscount,
     bogoPreview,
+    hasFreeBacWater,
+    freeBacWaterRemaining,
     applyPromoCode,
     clearPromoCode,
     addItem,
-    removeItem: (id) => setItems((prev) => prev.filter((i) => i.id !== id)),
-    setQty: (id, qty) =>
-      setItems((prev) =>
+    removeItem: (id) => {
+      if (id === FREE_BAC_WATER_ID) return;
+      setRawItems((prev) => prev.filter((i) => i.id !== id));
+    },
+    setQty: (id, qty) => {
+      if (id === FREE_BAC_WATER_ID) return;
+      setRawItems((prev) =>
         qty <= 0 ? prev.filter((i) => i.id !== id) : prev.map((i) => (i.id === id ? { ...i, qty } : i)),
-      ),
+      );
+    },
     isOpen,
     openCart: () => setIsOpen(true),
     closeCart: () => setIsOpen(false),

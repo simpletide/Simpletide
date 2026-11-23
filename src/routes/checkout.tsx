@@ -494,6 +494,7 @@ function CheckoutPage() {
                   const variantLabel = item.variant ?? null;
                   const vial = vialFor(item.name, item.variant);
                   const line = discountedLine(item.name, item.price, item.qty);
+                  const isGift = Boolean(item.isFreeGift) || item.price === 0;
                   return (
                     <li key={item.id} className="flex items-start gap-3">
                       <div className="relative shrink-0">
@@ -508,17 +509,33 @@ function CheckoutPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold leading-snug text-slate-900">{item.name}</p>
-                        {variantLabel && (
-                          <p className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-st-cyan">
-                            {variantLabel}
-                          </p>
-                        )}
+                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                          {variantLabel && (
+                            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-st-cyan">
+                              {variantLabel}
+                            </p>
+                          )}
+                          {isGift && (
+                            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700">
+                              Free Gift ($150+)
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="text-right whitespace-nowrap">
-                        {line.pct > 0 && (
-                          <span className="block text-[11px] text-slate-400 line-through">{fmt(line.baseTotal)}</span>
+                        {isGift ? (
+                          <>
+                            <span className="block text-[11px] text-slate-400 line-through">$20.00</span>
+                            <span className="text-sm font-bold text-emerald-600">FREE</span>
+                          </>
+                        ) : (
+                          <>
+                            {line.pct > 0 && (
+                              <span className="block text-[11px] text-slate-400 line-through">{fmt(line.baseTotal)}</span>
+                            )}
+                            <span className="text-sm font-semibold text-slate-900">{fmt(line.lineTotal)}</span>
+                          </>
                         )}
-                        <span className="text-sm font-semibold text-slate-900">{fmt(line.lineTotal)}</span>
                       </div>
                     </li>
                   );

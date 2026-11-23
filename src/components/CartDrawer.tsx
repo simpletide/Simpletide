@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { X, Minus, Plus, ArrowRight, ShieldCheck, Sparkles, CheckCircle2 } from "lucide-react";
+import { X, Minus, Plus, ArrowRight, ShieldCheck, Sparkles, CheckCircle2, Gift } from "lucide-react";
 
 import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
-import { useCart } from "@/lib/cart-context";
+import { useCart, FREE_BAC_WATER_THRESHOLD } from "@/lib/cart-context";
 import { slugFor, baseProductName } from "@/lib/catalog";
 import { BOGO_CODE } from "@/lib/promo-codes";
 import { FREE_SHIPPING_THRESHOLD, shippingFeeForSubtotal } from "@/lib/site-copy";
@@ -22,6 +22,8 @@ export function CartDrawer() {
     promoCode,
     promoDiscount,
     bogoPreview,
+    hasFreeBacWater,
+    freeBacWaterRemaining,
     applyPromoCode,
     clearPromoCode,
     removeItem,
@@ -138,10 +140,15 @@ export function CartDrawer() {
                   const variantLabel = item.variant ?? variant ?? sizeForTitle(title);
                   const image = imageForTitle(title, variantLabel);
                   const lineTotal = Number((item.price * item.qty).toFixed(2));
+                  const isGift = Boolean(item.isFreeGift);
                   return (
                     <li
                       key={item.id}
-                      className="flex gap-2.5 items-center p-2 rounded-xl border border-slate-100 bg-white hover:border-slate-200 transition-colors"
+                      className={`flex gap-2.5 items-center p-2 rounded-xl border transition-colors ${
+                        isGift
+                          ? "border-emerald-200 bg-gradient-to-r from-emerald-50/60 via-white to-violet-50/40"
+                          : "border-slate-100 bg-white hover:border-slate-200"
+                      }`}
                     >
                       <div className="w-20 h-20 rounded-md bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
                         {image ? (
@@ -161,39 +168,63 @@ export function CartDrawer() {
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0 flex flex-col items-start">
                             <h3 className="max-w-full font-bold text-sm text-slate-900 leading-snug truncate">{title}</h3>
-                            {variantLabel && (
-                              <span className="mt-0.5 rounded bg-[#d3def6] px-1.5 py-0.5 text-[10px] font-semibold text-[#3559a6]">
-                                {formatVariant(variantLabel)}
-                              </span>
-                            )}
+                            <div className="mt-0.5 flex flex-wrap items-center gap-1">
+                              {variantLabel && (
+                                <span className="rounded bg-[#d3def6] px-1.5 py-0.5 text-[10px] font-semibold text-[#3559a6]">
+                                  {formatVariant(variantLabel)}
+                                </span>
+                              )}
+                              {isGift && (
+                                <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700">
+                                  <Gift className="h-2.5 w-2.5" /> Free Gift ($150+)
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="text-slate-400 hover:text-red-600 transition-colors shrink-0"
-                            aria-label={`Remove ${item.name}`}
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
+                          {!isGift && (
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="text-slate-400 hover:text-red-600 transition-colors shrink-0"
+                              aria-label={`Remove ${item.name}`}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                         <div className="mt-1.5 flex items-center justify-between gap-2">
-                          <div className="inline-flex items-center border border-slate-200 rounded-full">
-                            <button
-                              onClick={() => setQty(item.id, item.qty - 1)}
-                              className="w-6 h-6 flex items-center justify-center text-slate-600 hover:text-slate-900"
-                              aria-label="Decrease quantity"
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="w-6 text-center text-sm font-medium">{item.qty}</span>
-                            <button
-                              onClick={() => setQty(item.id, item.qty + 1)}
-                              className="w-6 h-6 flex items-center justify-center text-slate-600 hover:text-slate-900"
-                              aria-label="Increase quantity"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
-                          <span className="text-sm font-bold text-slate-900">{fmt(lineTotal)}</span>
+                          {isGift ? (
+                            <span className="text-[11px] font-medium text-emerald-700">
+                              Qty: 1 · Auto-added
+                            </span>
+                          ) : (
+                            <div className="inline-flex items-center border border-slate-200 rounded-full">
+                              <button
+                                onClick={() => setQty(item.id, item.qty - 1)}
+                                className="w-6 h-6 flex items-center justify-center text-slate-600 hover:text-slate-900"
+                                aria-label="Decrease quantity"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-6 text-center text-sm font-medium">{item.qty}</span>
+                              <button
+                                onClick={() => setQty(item.id, item.qty + 1)}
+                                className="w-6 h-6 flex items-center justify-center text-slate-600 hover:text-slate-900"
+                                aria-label="Increase quantity"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                          {isGift ? (
+                            <span className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600">
+                              <span className="text-xs font-medium text-slate-400 line-through">
+                                {fmt(BAC_PRICE)}
+                              </span>
+                              FREE
+                            </span>
+                          ) : (
+                            <span className="text-sm font-bold text-slate-900">{fmt(lineTotal)}</span>
+                          )}
                         </div>
                       </div>
                     </li>
@@ -427,6 +458,11 @@ export function CartDrawer() {
                   <span className="font-semibold text-xs text-slate-900 sm:text-sm">{fmt(shipping)}</span>
                 )}
               </div>
+              {!hasFreeBacWater && freeBacWaterRemaining > 0 && (
+                <p className="text-[11px] text-emerald-700 font-medium">
+                  Add {fmt(freeBacWaterRemaining)} more for a FREE Bac Water (orders ${FREE_BAC_WATER_THRESHOLD}+)
+                </p>
+              )}
               {freeShippingRemaining > 0 && (
                 <p className="text-[11px] text-violet-600 font-medium">
                   Add {fmt(freeShippingRemaining)} more for free FedEx shipping (orders ${FREE_SHIPPING_THRESHOLD}+)
