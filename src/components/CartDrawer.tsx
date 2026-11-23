@@ -6,6 +6,7 @@ import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
 import { useCart } from "@/lib/cart-context";
 import { slugFor, baseProductName } from "@/lib/catalog";
 import { BOGO_CODE } from "@/lib/promo-codes";
+import { FREE_SHIPPING_THRESHOLD, shippingFeeForSubtotal } from "@/lib/site-copy";
 import { imageForTitle, sizeForTitle, formatVariant, splitNameVariant } from "@/lib/drawer-product-image";
 import { useEntered } from "@/lib/use-overlay-mount";
 
@@ -58,8 +59,9 @@ export function CartDrawer() {
     setPromoStatus(null);
   };
 
-  const shipping = 0;
-  const total = subtotal + shipping;
+  const shipping = shippingFeeForSubtotal(subtotal);
+  const freeShippingRemaining = Math.max(0, Number((FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)));
+  const total = Number((subtotal + shipping).toFixed(2));
   const bogoActive = promoCode === BOGO_CODE;
 
   const fmt = (n: number) =>
@@ -416,9 +418,20 @@ export function CartDrawer() {
               </div>
             )}
 
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-xs text-slate-700 sm:text-sm">Shipping</span>
-              <span className="font-semibold text-xs text-emerald-500 sm:text-sm">FREE</span>
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-xs text-slate-700 sm:text-sm">FedEx Shipping</span>
+                {shipping === 0 ? (
+                  <span className="font-semibold text-xs text-emerald-500 sm:text-sm">FREE</span>
+                ) : (
+                  <span className="font-semibold text-xs text-slate-900 sm:text-sm">{fmt(shipping)}</span>
+                )}
+              </div>
+              {freeShippingRemaining > 0 && (
+                <p className="text-[11px] text-violet-600 font-medium">
+                  Add {fmt(freeShippingRemaining)} more for free FedEx shipping (orders ${FREE_SHIPPING_THRESHOLD}+)
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between border-t border-slate-200 pt-1.5 sm:pt-2">

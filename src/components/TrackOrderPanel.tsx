@@ -184,8 +184,8 @@ export function ShippingInfo({ className = "" }: { className?: string }) {
         <li className="flex gap-3">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#a78bfa]" aria-hidden />
           <span>
-            Orders placed before 4pm EST will be dropped off at USPS the same day, and the tracking number should
-            update the day after.
+            Orders placed before 4pm EST ship the same day via FedEx, and the tracking number should update shortly after
+            pickup.
           </span>
         </li>
         <li className="flex gap-3">
@@ -195,7 +195,8 @@ export function ShippingInfo({ className = "" }: { className?: string }) {
         <li className="flex gap-3">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#a78bfa]" aria-hidden />
           <span>
-            Our USPS Priority shipping (free on orders over $199) usually arrives within 2–3 business days depending on your location.
+            FedEx shipping is $15 flat rate (free on orders over $199) and usually arrives within 2–3 business days
+            depending on your location.
           </span>
         </li>
       </ul>

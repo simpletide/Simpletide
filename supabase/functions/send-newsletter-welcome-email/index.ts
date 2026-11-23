@@ -140,7 +140,7 @@ export function buildWelcomeEmail(opts: {
       <tr>
         <td style="padding:16px 22px;border-bottom:1px solid ${COLORS.line};font-size:14px;color:${COLORS.ink};">
           <strong>Same-day priority shipping</strong><br />
-          <span style="color:${COLORS.body};font-size:13px;">Order by 4PM ET — ships same day with free USPS Priority delivery.</span>
+          <span style="color:${COLORS.body};font-size:13px;">Order by 4PM ET — ships same day via FedEx ($15 flat rate, free over $199).</span>
         </td>
       </tr>
       <tr>

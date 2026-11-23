@@ -33,8 +33,11 @@ type ConfirmedOrder = {
   baseSubtotal: number;
   subtotal: number;
   bundleSavings: number;
+  promoCode?: string | null;
+  promoDiscount?: number;
+  shipping?: number;
   total: number;
-  // True for paid card orders (KeyBilling); absent/false for manual (Venmo) flows.
+  // True for paid card orders; absent/false for legacy flows.
   paid?: boolean;
 };
 
@@ -299,6 +302,12 @@ function OrderConfirmationPage() {
                 <span className="text-slate-600">Subtotal</span>
                 <span className="font-semibold text-slate-900">{fmt(order.baseSubtotal)}</span>
               </div>
+              {order.promoCode && (order.promoDiscount ?? 0) > 0 && (
+                <div className="flex items-center justify-between text-sm text-emerald-600">
+                  <span className="font-semibold">Promo ({order.promoCode})</span>
+                  <span className="font-bold">-{fmt(order.promoDiscount ?? 0)}</span>
+                </div>
+              )}
               {order.bundleSavings > 0 && (
                 <div className="flex items-center justify-between text-sm text-emerald-600">
                   <span className="font-semibold">Bundle savings</span>
@@ -306,8 +315,12 @@ function OrderConfirmationPage() {
                 </div>
               )}
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Shipping</span>
-                <span className="font-semibold text-emerald-600">FREE</span>
+                <span className="text-slate-600">FedEx Shipping</span>
+                {(order.shipping ?? 0) === 0 ? (
+                  <span className="font-semibold text-emerald-600">FREE</span>
+                ) : (
+                  <span className="font-semibold text-slate-900">{fmt(order.shipping ?? 0)}</span>
+                )}
               </div>
               <div className="flex items-center justify-between border-t border-slate-200 pt-2">
                 <span className="text-base font-bold text-slate-900">Total</span>

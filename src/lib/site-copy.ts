@@ -8,6 +8,11 @@
  */
 export const SHIPPING_CUTOFF = "4PM ET";
 export const FREE_SHIPPING_THRESHOLD = 199;
+export const FEDEX_SHIPPING_FEE = 15;
+
+export function shippingFeeForSubtotal(subtotal: number): number {
+  return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FEDEX_SHIPPING_FEE;
+}
 
 /** The full shipping promise. Announcement bar, product page, FAQ. */
 export const SHIPPING_PROMISE = `Order by ${SHIPPING_CUTOFF} — ships same day. Free shipping over $${FREE_SHIPPING_THRESHOLD}.`;

@@ -178,7 +178,7 @@ export function buildOrderConfirmationEmail(data: OrderConfirmationInput) {
           : ""
       }
       <tr>
-        <td align="left" style="padding:6px 2px;font-size:14px;color:${COLORS.body};font-weight:600;">Shipping (USPS Priority)</td>
+        <td align="left" style="padding:6px 2px;font-size:14px;color:${COLORS.body};font-weight:600;">Shipping (FedEx)</td>
         <td align="right" style="padding:6px 2px;font-size:14px;color:${shippingDisplay === "FREE" ? COLORS.greenText : COLORS.ink};font-weight:700;">${shippingDisplay}</td>
       </tr>
     </table>

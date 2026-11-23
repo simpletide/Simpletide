@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart-context";
 import { discountedLine } from "@/lib/catalog";
 import { vialImageForProduct } from "@/lib/product-vial-variants";
 import { CARD_PROCESSING_LIVE, ORDER_PREFIX } from "@/lib/payment-config";
+import { FREE_SHIPPING_THRESHOLD, shippingFeeForSubtotal } from "@/lib/site-copy";
 import { supabase } from "@/integrations/supabase/client";
 import {
   loadGoogleMaps,
@@ -108,8 +109,9 @@ function CheckoutPage() {
 
   const updateAddr = (patch: Partial<Addr>) => setAddr((a) => ({ ...a, ...patch }));
 
-  const shipping = 0;
-  const total = subtotal + shipping;
+  const shipping = shippingFeeForSubtotal(subtotal);
+  const freeShippingRemaining = Math.max(0, Number((FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)));
+  const total = Number((subtotal + shipping).toFixed(2));
 
   const fmt = (n: number) =>
     `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -122,6 +124,9 @@ function CheckoutPage() {
     baseSubtotal,
     subtotal,
     bundleSavings,
+    promoCode,
+    promoDiscount,
+    shipping,
     total,
     paid: true,
   });
@@ -206,12 +211,12 @@ function CheckoutPage() {
         },
         items: orderItems,
         subtotal: round2(subtotal),
-        shipping_cost: 0,
+        shipping_cost: round2(shipping),
         affiliate_code: promoCode,
         affiliate_discount: round2(promoDiscount),
         total: round2(total),
         user_id: userId,
-        shipping_method: "priority",
+        shipping_method: "fedex",
         estimated_delivery: "2-3 business days",
       };
 
@@ -598,9 +603,20 @@ function CheckoutPage() {
                     <span className="font-bold">-{fmt(bundleSavings)}</span>
                   </div>
                 )}
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600">Shipping</span>
-                  <span className="font-semibold text-emerald-600">FREE</span>
+                <div className="space-y-0.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-600">FedEx Shipping</span>
+                    {shipping === 0 ? (
+                      <span className="font-semibold text-emerald-600">FREE</span>
+                    ) : (
+                      <span className="font-semibold text-slate-900">{fmt(shipping)}</span>
+                    )}
+                  </div>
+                  {freeShippingRemaining > 0 && (
+                    <p className="text-[11px] font-medium text-violet-600">
+                      Add {fmt(freeShippingRemaining)} more for free FedEx shipping (orders ${FREE_SHIPPING_THRESHOLD}+)
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center justify-between border-t border-slate-200 pt-2">
                   <span className="text-base font-bold text-slate-900">Total</span>

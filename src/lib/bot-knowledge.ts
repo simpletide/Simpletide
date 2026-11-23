@@ -216,7 +216,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
       return out(
         `${p.name}${range ? ` (${range})` : ""}: ${p.description} It's third-party lab tested${
           p.variants[0]?.purity ? ` at ${p.variants[0].purity} purity` : ""
-        } and ships via USPS Priority in 2–3 business days (free shipping over $199). Full specs are on its page below. (For research use only.)`,
+        } and ships via FedEx in 2–3 business days ($15 flat rate, free shipping over $199). Full specs are on its page below. (For research use only.)`,
         [p],
       );
     }
@@ -225,7 +225,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
   // General store intents.
   if (has("ship", "shipping", "delivery", "deliver", "arrive", "how long", "tracking", "track my")) {
     return out(
-      `We offer free shipping over $199, sent via USPS Priority with an estimated 2–3 business days in transit. A tracking number is emailed once your order ships. For a specific order, email ${SUPPORT_EMAIL} with your order number.`,
+      `FedEx shipping is $15 flat rate, and free on orders over $199 — estimated 2–3 business days in transit. A tracking number is emailed once your order ships. For a specific order, email ${SUPPORT_EMAIL} with your order number.`,
     );
   }
 
@@ -382,7 +382,7 @@ export function buildSystemPrompt(): string {
 ABOUT: Simpletide sells premium, third-party lab-tested research compounds for laboratory use.
 
 KEY FACTS:
-- Shipping: Free shipping over $199, USPS Priority, estimated 2–3 business days, tracking emailed.
+- Shipping: $15 FedEx flat rate (free shipping over $199), estimated 2–3 business days, tracking emailed.
 - Promo: Use code BOGO for Buy One Get One Free on pairs of vials.
 - Payments accepted: credit/debit card.
 - Bulk/wholesale pricing: email ${SALES_EMAIL} for a custom quote.
