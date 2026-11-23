@@ -7,9 +7,10 @@
  * here together.
  */
 export const SHIPPING_CUTOFF = "4PM ET";
+export const FREE_SHIPPING_THRESHOLD = 199;
 
 /** The full shipping promise. Announcement bar, product page, FAQ. */
-export const SHIPPING_PROMISE = `Order by ${SHIPPING_CUTOFF} — ships same day. Free priority shipping.`;
+export const SHIPPING_PROMISE = `Order by ${SHIPPING_CUTOFF} — ships same day. Free shipping over $${FREE_SHIPPING_THRESHOLD}.`;
 
 /** Short form for trust strips and badges, where the full sentence won't fit. */
-export const SHIPPING_SHORT = `Ships same day (${SHIPPING_CUTOFF})`;
+export const SHIPPING_SHORT = `Free shipping over $${FREE_SHIPPING_THRESHOLD}`;

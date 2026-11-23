@@ -402,7 +402,7 @@ export function ProductDetail() {
 
   const heroInfoRows = [
     { icon: Clock, title: "Same-day dispatch", note: SHIPPING_PROMISE },
-    { icon: Truck, title: "Free priority shipping", note: "On every order — most arrive within 2–3 days." },
+    { icon: Truck, title: "Free shipping over $199", note: "USPS Priority — most orders arrive within 2–3 days." },
     { icon: ShieldCheck, title: "Third-party tested · 99%+ purity", note: "Every batch ships with its Certificate of Analysis." },
     { icon: Headphones, title: "Research support", note: "Email support@simpletide.com anytime with questions." },
   ];
@@ -457,7 +457,7 @@ export function ProductDetail() {
     },
     {
       q: "When will my order arrive?",
-      a: "All orders are handed off to our shipping carrier within 24 hours. Because Simpletide covers the cost of priority shipping, you can expect your package to arrive within 2–3 days.",
+      a: "All orders are handed off to our shipping carrier within 24 hours. Orders over $199 qualify for free USPS Priority shipping, and most packages arrive within 2–3 days.",
     },
     {
       q: "How is purity verified?",

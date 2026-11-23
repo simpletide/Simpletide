@@ -216,7 +216,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
       return out(
         `${p.name}${range ? ` (${range})` : ""}: ${p.description} It's third-party lab tested${
           p.variants[0]?.purity ? ` at ${p.variants[0].purity} purity` : ""
-        } and ships free in 2–3 business days. Full specs are on its page below. (For research use only.)`,
+        } and ships via USPS Priority in 2–3 business days (free shipping over $199). Full specs are on its page below. (For research use only.)`,
         [p],
       );
     }
@@ -225,19 +225,19 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
   // General store intents.
   if (has("ship", "shipping", "delivery", "deliver", "arrive", "how long", "tracking", "track my")) {
     return out(
-      `We offer FREE shipping on every order, sent via USPS Priority with an estimated 2–3 business days in transit. A tracking number is emailed once your order ships. For a specific order, email ${SUPPORT_EMAIL} with your order number.`,
+      `We offer free shipping over $199, sent via USPS Priority with an estimated 2–3 business days in transit. A tracking number is emailed once your order ships. For a specific order, email ${SUPPORT_EMAIL} with your order number.`,
     );
   }
 
-  if (has("pay", "payment", "card", "credit", "debit", "venmo", "checkout", "how do i buy", "purchase", "order online")) {
+  if (has("pay", "payment", "card", "credit", "debit", "checkout", "how do i buy", "purchase", "order online")) {
     return out(
-      "You can check out with a credit/debit card or Venmo. Add items to your cart, go to checkout, choose your payment method, and place your order — card payments are processed securely.",
+      "You can check out with a credit or debit card. Add items to your cart, apply promo code BOGO for Buy One Get One Free on pairs, go to checkout, and place your order — card payments are processed securely.",
     );
   }
 
-  if (has("discount", "bundle", "bulk", "wholesale", "save", "deal", "coupon", "promo", "cheaper", "quantity")) {
+  if (has("discount", "bundle", "bulk", "wholesale", "save", "deal", "coupon", "promo", "cheaper", "quantity", "bogo")) {
     return out(
-      `For bulk or wholesale research orders, email ${SALES_EMAIL} with your volume requirements for a custom quote.`,
+      `Use promo code BOGO in your cart or at checkout for Buy One Get One Free! For bulk or wholesale research orders, email ${SALES_EMAIL} with your volume requirements for a custom quote.`,
     );
   }
 
@@ -319,7 +319,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
   }
 
   return out(
-    `I can help with our products, pricing, shipping (free, 2–3 days), payments (card or Venmo), COAs, and orders. Could you tell me a bit more about what you're looking for? For anything else, email ${SUPPORT_EMAIL}.`,
+    `I can help with our products, pricing, BOGO promo code, shipping (free over $199, 2–3 days), payments, COAs, and orders. Could you tell me a bit more about what you're looking for? For anything else, email ${SUPPORT_EMAIL}.`,
   );
 }
 
@@ -382,8 +382,9 @@ export function buildSystemPrompt(): string {
 ABOUT: Simpletide sells premium, third-party lab-tested research compounds for laboratory use.
 
 KEY FACTS:
-- Shipping: FREE, USPS Priority, estimated 2–3 business days, tracking emailed.
-- Payments accepted: credit/debit card and Venmo.
+- Shipping: Free shipping over $199, USPS Priority, estimated 2–3 business days, tracking emailed.
+- Promo: Use code BOGO for Buy One Get One Free on pairs of vials.
+- Payments accepted: credit/debit card.
 - Bulk/wholesale pricing: email ${SALES_EMAIL} for a custom quote.
 - COAs: every batch is lab tested; the full archive is at /coa-archive.
 - Contact: ${SUPPORT_EMAIL} (support), ${SALES_EMAIL} (sales). Replies within 24 hours.

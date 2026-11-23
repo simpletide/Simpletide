@@ -195,7 +195,7 @@ export function ShippingInfo({ className = "" }: { className?: string }) {
         <li className="flex gap-3">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#a78bfa]" aria-hidden />
           <span>
-            Our complimentary priority shipping usually arrives within 2–3 business days depending on your location.
+            Our USPS Priority shipping (free on orders over $199) usually arrives within 2–3 business days depending on your location.
           </span>
         </li>
       </ul>

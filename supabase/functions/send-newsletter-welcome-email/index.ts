@@ -173,7 +173,7 @@ export function buildWelcomeEmail(opts: {
     "",
     "WHAT TO EXPECT",
     `- Third-party verified purity (ILS Laboratories COAs): ${SITE_URL}/coa-archive`,
-    "- Order by 4PM ET — ships same day. Free priority shipping.",
+    "- Order by 4PM ET — ships same day. Free shipping over $199.",
     "- Early access to restocks, new batches, and subscriber offers.",
     "",
     `Browse products: ${SHOP_URL}`,

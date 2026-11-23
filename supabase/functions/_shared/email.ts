@@ -8,7 +8,7 @@ export const SHOP_URL = `${SITE_URL}/products`;
 export const TRACK_URL = `${SITE_URL}/track-order`;
 export const SUPPORT_EMAIL = "support@simpletide.com";
 
-export const SHIPPING_PROMISE = "Order by 4PM ET — ships same day. Free priority shipping.";
+export const SHIPPING_PROMISE = "Order by 4PM ET — ships same day. Free shipping over $199.";
 
 export const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",

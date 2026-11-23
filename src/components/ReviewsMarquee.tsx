@@ -39,7 +39,7 @@ const REVIEW_DATA: Omit<Review, "color">[] = [
   },
   // --- Shipping (short) ---
   {
-    text: "Free priority shipping that actually shows up fast. Can't beat it.",
+    text: "Fast priority shipping that actually shows up on time, and free over $199. Can't beat it.",
     name: "Devin Park",
     username: "@devin_park",
   },
@@ -75,7 +75,7 @@ const REVIEW_DATA: Omit<Review, "color">[] = [
   },
   // --- Shipping ---
   {
-    text: "Love that priority shipping is free on all orders, no minimums and no surprise fees at checkout. Made me a repeat customer.",
+    text: "Love that priority shipping is fast and free on orders over $199 — no surprise fees at checkout. Made me a repeat customer.",
     name: "Nina Volkov",
     username: "@nina.volkov",
   },
@@ -117,7 +117,7 @@ const REVIEW_DATA: Omit<Review, "color">[] = [
   },
   // --- Shipping (short) ---
   {
-    text: "Fast, free shipping every single time. A+.",
+    text: "Fast priority shipping every single time, and free over $199. A+.",
     name: "QuantumQuokka",
     username: "@quantumquokka",
   },

@@ -215,16 +215,16 @@ function ShippingReturnsPage() {
             </div>
 
             <div className="flex flex-col gap-5 md:gap-6">
-              {/* Free USPS Priority */}
+              {/* Free USPS Priority over $199 */}
               <div data-reveal style={revealDelay(0)}>
                 <h3 className="text-[14px] font-bold tracking-[-0.01em] text-[#8b5cf6] lg:text-[16px]">
-                  Free USPS Priority Shipping - $0
+                  USPS Priority Shipping — Free over $199
                 </h3>
                 <p className="mt-2 text-[13px] leading-[1.6] text-[#555] lg:text-[15px] lg:leading-7">
                   <strong className="font-semibold text-[#242424]">Typical delivery: 2-3 business days</strong> after dispatch within the contiguous United States. Carrier scans and rural routes may add a day in isolated cases.
                 </p>
                 <p className="mt-2 text-[11px] leading-[1.5] text-[#9aa0ab] lg:text-[12px]">
-                  Default option for research peptide orders—no minimum purchase required for this complimentary service.
+                  Free USPS Priority shipping automatically applies on orders over $199.
                 </p>
               </div>
 

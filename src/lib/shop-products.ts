@@ -64,7 +64,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   { name: "GLP-3 RT", price: "From $40.00", badge: "BEST SELLING!", category: "Metabolic Research", image: "/images/cards/glp-3-rt.webp" },
   { name: "GLP-2 TZ", price: "From $36.00", badge: "BEST SELLING!", category: "Metabolic Research", image: "/images/cards/glp-2-tz.webp" },
   { name: "GLP-1 SM", price: "$40.00", badge: null, category: "Metabolic Research", image: "/images/cards/glp-1-sm.webp" },
-  { name: "Elora", price: "$150.00", badge: null, image: "/images/cards/elora.webp", outOfStock: true },
   { name: "Tesamorelin", price: "$70.00", badge: null, category: "GH Research", image: "/images/cards/tesamorelin.webp" },
   { name: "MOTS-c", price: "From $40.00", badge: "BEST SELLING!", category: "Metabolic Research", image: "/images/cards/mots-c.webp" },
   { name: "GLOW", price: "$80.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/glow.webp" },
@@ -101,6 +100,7 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   { name: "DSIP", price: "$50.00", badge: null, category: "Neuro Research", image: "/images/cards/dsip.webp" },
   { name: "Sermorelin", price: "$56.00", badge: null, category: "GH Research", image: "/images/cards/sermorelin.webp" },
   { name: "Epithalon", price: "$80.00", badge: null, category: "Cellular Research", image: "/images/cards/epithalon.webp", outOfStock: true },
+  { name: "Elora", price: "$150.00", badge: null, image: "/images/cards/elora.webp", outOfStock: true },
 ];
 
 const byName = new Map(SHOP_PRODUCTS.map((p) => [p.name, p]));
