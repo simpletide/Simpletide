@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useCart, parsePrice } from "@/lib/cart-context";
 import { CTA_PRIMARY, CTA_CARD } from "@/lib/cta";
-import { SHIPPING_SHORT, BUNDLE_SAVINGS_LINE } from "@/lib/site-copy";
+import { SHIPPING_SHORT } from "@/lib/site-copy";
 import { ProductBadge } from "@/components/ProductBadge";
 import { getShopProductByName, type ShopBadge } from "@/lib/shop-products";
 import { useStockOverrides } from "@/lib/stock-overrides";
@@ -480,8 +480,7 @@ function SimpletideHome() {
                   })()}
                   <span className="font-bold text-[13px] sm:text-base text-slate-800 whitespace-nowrap">{product.price}</span>
                 </div>
-                <p className="text-[11px] tracking-wider text-slate-500">{descriptorFor(product.name) ?? product.tag}</p>
-                <p className="text-[11px] font-semibold text-violet-600 mb-2 sm:mb-2.5">{BUNDLE_SAVINGS_LINE}</p>
+                <p className="text-[11px] tracking-wider text-slate-500 mb-2 sm:mb-2.5">{descriptorFor(product.name) ?? product.tag}</p>
                 {isOutOfStock ? (
                   <button
                     disabled

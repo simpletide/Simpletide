@@ -237,7 +237,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
 
   if (has("discount", "bundle", "bulk", "wholesale", "save", "deal", "coupon", "promo", "cheaper", "quantity")) {
     return out(
-      `We have automatic bundle pricing: buy 2 vials and save 5%, 3 vials save 7%, and 5+ vials save 10% — applied at checkout. For larger or wholesale orders, email ${SALES_EMAIL} for a custom quote.`,
+      `For bulk or wholesale research orders, email ${SALES_EMAIL} with your volume requirements for a custom quote.`,
     );
   }
 
@@ -308,7 +308,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
 
   if (has("price", "cost", "how much", "pricing")) {
     return out(
-      "Pricing varies by product and vial size, with automatic bundle discounts (5–10% off) for multiple vials. Tell me which compound you're interested in and I'll give you the price, or browse them all at /products.",
+      "Pricing varies by product and vial size. Tell me which compound you're interested in and I'll give you the price, or browse them all at /products.",
     );
   }
 
@@ -384,7 +384,7 @@ ABOUT: Simpletide sells premium, third-party lab-tested research compounds for l
 KEY FACTS:
 - Shipping: FREE, USPS Priority, estimated 2–3 business days, tracking emailed.
 - Payments accepted: credit/debit card and Venmo.
-- Bundle discounts (applied automatically at checkout): 2 vials = 5% off, 3 vials = 7% off, 5+ vials = 10% off. Bulk/wholesale: email ${SALES_EMAIL}.
+- Bulk/wholesale pricing: email ${SALES_EMAIL} for a custom quote.
 - COAs: every batch is lab tested; the full archive is at /coa-archive.
 - Contact: ${SUPPORT_EMAIL} (support), ${SALES_EMAIL} (sales). Replies within 24 hours.
 - Returns/issues: email ${SUPPORT_EMAIL} with the order number.

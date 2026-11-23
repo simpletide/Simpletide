@@ -7,7 +7,6 @@ import { SHOP_VARIANTS, shopProductId, type ShopProduct } from "@/lib/shop-produ
 import { srcSetFor, intrinsicSizeFor, CARD_SIZES } from "@/lib/responsive-image";
 import { ProductBadge } from "@/components/ProductBadge";
 import { CTA_CARD } from "@/lib/cta";
-import { BUNDLE_SAVINGS_LINE } from "@/lib/site-copy";
 import { useIsOutOfStock } from "@/lib/stock-overrides";
 type ProductCardProps = {
   product: ShopProduct;
@@ -83,12 +82,9 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
           <span className={`font-bold text-gray-900 whitespace-nowrap ${compact ? "text-[13px]" : "text-[13px] sm:text-base"}`}>{product.price}</span>
         </div>
         {!compact && (
-          <>
-            <p className="text-[11px] tracking-wider text-gray-500">
-              {descriptorFor(product.name) ?? product.category ?? "Research Compound"}
-            </p>
-            <p className="text-[11px] font-semibold text-violet-600 mb-2 sm:mb-2.5">{BUNDLE_SAVINGS_LINE}</p>
-          </>
+          <p className="text-[11px] tracking-wider text-gray-500 mb-2 sm:mb-2.5">
+            {descriptorFor(product.name) ?? product.category ?? "Research Compound"}
+          </p>
         )}
         {isOutOfStock ? (
           <button

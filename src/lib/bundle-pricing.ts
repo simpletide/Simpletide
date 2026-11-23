@@ -24,12 +24,8 @@ export type BundleTier = {
   highlight?: boolean;
 };
 
-/** Default bundle tiers shared by every product unless overridden per-product. */
-export const BUNDLE_TIERS: BundleTier[] = [
-  { id: "duo", label: "2 Vials", minQty: 2, discountPct: 5 },
-  { id: "trio", label: "3 Vials", minQty: 3, discountPct: 7 },
-  { id: "quad", label: "5+ Vials", minQty: 5, discountPct: 10, badge: "BEST VALUE", highlight: true },
-];
+/** Default bundle tiers (disabled — single per-vial pricing site-wide). */
+export const BUNDLE_TIERS: BundleTier[] = [];
 
 /** Highest tier satisfied by `qty`, or null when the quantity earns no discount. */
 export function tierForQty(tiers: BundleTier[], qty: number): BundleTier | null {

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, type ComponentType } from "react";
 import { Header } from "@/components/Header";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { useCart } from "@/lib/cart-context";
-import { getProductBySlug, BUNDLE_TIERS, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant, vialThumbFor } from "@/lib/catalog";
+import { getProductBySlug, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant } from "@/lib/catalog";
 import { CoaLightbox } from "@/components/CoaLightbox";
 import { coaReports, coaPanel } from "@/lib/coa-data";
 import { CoaThumbnail } from "@/components/CoaThumbnail";
@@ -322,11 +322,7 @@ export function ProductDetail() {
   const heroFallback = product.heroImage ?? product.image;
   const heroSrc = heroImageForVariant(product.slug, variant.size, heroFallback);
 
-  // --- Bundle tiers + quantity (generic, data-driven) -------------------
-  // Default to a single, standard vial (quantity = 1) with NO bundle tier
-  // pre-selected. Bundle cards stay clickable and snap quantity to their tier.
-  const tiers = product.bundleTiers ?? BUNDLE_TIERS;
-  const vialThumb = vialThumbFor(product.slug);
+  // --- Quantity selector ------------------------------------------------
   const [quantity, setQuantity] = useState(1);
   const [qtyDraft, setQtyDraft] = useState<string | null>(null);
 
@@ -402,23 +398,13 @@ export function ProductDetail() {
     };
   }, []);
 
-  // Highest tier whose minimum quantity is satisfied (null => no discount).
-  const activeTier = [...tiers].reverse().find((t) => quantity >= t.minQty) ?? null;
-  const discountPct = activeTier?.discountPct ?? 0;
-  const discountedUnit = Number((variant.price * (1 - discountPct / 100)).toFixed(2));
-  const lineTotal = Number((discountedUnit * quantity).toFixed(2));
-  const originalTotal = Number((variant.price * quantity).toFixed(2));
-
-  const pricingTiles = [
-    { id: "single", qty: 1, label: "1 vial", discountPct: 0, badge: undefined as string | undefined },
-    ...tiers.map((t) => ({ id: t.id, qty: t.minQty, label: t.label.toLowerCase(), discountPct: t.discountPct, badge: t.badge })),
-  ];
+  const lineTotal = Number((variant.price * quantity).toFixed(2));
 
   const heroInfoRows = [
     { icon: Clock, title: "Same-day dispatch", note: SHIPPING_PROMISE },
     { icon: Truck, title: "Free priority shipping", note: "On every order — most arrive within 2–3 days." },
     { icon: ShieldCheck, title: "Third-party tested · 99%+ purity", note: "Every batch ships with its Certificate of Analysis." },
-    { icon: Headphones, title: "Research support", note: "Call, text, or email us anytime with questions." },
+    { icon: Headphones, title: "Research support", note: "Email support@simpletide.com anytime with questions." },
   ];
 
   const openSelectedCoa = () => {
@@ -703,97 +689,12 @@ export function ProductDetail() {
 
                 <div className="sm:text-right">
                   <div className="flex items-baseline gap-2 sm:justify-end">
-                    {discountPct > 0 && (
-                      <span className="text-sm text-slate-400 line-through tabular-nums">${originalTotal.toFixed(2)}</span>
-                    )}
                     <span className="text-3xl font-extrabold tabular-nums text-slate-900">${lineTotal.toFixed(2)}</span>
                   </div>
                   <p className="mt-1 text-xs text-slate-500">
                     {quantity} unit{quantity === 1 ? "" : "s"}
-                    {discountPct > 0 && (
-                      <span className="ml-1.5 rounded bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] px-1.5 py-0.5 text-[10px] font-bold text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)]">
-                        {discountPct}% off
-                      </span>
-                    )}
-                  </p>
-                  <p className="mt-1 max-w-[230px] text-[11px] leading-snug text-slate-400 sm:ml-auto">
-                    Bundle pricing applies automatically at checkout.
                   </p>
                 </div>
-              </div>
-
-              <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Quantity pricing</p>
-              <div className="mt-2.5 grid grid-cols-2 gap-2">
-                {pricingTiles.map((tile) => {
-                  const selected = (activeTier?.id ?? "single") === tile.id;
-                  const total = variant.price * (1 - tile.discountPct / 100) * tile.qty;
-                  const original = variant.price * tile.qty;
-                  return (
-                    <button
-                      key={tile.id}
-                      type="button"
-                      onClick={() => {
-                        setQtyDraft(null);
-                        setQuantity(tile.qty);
-                      }}
-                      aria-pressed={selected}
-                      className={`relative flex min-w-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-all ${
-                        selected
-                          ? "border-[#c4b5fd] bg-[#f5f3ff] shadow-[0_0_16px_rgba(196,181,253,0.45)]"
-                          : "border-slate-200 bg-white hover:border-slate-300"
-                      }`}
-                    >
-                      {tile.badge && (
-                        <span className="absolute -top-2 right-2 rounded-full bg-emerald-400 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-[#06231a]">
-                          {tile.badge}
-                        </span>
-                      )}
-                      {vialThumb ? (
-                        <span className="flex shrink-0 items-end gap-0.5">
-                          {Array.from({ length: Math.min(tile.qty, 3) }).map((_, i) => (
-                            <img
-                              key={i}
-                              src={vialThumb}
-                              alt=""
-                              width={117}
-                              height={240}
-                              loading="lazy"
-                              decoding="async"
-                              className="h-8 w-auto object-contain drop-shadow-[0_1px_2px_rgba(15,23,42,0.15)]"
-                            />
-                          ))}
-                        </span>
-                      ) : (
-                        <span className="hidden shrink-0 -space-x-3 sm:flex">
-                          {Array.from({ length: Math.min(tile.qty, 3) }).map((_, i) => (
-                            <img
-                              key={i}
-                              src={product.image}
-                              alt=""
-                              className="h-10 w-8 rounded-md object-cover ring-2 ring-white"
-                            />
-                          ))}
-                        </span>
-                      )}
-                      <span className="min-w-0 flex-1">
-                        <span className="flex items-center justify-between gap-2">
-                          <span className="text-[13px] font-semibold text-slate-800">{tile.label}</span>
-                          {tile.discountPct > 0 && (
-                            <span className="shrink-0 rounded bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] px-1.5 py-px text-[10px] font-bold text-white [text-shadow:0_1px_2px_rgba(91,33,182,0.35)]">
-                              {tile.discountPct}% off
-                            </span>
-                          )}
-                        </span>
-                        <span className="block text-[13px] font-bold tabular-nums text-slate-900">
-                          ${total.toFixed(2)}
-                          {tile.discountPct > 0 && (
-                            <span className="block text-[11px] font-medium text-slate-400 line-through sm:ml-1.5 sm:inline">${original.toFixed(2)}</span>
-                          )}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
               </div>
 
               <div className="mt-5 flex gap-2.5">
