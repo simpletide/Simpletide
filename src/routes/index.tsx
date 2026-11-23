@@ -10,7 +10,8 @@ import { useCart, parsePrice } from "@/lib/cart-context";
 import { CTA_PRIMARY, CTA_CARD } from "@/lib/cta";
 import { SHIPPING_SHORT, BUNDLE_SAVINGS_LINE } from "@/lib/site-copy";
 import { ProductBadge } from "@/components/ProductBadge";
-import type { ShopBadge } from "@/lib/shop-products";
+import { getShopProductByName, type ShopBadge } from "@/lib/shop-products";
+import { useStockOverrides } from "@/lib/stock-overrides";
 import { Header } from "@/components/Header";
 import { slugFor, descriptorFor, seoProductSlug } from "@/lib/catalog";
 import { pageSeoHead } from "@/lib/site-seo";
@@ -261,6 +262,7 @@ const HOME_VARIANTS: Record<string, Variant[]> = {
 
 function SimpletideHome() {
   const { openCart, addItem, count: cartCount } = useCart();
+  const stockOverrides = useStockOverrides();
 
   const [openVariantId, setOpenVariantId] = useState<string | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
@@ -428,6 +430,11 @@ function SimpletideHome() {
             const isOpen = openVariantId === id;
             const slug = slugFor(product.name);
             const productSlug = slug ? seoProductSlug(slug) : null;
+            const isOutOfStock =
+              product.name in stockOverrides
+                ? stockOverrides[product.name]
+                : Boolean(getShopProductByName(product.name)?.outOfStock);
+            const activeBadge = isOutOfStock ? "OUT OF STOCK" : product.badge;
             return (
             <div
               key={idx}
@@ -437,7 +444,7 @@ function SimpletideHome() {
             >
               {/* Product Image */}
               <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-xl">
-                {product.badge && <ProductBadge badge={product.badge} />}
+                {activeBadge && <ProductBadge badge={activeBadge} />}
                 <img
                   src={product.image}
                   srcSet={srcSetFor(product.image)}
@@ -475,38 +482,47 @@ function SimpletideHome() {
                 </div>
                 <p className="text-[11px] tracking-wider text-slate-500">{descriptorFor(product.name) ?? product.tag}</p>
                 <p className="text-[11px] font-semibold text-violet-600 mb-2 sm:mb-2.5">{BUNDLE_SAVINGS_LINE}</p>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    if (variants) {
-                      setOpenVariantId(isOpen ? null : id);
-                    } else {
-                      const cartName =
-                        product.name === "GLOW"
-                          ? "GLOW - 70mg"
-                          : product.name === "KLOW"
-                            ? "KLOW - 80mg"
-                            : product.name;
-                      const variant =
-                        product.name === "GLOW" ? "70mg" : product.name === "KLOW" ? "80mg" : undefined;
-                      addItem({
-                        id: product.name === "KLOW" ? `${id}--80mg` : id,
-                        name: cartName,
-                        tag: product.tag,
-                        price: parsePrice(product.price),
-                        variant,
-                      });
-                      openCart();
-                    }
-                  }}
-                  className={`group/cart mt-auto py-2.5 sm:py-3 text-sm ${CTA_CARD}`}
-                >
-                  <span>Add to cart</span>
-                  <div className="w-0 overflow-hidden transition-all duration-200 ease-out group-hover/cart:ml-2 group-hover/cart:w-4">
-                    <ArrowRight className="h-4 w-4 flex-shrink-0 -translate-x-2 opacity-0 transition-all duration-200 ease-out group-hover/cart:translate-x-0 group-hover/cart:opacity-100" />
-                  </div>
-                </button>
+                {isOutOfStock ? (
+                  <button
+                    disabled
+                    className="mt-auto w-full cursor-not-allowed rounded-full border border-slate-200 bg-slate-100 py-2.5 sm:py-3 text-sm font-bold uppercase tracking-wider text-slate-400"
+                  >
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      if (variants) {
+                        setOpenVariantId(isOpen ? null : id);
+                      } else {
+                        const cartName =
+                          product.name === "GLOW"
+                            ? "GLOW - 70mg"
+                            : product.name === "KLOW"
+                              ? "KLOW - 80mg"
+                              : product.name;
+                        const variant =
+                          product.name === "GLOW" ? "70mg" : product.name === "KLOW" ? "80mg" : undefined;
+                        addItem({
+                          id: product.name === "KLOW" ? `${id}--80mg` : id,
+                          name: cartName,
+                          tag: product.tag,
+                          price: parsePrice(product.price),
+                          variant,
+                        });
+                        openCart();
+                      }
+                    }}
+                    className={`group/cart mt-auto py-2.5 sm:py-3 text-sm ${CTA_CARD}`}
+                  >
+                    <span>Add to cart</span>
+                    <div className="w-0 overflow-hidden transition-all duration-200 ease-out group-hover/cart:ml-2 group-hover/cart:w-4">
+                      <ArrowRight className="h-4 w-4 flex-shrink-0 -translate-x-2 opacity-0 transition-all duration-200 ease-out group-hover/cart:translate-x-0 group-hover/cart:opacity-100" />
+                    </div>
+                  </button>
+                )}
               </div>
 
 

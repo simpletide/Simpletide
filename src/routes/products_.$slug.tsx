@@ -13,6 +13,7 @@ import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
 import { heroImageForVariant } from "@/lib/product-vial-variants";
 import { useReveal, revealDelay } from "@/lib/use-reveal";
 import { useIsOutOfStock } from "@/lib/stock-overrides";
+import { getShopProductByName } from "@/lib/shop-products";
 import {
   FileText,
   ShoppingCart,
@@ -299,7 +300,8 @@ export const Route = createFileRoute("/products_/$slug")({
 export function ProductDetail() {
   const { slug } = useParams({ strict: false });
   const product = getProductBySlug(String(slug ?? ""));
-  const isOutOfStock = useIsOutOfStock(product?.name ?? "");
+  const shopProduct = product ? getShopProductByName(product.name) : undefined;
+  const isOutOfStock = useIsOutOfStock(product?.name ?? "", shopProduct?.outOfStock);
   if (!product) {
     return (
       <div className="min-h-screen text-slate-800 flex items-center justify-center px-6 relative z-[1]">
