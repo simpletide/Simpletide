@@ -14,7 +14,7 @@ export const SITE_ORIGIN = (
 
 /** Default social preview (1200×630 JPEG hosted on your domain).
  *  Stays JPEG: Facebook/X/iMessage/WhatsApp link scrapers reliably render JPEG. */
-export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
+export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg?v=2`;
 export const DEFAULT_OG_IMAGE_WIDTH = "1200";
 export const DEFAULT_OG_IMAGE_HEIGHT = "630";
 export const DEFAULT_OG_IMAGE_ALT = "Simpletide — High-purity lab-tested research compounds";
