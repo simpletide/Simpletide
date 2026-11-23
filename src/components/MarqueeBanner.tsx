@@ -13,6 +13,7 @@ import { SHIPPING_PROMISE } from "@/lib/site-copy";
 const REPEATS = 3;
 
 export function MarqueeBanner({ light = false }: { light?: boolean }) {
+  const sentenceBogo = "BUY ONE, GET ONE FREE — Mix & Match Site-Wide · Code: BOGO";
   const sentenceOne = SHIPPING_PROMISE;
   const sentenceTwo = "Third Party Tested | 99% Purity Guaranteed";
   const items = Array.from({ length: REPEATS });
@@ -34,6 +35,10 @@ export function MarqueeBanner({ light = false }: { light?: boolean }) {
     return () => io.disconnect();
   }, []);
 
+  const bogoClass = light
+    ? "flex-shrink-0 pr-24 md:pr-36 lg:pr-48 font-bold text-violet-700"
+    : "flex-shrink-0 pr-24 md:pr-36 lg:pr-48 font-bold text-white";
+
   return (
     <div
       className={`w-full border-b overflow-hidden whitespace-nowrap py-2.5 min-h-[40px] flex items-center text-xs md:text-sm tracking-wide font-medium ${
@@ -46,16 +51,18 @@ export function MarqueeBanner({ light = false }: { light?: boolean }) {
         <div className="flex shrink-0">
           {items.map((_, i) => (
             <React.Fragment key={`a-${i}`}>
-              <span className="flex-shrink-0 pr-28 md:pr-44 lg:pr-60">{sentenceOne}</span>
-              <span className="flex-shrink-0 pr-28 md:pr-44 lg:pr-60">{sentenceTwo}</span>
+              <span className={bogoClass}>{sentenceBogo}</span>
+              <span className="flex-shrink-0 pr-24 md:pr-36 lg:pr-48">{sentenceOne}</span>
+              <span className="flex-shrink-0 pr-24 md:pr-36 lg:pr-48">{sentenceTwo}</span>
             </React.Fragment>
           ))}
         </div>
         <div className="flex shrink-0" aria-hidden="true">
           {items.map((_, i) => (
             <React.Fragment key={`b-${i}`}>
-              <span className="flex-shrink-0 pr-28 md:pr-44 lg:pr-60">{sentenceOne}</span>
-              <span className="flex-shrink-0 pr-28 md:pr-44 lg:pr-60">{sentenceTwo}</span>
+              <span className={bogoClass}>{sentenceBogo}</span>
+              <span className="flex-shrink-0 pr-24 md:pr-36 lg:pr-48">{sentenceOne}</span>
+              <span className="flex-shrink-0 pr-24 md:pr-36 lg:pr-48">{sentenceTwo}</span>
             </React.Fragment>
           ))}
         </div>

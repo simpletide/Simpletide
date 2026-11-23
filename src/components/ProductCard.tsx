@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useCart, parsePrice } from "@/lib/cart-context";
+import { formatBogoCardLabel } from "@/lib/promo-codes";
 import { descriptorFor, slugFor, seoProductSlug } from "@/lib/catalog";
 import { SHOP_VARIANTS, shopProductId, type ShopProduct } from "@/lib/shop-products";
 import { srcSetFor, intrinsicSizeFor, CARD_SIZES } from "@/lib/responsive-image";
@@ -81,7 +82,9 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
           })()}
           <span className={`font-bold text-gray-900 whitespace-nowrap ${compact ? "text-[13px]" : "text-[13px] sm:text-base"}`}>{product.price}</span>
           {!compact && !isOutOfStock && (
-            <span className="text-[11px] font-semibold text-violet-600">Buy One Get One</span>
+            <span className="text-[11px] font-semibold text-violet-600">
+              {formatBogoCardLabel(product.price, parsePrice(product.price))}
+            </span>
           )}
         </div>
         {!compact && (

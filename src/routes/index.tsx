@@ -5,8 +5,12 @@ import {
   X,
   ArrowRight,
   MapPin,
+  Check,
+  Copy,
+  Sparkles,
 } from "lucide-react";
 import { useCart, parsePrice } from "@/lib/cart-context";
+import { BOGO_CODE, formatBogoCardLabel } from "@/lib/promo-codes";
 import { CTA_PRIMARY, CTA_CARD } from "@/lib/cta";
 import { SHIPPING_SHORT } from "@/lib/site-copy";
 import { ProductBadge } from "@/components/ProductBadge";
@@ -264,9 +268,31 @@ const HOME_VARIANTS: Record<string, Variant[]> = {
   ],
 };
 
+const BOGO_EXAMPLES = [
+  { name: "GLP-3 RT", size: "10mg", regular: "$40", perVial: "$20", bundle: "2 for $40", slug: "glp-3-rt" },
+  { name: "GLP-2 TZ", size: "10mg", regular: "$36", perVial: "$18", bundle: "2 for $36", slug: "glp-2-tz" },
+  { name: "GHK-Cu", size: "50mg", regular: "$32", perVial: "$16", bundle: "2 for $32", slug: "ghk-cu" },
+] as const;
+
 function SimpletideHome() {
-  const { openCart, addItem, count: cartCount } = useCart();
+  const { openCart, addItem, promoCode, applyPromoCode } = useCart();
   const stockOverrides = useStockOverrides();
+  const bogoActive = promoCode === BOGO_CODE;
+  const [bogoJustCopied, setBogoJustCopied] = useState(false);
+
+  const activateBogo = (scrollToFeatured = false) => {
+    applyPromoCode(BOGO_CODE);
+    try {
+      void navigator.clipboard?.writeText(BOGO_CODE);
+    } catch {
+      /* clipboard unavailable */
+    }
+    setBogoJustCopied(true);
+    window.setTimeout(() => setBogoJustCopied(false), 2600);
+    if (scrollToFeatured) {
+      document.getElementById("featured-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   const [openVariantId, setOpenVariantId] = useState<string | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
@@ -324,11 +350,43 @@ function SimpletideHome() {
       {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[124px] md:pt-4 lg:pt-6 pb-2 md:pb-4 lg:pb-6 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4 lg:gap-12 items-center">
 
-        <div className="relative z-10 space-y-6 lg:max-w-2xl text-center lg:text-left">
+        <div className="relative z-10 space-y-5 lg:space-y-6 lg:max-w-2xl text-center lg:text-left">
+          {/* Above-the-fold BOGO pill — one click applies code BOGO to cart & copies it */}
+          <div className="flex justify-center lg:justify-start">
+            <button
+              type="button"
+              onClick={() => activateBogo(false)}
+              className={`group inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all duration-200 cursor-pointer ${
+                bogoActive
+                  ? "border-violet-300 bg-violet-50/90 text-violet-900 shadow-[0_6px_24px_rgba(124,58,237,0.18)]"
+                  : "border-white bg-white/80 text-slate-800 shadow-[0_8px_28px_rgba(167,139,250,0.2)] hover:border-violet-200 hover:bg-white hover:-translate-y-0.5"
+              }`}
+            >
+              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#ec4899] via-[#8b5cf6] to-[#3b82f6] px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white">
+                <Sparkles className="h-2.5 w-2.5" /> BOGO
+              </span>
+              {bogoActive ? (
+                <span className="inline-flex items-center gap-1.5 text-violet-800">
+                  <Check className="h-3.5 w-3.5 text-violet-600" />
+                  <span>
+                    {bogoJustCopied ? "Copied & active in cart" : "Buy 1 Get 1 Free active in cart"}
+                  </span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  <span>Buy 1 Get 1 Free</span>
+                  <span className="text-slate-300">&middot;</span>
+                  <span className="font-bold text-violet-700">Code: {BOGO_CODE}</span>
+                  <Copy className="h-3 w-3 text-violet-500 transition-transform group-hover:scale-110" />
+                </span>
+              )}
+            </button>
+          </div>
+
           {/* No `data-reveal` anywhere above the fold: it starts at opacity 0 and
               waits on JS, which delayed the headline, CTA and vials past first
               paint. These render with the document instead. */}
-          <h1 className="text-[34px] sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left text-slate-800 max-md:-mt-2 md:mt-0">
+          <h1 className="text-[34px] sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-tight text-center lg:text-left text-slate-800 max-md:-mt-1 md:mt-0">
             <span className="text-slate-800">Keep it</span>{" "}
             <span className="inline-block bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">
               Simple.
@@ -412,8 +470,94 @@ function SimpletideHome() {
         </div>
       </section>
 
+      {/* BOGO Spotlight — makes effective per-vial pricing unmistakable */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-8">
+        <div
+          data-reveal
+          className="relative overflow-hidden rounded-3xl border border-white bg-gradient-to-br from-[#fdf2f8]/95 via-[#f5f3ff]/95 to-[#eff6ff]/95 p-5 sm:p-7 lg:p-8 shadow-[0_14px_45px_rgba(167,139,250,0.18)] backdrop-blur-md"
+        >
+          <div className="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-violet-300/25 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-pink-300/25 blur-3xl" aria-hidden="true" />
+
+          <div className="relative grid grid-cols-1 items-center gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
+            <div className="text-center lg:text-left">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-violet-700 ring-1 ring-violet-200/80 shadow-xs">
+                <Sparkles className="h-3 w-3 text-pink-500" />
+                Site-Wide Launch Sale &middot; Code: {BOGO_CODE}
+              </span>
+              <h2 className="mt-3 text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-slate-900 leading-[1.12]">
+                Buy One, Get One{" "}
+                <span className="inline-block bg-gradient-to-r from-[#ec4899] via-[#8b5cf6] to-[#3b82f6] bg-clip-text text-transparent">
+                  Free.
+                </span>
+              </h2>
+              <p className="mt-2.5 text-sm sm:text-[15px] text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Mix &amp; match any compounds across the store — every 2nd vial of equal or lesser value is{" "}
+                <span className="font-semibold text-slate-900">100% free</span>. Third-party tested purity at half the price.
+              </p>
+
+              <div className="mt-5 flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => activateBogo(true)}
+                  className={`group inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-200 cursor-pointer ${
+                    bogoActive
+                      ? "bg-violet-600 text-white shadow-[0_10px_28px_rgba(124,58,237,0.3)] hover:bg-violet-700"
+                      : "bg-slate-950 text-white shadow-[0_10px_28px_rgba(15,23,42,0.28)] hover:bg-slate-900 hover:-translate-y-0.5"
+                  }`}
+                >
+                  {bogoActive ? (
+                    <>
+                      <Check className="h-4 w-4 shrink-0" />
+                      <span>Code {BOGO_CODE} Active — Shop Below</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Apply Code {BOGO_CODE} &amp; Save 50%</span>
+                      <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+                    </>
+                  )}
+                </button>
+                <span className="text-xs font-medium text-slate-500">
+                  No minimum order &middot; Auto-pairs in cart
+                </span>
+              </div>
+            </div>
+
+            {/* Real per-vial math examples */}
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+              {BOGO_EXAMPLES.map((ex) => (
+                <Link
+                  key={ex.slug}
+                  to="/product/$slug"
+                  params={{ slug: seoProductSlug(ex.slug) }}
+                  className="group flex flex-col justify-between rounded-2xl border border-white bg-white/90 p-3 sm:p-4 text-center shadow-[0_6px_22px_rgba(124,58,237,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-[0_12px_28px_rgba(124,58,237,0.16)]"
+                >
+                  <div>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">{ex.name}</p>
+                    <p className="mt-0.5 text-[10px] sm:text-[11px] font-medium text-slate-400">{ex.size} vial</p>
+                  </div>
+                  <div className="my-2.5 sm:my-3">
+                    <span className="text-[11px] font-medium text-slate-400 line-through">{ex.regular}</span>
+                    <div className="mt-0.5 flex items-baseline justify-center gap-0.5">
+                      <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-violet-700">
+                        {ex.perVial}
+                      </span>
+                      <span className="text-[10px] sm:text-xs font-semibold text-slate-500">/vial</span>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center justify-center rounded-full bg-violet-50 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-violet-700 ring-1 ring-inset ring-violet-200/70">
+                    {ex.bundle}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products */}
-      <section className="pt-8 md:pt-12 pb-12 md:pb-16">
+      <section id="featured-products" className="pt-8 md:pt-12 pb-12 md:pb-16 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div data-reveal className="text-center mb-8">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight font-sans mb-4">
@@ -484,7 +628,9 @@ function SimpletideHome() {
                   })()}
                   <span className="font-bold text-[13px] sm:text-base text-slate-800 whitespace-nowrap">{product.price}</span>
                   {!isOutOfStock && (
-                    <span className="text-[11px] font-semibold text-violet-600">Buy One Get One</span>
+                    <span className="text-[11px] font-semibold text-violet-600">
+                      {formatBogoCardLabel(product.price, parsePrice(product.price))}
+                    </span>
                   )}
                 </div>
                 <p className="text-[11px] tracking-wider text-slate-500 mb-2 sm:mb-2.5">{descriptorFor(product.name) ?? product.tag}</p>

@@ -60,3 +60,16 @@ export function normalizePromoCode(raw: string): string {
 export function isSupportedPromoCode(raw: string): boolean {
   return normalizePromoCode(raw) === BOGO_CODE;
 }
+
+/** Formats the effective per-vial price under BOGO (50% off when paired), e.g. "$20" or "$17.50". */
+export function formatBogoUnitPrice(unitPrice: number): string {
+  const half = Number((unitPrice / 2).toFixed(2));
+  return Number.isInteger(half) ? `$${half}` : `$${half.toFixed(2)}`;
+}
+
+/** Compact card micro-copy showing the effective BOGO per-vial rate, e.g. "BOGO · from $20/vial". */
+export function formatBogoCardLabel(priceText: string, unitPrice: number): string {
+  const unit = formatBogoUnitPrice(unitPrice);
+  const isFrom = /^from\b/i.test(priceText.trim());
+  return isFrom ? `BOGO · from ${unit}/vial` : `BOGO · ${unit}/vial`;
+}

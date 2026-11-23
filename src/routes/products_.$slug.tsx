@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, redirect, useParams } from "@tanstack/
 import { useState, useEffect, useRef, type ComponentType } from "react";
 import { Header } from "@/components/Header";
 import { NewsletterSection } from "@/components/NewsletterSection";
+import { formatBogoUnitPrice } from "@/lib/promo-codes";
 import { useCart } from "@/lib/cart-context";
 import { getProductBySlug, CATALOG, descriptorFor, seoProductSlug, coaUrlForVariant } from "@/lib/catalog";
 import { CoaLightbox } from "@/components/CoaLightbox";
@@ -697,7 +698,9 @@ export function ProductDetail() {
                     <span className="text-3xl font-extrabold tabular-nums text-slate-900">${lineTotal.toFixed(2)}</span>
                   </div>
                   {!isOutOfStock && (
-                    <p className="mt-0.5 text-xs font-semibold text-violet-600">Buy One Get One</p>
+                    <p className="mt-0.5 text-xs font-semibold text-violet-600">
+                      Buy One Get One · {formatBogoUnitPrice(variant.price)}/vial with BOGO
+                    </p>
                   )}
                   <p className="mt-0.5 text-xs text-slate-500">
                     {quantity} unit{quantity === 1 ? "" : "s"}
