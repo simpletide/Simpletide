@@ -5,6 +5,7 @@ import { parsePrice } from "@/lib/cart-context";
 import { Header } from "@/components/Header";
 import { ProductCard } from "@/components/ProductCard";
 import { SHOP_PRODUCTS } from "@/lib/shop-products";
+import { useStockOverrides } from "@/lib/stock-overrides";
 import { absoluteUrl, pageSeoHead } from "@/lib/site-seo";
 import { useReveal, revealDelay } from "@/lib/use-reveal";
 
@@ -45,11 +46,13 @@ const FILTERS = [
   "Tissue Repair Research",
   "Cellular Research",
   "Neuro Research",
+  "Out Of Stock",
 ] as const;
 type Filter = typeof FILTERS[number];
 
 function ProductsPage() {
   const { category } = Route.useSearch();
+  const stockOverrides = useStockOverrides();
   const filterFromParam = (value?: string): Filter =>
     (FILTERS as readonly string[]).includes(value ?? "") ? (value as Filter) : "All products";
   const [active, setActive] = useState<Filter>(filterFromParam(category));
@@ -63,12 +66,19 @@ function ProductsPage() {
   const [sort, setSort] = useState<"popular" | "price-asc" | "price-desc" | "newest" | "name-asc" | "name-desc">("popular");
 
   const filtered = useMemo(() => {
+    const isOos = (p: (typeof SHOP_PRODUCTS)[number]) =>
+      p.name in stockOverrides ? stockOverrides[p.name] : Boolean(p.outOfStock);
+
     return SHOP_PRODUCTS.filter((p) => {
-      const matchesCat = active === "All products" || p.category === active;
+      const oos = isOos(p);
+      const matchesCat =
+        active === "Out Of Stock"
+          ? oos
+          : !oos && (active === "All products" || p.category === active);
       const matchesQuery = !query || p.name.toLowerCase().includes(query.toLowerCase());
       return matchesCat && matchesQuery;
     });
-  }, [active, query]);
+  }, [active, query, stockOverrides]);
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
@@ -95,7 +105,7 @@ function ProductsPage() {
 
   // Re-run reveals whenever the visible set changes (filter / search / sort)
   // so freshly rendered cards get observed and animate in.
-  useReveal(`${active}|${sort}|${query}`);
+  useReveal(`${active}|${sort}|${query}|${sorted.length}`);
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-slate-900 selection:bg-st-cyan selection:text-white">
