@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as AgeRouteImport } from './routes/age'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CoaRouteImport } from './routes/coa'
 import { Route as CoaArchiveRouteImport } from './routes/coa-archive'
@@ -59,6 +60,11 @@ const AboutUsRoute = AboutUsRouteImport.update({
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgeRoute = AgeRouteImport.update({
+  id: '/age',
+  path: '/age',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/about-us': typeof AboutUsRoute
   '/account': typeof AccountRoute
+  '/age': typeof AgeRoute
   '/checkout': typeof CheckoutRoute
   '/coa': typeof CoaRoute
   '/coa-archive': typeof CoaArchiveRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/about-us': typeof AboutUsRoute
   '/account': typeof AccountRoute
+  '/age': typeof AgeRoute
   '/checkout': typeof CheckoutRoute
   '/coa': typeof CoaRoute
   '/coa-archive': typeof CoaArchiveRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/about-us': typeof AboutUsRoute
   '/account': typeof AccountRoute
+  '/age': typeof AgeRoute
   '/checkout': typeof CheckoutRoute
   '/coa': typeof CoaRoute
   '/coa-archive': typeof CoaArchiveRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-us'
     | '/account'
+    | '/age'
     | '/checkout'
     | '/coa'
     | '/coa-archive'
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-us'
     | '/account'
+    | '/age'
     | '/checkout'
     | '/coa'
     | '/coa-archive'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-us'
     | '/account'
+    | '/age'
     | '/checkout'
     | '/coa'
     | '/coa-archive'
@@ -404,6 +416,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AboutUsRoute: typeof AboutUsRoute
   AccountRoute: typeof AccountRoute
+  AgeRoute: typeof AgeRoute
   CheckoutRoute: typeof CheckoutRoute
   CoaRoute: typeof CoaRoute
   CoaArchiveRoute: typeof CoaArchiveRoute
@@ -460,6 +473,13 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/age': {
+      id: '/age'
+      path: '/age'
+      fullPath: '/age'
+      preLoaderRoute: typeof AgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -671,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AboutUsRoute: AboutUsRoute,
   AccountRoute: AccountRoute,
+  AgeRoute: AgeRoute,
   CheckoutRoute: CheckoutRoute,
   CoaRoute: CoaRoute,
   CoaArchiveRoute: CoaArchiveRoute,

@@ -14,7 +14,11 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth-context";
 import { CartProvider } from "@/lib/cart-context";
-import { ResearcherGate } from "@/components/ResearcherGate";
+import {
+  FIRST_PAINT_AGE_GATE_SCRIPT,
+  isAgeBypassPath,
+  isAgeVerifiedClient,
+} from "@/lib/age-gate";
 import { Starfield } from "@/components/Starfield";
 import { RainbowMist } from "@/components/RainbowMist";
 import { Footer } from "@/components/Footer";
@@ -124,6 +128,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        children: FIRST_PAINT_AGE_GATE_SCRIPT,
+      },
+      {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -168,6 +175,21 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAgePage = pathname === "/age" || pathname.startsWith("/age/");
+
+  // Client-side SPA safety net: if an unverified user navigates to any gated
+  // route without a full reload, send them straight to `/age?return=<path>`.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (isAgeBypassPath(pathname)) return;
+    if (!isAgeVerifiedClient()) {
+      const target =
+        (window.location.pathname || "/") +
+        (window.location.search || "") +
+        (window.location.hash || "");
+      window.location.replace(`/age?return=${encodeURIComponent(target || "/")}`);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     if (!ENABLE_INTERCOM) return;
@@ -183,6 +205,14 @@ function RootComponent() {
     document.body.appendChild(script);
   }, []);
 
+  if (isAgePage) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    );
+  }
+
   const showFooter = !pathname.startsWith("/auth");
 
   return (
@@ -194,7 +224,6 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           {showFooter && <Footer light />}
-          <ResearcherGate />
           <DeferredWidgets />
         </CartProvider>
       </AuthProvider>
