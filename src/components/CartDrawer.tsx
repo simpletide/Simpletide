@@ -9,7 +9,7 @@ import { BOGO_CODE } from "@/lib/promo-codes";
 import { imageForTitle, sizeForTitle, formatVariant, splitNameVariant } from "@/lib/drawer-product-image";
 import { useEntered } from "@/lib/use-overlay-mount";
 
-const BAC_PRICE = 10.0;
+const BAC_PRICE = 20.0;
 
 export function CartDrawer() {
   const {
