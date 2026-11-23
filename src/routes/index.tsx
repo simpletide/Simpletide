@@ -258,6 +258,10 @@ const HOME_VARIANTS: Record<string, Variant[]> = {
     { size: "20mg", price: 60 },
     { size: "40mg", price: 110 },
   ],
+  "GHK-Cu": [
+    { size: "50mg", price: 32 },
+    { size: "100mg", price: 44 },
+  ],
 };
 
 function SimpletideHome() {
@@ -306,7 +310,7 @@ function SimpletideHome() {
     { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $40.00", badge: "BEST SELLING!", image: "/images/cards/mots-c.webp" },
     { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $40.00", image: "/images/cards/wolverine.webp" },
     { name: "BPC-157", tag: "Tissue Repair Research", price: "$46.00", image: "/images/cards/bpc-157.webp" },
-    { name: "Adamax", tag: "Neuro Research", price: "$70.00", badge: "BEST SELLING!", image: "/images/cards/adamax.webp" },
+    { name: "GHK-Cu", tag: "Tissue Repair Research", price: "From $32.00", badge: "BEST SELLING!", image: "/images/cards/ghk-cu.webp" },
   ];
 
   return (
