@@ -408,9 +408,14 @@ export function ProductDetail() {
   ];
 
   const openSelectedCoa = () => {
-    const url = coaUrlForVariant(product.slug, variant.size, product.variants.indexOf(variant));
-    if (url) {
+    const exactUrl = coaUrlForVariant(product.slug, variant.size, product.variants.indexOf(variant));
+    if (exactUrl) {
       setCoaPreview({ size: variant.size });
+      return;
+    }
+    const reports = coaReports(product.slug);
+    if (reports.length > 0) {
+      setCoaPreview({ size: reports[0].size });
       return;
     }
     setCoaOpen(true);
@@ -702,9 +707,11 @@ export function ProductDetail() {
                   <button
                     type="button"
                     onClick={openSelectedCoa}
-                    className="h-12 shrink-0 rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400"
+                    aria-label="View Certificate of Analysis"
+                    className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-full border border-slate-300 bg-white px-5 text-sm font-bold text-slate-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-900 hover:bg-slate-50"
                   >
-                    CoA
+                    <FileText className="h-4 w-4 text-[#7c3aed]" />
+                    COA
                   </button>
                 )}
                 <button
