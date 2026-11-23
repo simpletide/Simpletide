@@ -8,6 +8,7 @@ type AuthValue = {
   session: Session | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  syncSession: (nextSession: Session | null) => void;
 };
 
 const AuthContext = createContext<AuthValue | null>(null);
@@ -15,6 +16,11 @@ const AuthContext = createContext<AuthValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const syncSession = (nextSession: Session | null) => {
+    setSession(nextSession);
+    setLoading(false);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -40,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const { data } = await supabase.auth.getSession();
         if (!mounted) return;
-        setSession(data.session);
+        setSession((prev) => data.session ?? prev);
         setLoading(false);
       } catch {
         if (mounted) setLoading(false);
@@ -59,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       const { data: latest } = await supabase.auth.getSession();
-      if (mounted) setSession((prev) => prev ?? latest.session);
+      if (mounted) setSession((prev) => latest.session ?? prev);
     };
 
     // A signed-in visitor has a persisted token, so load the SDK right after
@@ -107,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user: session?.user ?? null, session, loading, signOut }}>
+    <AuthContext.Provider value={{ user: session?.user ?? null, session, loading, signOut, syncSession }}>
       {children}
     </AuthContext.Provider>
   );

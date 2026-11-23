@@ -176,23 +176,33 @@ function AccountPage() {
 
         const byId = await sb
           .from("orders")
-          .select("*, order_items(*)")
+          .select("*")
           .eq("user_id", user.id)
           .eq("payment_status", "paid")
           .order("created_at", { ascending: false });
 
+        const normalizeOrder = (o: Order & { line_items_snapshot?: OrderItem[] | null }): Order => ({
+          ...o,
+          order_items:
+            Array.isArray(o.order_items) && o.order_items.length > 0
+              ? o.order_items
+              : Array.isArray(o.line_items_snapshot)
+                ? o.line_items_snapshot
+                : [],
+        });
+
         const merged = new Map<string, Order>();
-        for (const o of byId.data || []) merged.set(o.id, o);
+        for (const o of byId.data || []) merged.set(o.id, normalizeOrder(o));
 
         const email = (user.email || "").trim().toLowerCase();
         if (email) {
           const byEmail = await sb
             .from("orders")
-            .select("*, order_items(*)")
+            .select("*")
             .ilike("email", email)
             .eq("payment_status", "paid")
             .order("created_at", { ascending: false });
-          for (const o of byEmail.data || []) if (!merged.has(o.id)) merged.set(o.id, o);
+          for (const o of byEmail.data || []) if (!merged.has(o.id)) merged.set(o.id, normalizeOrder(o));
         }
 
         const list = Array.from(merged.values())

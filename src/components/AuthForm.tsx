@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/lib/supabase-lazy";
+import { useAuth } from "@/lib/auth-context";
 import { Header } from "@/components/Header";
 import { toast } from "sonner";
 import { CTA_GRADIENT } from "@/lib/account-ui";
@@ -37,6 +38,7 @@ export function AuthForm({
   redirectTo?: string;
 }) {
   const navigate = useNavigate();
+  const { syncSession } = useAuth();
 
   const postAuthDestination = redirectTo ?? "/account";
   const authSearch = redirectTo ? { redirect: redirectTo } : undefined;
@@ -91,11 +93,15 @@ export function AuthForm({
 
     setLoading(true);
     try {
+      const supabase = await getSupabase();
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           toast.error(error.message);
           return;
+        }
+        if (data.session) {
+          syncSession(data.session);
         }
         toast.success("Welcome back");
         goPostAuth();
@@ -131,6 +137,7 @@ export function AuthForm({
           });
 
         if (data.session) {
+          syncSession(data.session);
           toast.success("Welcome to Simpletide — your account is ready!");
           goPostAuth();
         } else {
@@ -146,6 +153,7 @@ export function AuthForm({
   };
 
   const handleOAuth = async (provider: "google") => {
+    const supabase = await getSupabase();
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: getOAuthRedirectTo() },

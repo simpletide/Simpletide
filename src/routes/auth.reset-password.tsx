@@ -3,7 +3,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/Header";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/lib/supabase-lazy";
+import { useAuth } from "@/lib/auth-context";
 import { CTA_GRADIENT } from "@/lib/account-ui";
 import { AUTH_HERO_HEAD_LINKS, AUTH_HERO_VIAL, preloadAuthHeroImages } from "@/lib/auth-hero";
 import { pageSeoHead } from "@/lib/site-seo";
@@ -25,6 +26,7 @@ type RecoveryState = "checking" | "ready" | "invalid" | "done";
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
+  const { syncSession } = useAuth();
   const [state, setState] = useState<RecoveryState>("checking");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -36,6 +38,7 @@ function ResetPasswordPage() {
     preloadAuthHeroImages();
 
     let active = true;
+    let unsubscribe: (() => void) | undefined;
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
     const tokenHash = params.get("token_hash");
@@ -43,17 +46,22 @@ function ResetPasswordPage() {
     const hasHashRecovery =
       hashParams.get("type") === "recovery" || Boolean(hashParams.get("access_token"));
 
-    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!active) return;
-      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
-        setState("ready");
-      }
-    });
-
     const resolveSession = async () => {
       try {
+        const supabase = await getSupabase();
+        if (!active) return;
+
+        const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+          if (!active) return;
+          if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
+            if (session) syncSession(session);
+            setState("ready");
+          }
+        });
+        unsubscribe = () => sub.subscription.unsubscribe();
+
         if (tokenHash) {
-          const { error } = await supabase.auth.verifyOtp({
+          const { data, error } = await supabase.auth.verifyOtp({
             token_hash: tokenHash,
             type: "recovery",
           });
@@ -62,17 +70,19 @@ function ResetPasswordPage() {
             setState("invalid");
             return;
           }
+          if (data.session) syncSession(data.session);
           setState("ready");
           return;
         }
 
         if (code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
           if (!active) return;
           if (error) {
             setState("invalid");
             return;
           }
+          if (data.session) syncSession(data.session);
           setState("ready");
           return;
         }
@@ -80,6 +90,7 @@ function ResetPasswordPage() {
         const { data } = await supabase.auth.getSession();
         if (!active) return;
         if (data.session) {
+          syncSession(data.session);
           setState("ready");
           return;
         }
@@ -90,6 +101,7 @@ function ResetPasswordPage() {
             if (!active) return;
             const retry = await supabase.auth.getSession();
             if (!active) return;
+            if (retry.data.session) syncSession(retry.data.session);
             setState(retry.data.session ? "ready" : "invalid");
           }, 800);
           return;
@@ -105,7 +117,7 @@ function ResetPasswordPage() {
 
     return () => {
       active = false;
-      sub.subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, []);
 
@@ -124,11 +136,14 @@ function ResetPasswordPage() {
 
     setSaving(true);
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.updateUser({ password });
       if (error) {
         toast.error(error.message);
         return;
       }
+      const { data } = await supabase.auth.getSession();
+      if (data.session) syncSession(data.session);
       setState("done");
       toast.success("Password updated!");
       setTimeout(() => {
