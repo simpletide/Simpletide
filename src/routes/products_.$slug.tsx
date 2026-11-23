@@ -12,6 +12,7 @@ import type { DescriptionSection } from "@/lib/catalog";
 import { AcceptedCardLogos } from "@/components/AcceptedCardLogos";
 import { heroImageForVariant } from "@/lib/product-vial-variants";
 import { useReveal, revealDelay } from "@/lib/use-reveal";
+import { useIsOutOfStock } from "@/lib/stock-overrides";
 import {
   FileText,
   ShoppingCart,
@@ -298,6 +299,7 @@ export const Route = createFileRoute("/products_/$slug")({
 export function ProductDetail() {
   const { slug } = useParams({ strict: false });
   const product = getProductBySlug(String(slug ?? ""));
+  const isOutOfStock = useIsOutOfStock(product?.name ?? "");
   if (!product) {
     return (
       <div className="min-h-screen text-slate-800 flex items-center justify-center px-6 relative z-[1]">
@@ -804,17 +806,28 @@ export function ProductDetail() {
                 )}
                 <button
                   type="button"
+                  disabled={isOutOfStock}
                   onClick={handleAddToCart}
-                  className="relative flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-slate-900 text-sm font-bold text-white transition-colors hover:bg-slate-800"
+                  className={
+                    isOutOfStock
+                      ? "relative flex h-12 flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-100 text-sm font-bold uppercase tracking-wider text-slate-400"
+                      : "relative flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-slate-900 text-sm font-bold text-white transition-colors hover:bg-slate-800"
+                  }
                 >
-                  Add to cart · ${lineTotal.toFixed(2)} <ShoppingCart className="h-4 w-4" />
-                  {sessionAddedTotal > 0 && (
-                    <span
-                      aria-live="polite"
-                      className="absolute -right-1.5 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#a78bfa] px-1 text-[11px] font-bold tabular-nums text-white shadow-md ring-1 ring-white/90"
-                    >
-                      {sessionAddedTotal}
-                    </span>
+                  {isOutOfStock ? (
+                    "Out of Stock"
+                  ) : (
+                    <>
+                      Add to cart · ${lineTotal.toFixed(2)} <ShoppingCart className="h-4 w-4" />
+                      {sessionAddedTotal > 0 && (
+                        <span
+                          aria-live="polite"
+                          className="absolute -right-1.5 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#a78bfa] px-1 text-[11px] font-bold tabular-nums text-white shadow-md ring-1 ring-white/90"
+                        >
+                          {sessionAddedTotal}
+                        </span>
+                      )}
+                    </>
                   )}
                 </button>
               </div>

@@ -8,6 +8,9 @@ const CartDrawer = lazy(() =>
 );
 const ChatBot = lazy(() => import("@/components/ChatBot").then((m) => ({ default: m.ChatBot })));
 const Toaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })));
+const SitePresenceTracker = lazy(() =>
+  import("@/components/SitePresenceTracker").then((m) => ({ default: m.SitePresenceTracker })),
+);
 
 /**
  * Cart drawer, mounted only while open.
@@ -47,6 +50,7 @@ export function DeferredWidgets() {
       {idle && (
         <Suspense fallback={null}>
           <ChatBot />
+          <SitePresenceTracker />
           <Toaster position="top-center" richColors closeButton />
         </Suspense>
       )}

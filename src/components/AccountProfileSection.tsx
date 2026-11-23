@@ -479,7 +479,7 @@ export function AccountProfileSection({ user, tab, onTabChange }: Props) {
       )}
 
       {tab === "payment-admin" && isAdmin && !editing && (
-        <div className="overflow-hidden rounded-xl border border-neutral-800">
+        <div className="w-full">
           <PaymentAdmin />
         </div>
       )}

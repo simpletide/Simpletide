@@ -8,6 +8,7 @@ import { srcSetFor, intrinsicSizeFor, CARD_SIZES } from "@/lib/responsive-image"
 import { ProductBadge } from "@/components/ProductBadge";
 import { CTA_CARD } from "@/lib/cta";
 import { BUNDLE_SAVINGS_LINE } from "@/lib/site-copy";
+import { useIsOutOfStock } from "@/lib/stock-overrides";
 type ProductCardProps = {
   product: ShopProduct;
   /** Tighter layout for dense grids (e.g. the search dropdown): square image,
@@ -27,6 +28,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const slug = slugFor(product.name);
   const productSlug = slug ? seoProductSlug(slug) : null;
+  const isOutOfStock = useIsOutOfStock(product.name, product.outOfStock);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -47,7 +49,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
   return (
     <div className="relative bg-white rounded-2xl border border-slate-200 text-slate-900 group flex flex-col h-full overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl">
       <div className="relative w-full aspect-[4/5] overflow-hidden rounded-t-xl">
-        <ProductBadge badge={product.outOfStock ? "OUT OF STOCK" : product.badge} />
+        <ProductBadge badge={isOutOfStock ? "OUT OF STOCK" : product.badge} />
         <img
           src={product.image}
           srcSet={srcSetFor(product.image)}
@@ -88,7 +90,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             <p className="text-[11px] font-semibold text-violet-600 mb-2 sm:mb-2.5">{BUNDLE_SAVINGS_LINE}</p>
           </>
         )}
-        {product.outOfStock ? (
+        {isOutOfStock ? (
           <button
             disabled
             className={`w-full bg-gray-100 border border-gray-200 text-gray-400 rounded-full font-bold cursor-not-allowed mt-auto uppercase tracking-wider ${compact ? "py-2 text-xs" : "py-2.5 sm:py-3 text-sm"}`}
