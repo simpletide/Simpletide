@@ -1390,7 +1390,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialGlutathione.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
-      { size: "1500mg", price: 59.99, lot: "S-GLUTA1500", purity: "99.90%", testDate: "Jun 10, 2026" },
+      { size: "1500mg", price: 51.99, lot: "S-GLUTA1500", purity: "99.90%", testDate: "Jun 10, 2026" },
     ],
     description:
       "High-purity glutathione for oxidative-stress and cellular research applications.",
@@ -1857,7 +1857,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
   ph("cagrilintide", "Cagrilintide", "Compounds", "10mg", 57.99),
   ph("hcg", "HCG", "Compounds", "5000iu", 129.99),
   ph("epithalon", "Epithalon", "Compounds", "10mg", 35.99),
-  ph("kisspeptin", "Kisspeptin", "Compounds", "10mg", 57.99),
+  ph("kisspeptin", "Kisspeptin", "Compounds", "10mg", 53.99),
   ph("pt-141", "PT-141", "Compounds", "10mg", 53.99),
   ph("thymosin-alpha-1", "Thymosin Alpha-1", "Compounds", "10mg", 39.99),
   ph("cjc-1295-with-dac", "CJC-1295 With Dac", "Compounds"),
