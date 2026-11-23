@@ -298,9 +298,9 @@ export function AuthForm({
                         />
                         Remember me
                       </label>
-                      <a href="#" className="font-medium text-[#8b5cf6] hover:underline">
+                      <Link to="/auth/forgot-password" className="font-medium text-[#8b5cf6] hover:underline">
                         Forgot password?
-                      </a>
+                      </Link>
                     </div>
                   )}
 

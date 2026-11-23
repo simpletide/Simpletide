@@ -1,46 +1,43 @@
 // Supabase Edge Function: send-newsletter-welcome-email
-// Simpletide — "Welcome to the newsletter" email.
-// Sent the moment a visitor subscribes via the Newsletter section.
+// Simpletide — Branded Welcome Email (newsletter subscribe or new account).
+// Sent when a visitor subscribes via NewsletterSection (or optionally on signup).
 //
-// Design mirrors the dark "Welcome" layout (teal header banner, "What you'll get"
-// list, blue Browse Products button) but is fully branded as Simpletide.
+// Payload: { email: string, firstName?: string, type?: "newsletter" | "account" }
 //
-// Payload: { email: string }
+// Optional secret:
+//   WELCOME_DISCOUNT_CODE — if set (e.g. WELCOME10), shows a highlighted 10%
+//   off promo code box in the email. Left hidden until a real promo code is active.
 //
-// On subscribe this function does three things (storage steps are non-blocking —
-// a failure there never prevents the welcome email from sending):
+// Storage steps are non-blocking — a failure there never blocks the email:
 //   1. Stores the email in Supabase (public.newsletter_subscribers, self-created)
-//   2. Adds/updates the contact in Omnisend (subscribed) for email campaigns
-//   3. Sends the branded welcome email
+//   2. Syncs the contact in Omnisend (if OMNISEND_API_KEY is configured)
+//   3. Sends the Simpletide welcome email via PrivateEmail SMTP
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import nodemailer from 'npm:nodemailer'
-import postgres from 'https://deno.land/x/postgresjs@v3.4.5/mod.js'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import postgres from "https://deno.land/x/postgresjs@v3.4.5/mod.js";
+import {
+  COLORS,
+  CORS_HEADERS,
+  SHOP_URL,
+  SITE_URL,
+  SUPPORT_EMAIL,
+  escapeHtml,
+  isValidEmail,
+  renderCtaButton,
+  sendViaPrivateEmail,
+  wrapEmailShell,
+} from "../_shared/email.ts";
 
-const SITE_URL = 'https://simpletide.com'
-const SHOP_URL = `${SITE_URL}/products`
-const SUPPORT_EMAIL = 'support@simpletide.com'
+const OMNISEND_API = "https://api.omnisend.com/v5";
 
-const OMNISEND_API = 'https://api.omnisend.com/v5'
-
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-/**
- * Store the subscriber in Supabase. Uses the auto-injected SUPABASE_DB_URL so we
- * can create the table on demand (no separate migration needed) and upsert by email.
- */
-async function storeSubscriberInSupabase(email: string): Promise<void> {
-  const dbUrl = Deno.env.get('SUPABASE_DB_URL')
+async function storeSubscriberInSupabase(email: string, source: string): Promise<void> {
+  const dbUrl = Deno.env.get("SUPABASE_DB_URL");
   if (!dbUrl) {
-    console.warn('⚠️ SUPABASE_DB_URL not set; skipping Supabase storage')
-    return
+    console.warn("SUPABASE_DB_URL not set; skipping Supabase storage");
+    return;
   }
 
-  const sql = postgres(dbUrl, { prepare: false })
+  const sql = postgres(dbUrl, { prepare: false });
   try {
     await sql`
       CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
@@ -49,245 +46,201 @@ async function storeSubscriberInSupabase(email: string): Promise<void> {
         source text NOT NULL DEFAULT 'newsletter',
         created_at timestamptz NOT NULL DEFAULT now()
       )
-    `
+    `;
     await sql`
       INSERT INTO public.newsletter_subscribers (email, source)
-      VALUES (${email}, 'newsletter')
+      VALUES (${email}, ${source})
       ON CONFLICT (email) DO NOTHING
-    `
-    console.log(`✅ Subscriber stored in Supabase: ${email}`)
+    `;
+    console.log(`Subscriber stored in Supabase: ${email}`);
   } finally {
-    await sql.end({ timeout: 5 })
+    await sql.end({ timeout: 5 });
   }
 }
 
-/** Add/update the contact in Omnisend (status: subscribed) — mirrors lib/omnisend.ts. */
 async function pushContactToOmnisend(email: string): Promise<void> {
-  const key = Deno.env.get('OMNISEND_API_KEY')?.trim()
+  const key = Deno.env.get("OMNISEND_API_KEY")?.trim();
   if (!key) {
-    console.warn('⚠️ OMNISEND_API_KEY not set; skipping Omnisend sync')
-    return
+    console.warn("OMNISEND_API_KEY not set; skipping Omnisend sync");
+    return;
   }
 
-  const statusDate = new Date().toISOString()
+  const statusDate = new Date().toISOString();
   const res = await fetch(`${OMNISEND_API}/contacts`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'X-API-KEY': key,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      "X-API-KEY": key,
+      "Content-Type": "application/json",
+      Accept: "application/json",
     },
     body: JSON.stringify({
       identifiers: [
         {
-          type: 'email',
+          type: "email",
           id: email,
-          channels: { email: { status: 'subscribed', statusDate } },
+          channels: { email: { status: "subscribed", statusDate } },
         },
       ],
     }),
-  })
+  });
 
   if (!res.ok) {
-    const errText = await res.text()
-    throw new Error(`Omnisend ${res.status}: ${errText}`)
+    const errText = await res.text();
+    throw new Error(`Omnisend ${res.status}: ${errText}`);
   }
-  console.log(`✅ Omnisend contact synced: ${email}`)
+  console.log(`Omnisend contact synced: ${email}`);
 }
 
-function buildNewsletterEmail() {
-  const subject = 'Welcome to Simpletide'
+export function buildWelcomeEmail(opts: {
+  firstName?: string;
+  discountCode?: string;
+  type?: "newsletter" | "account";
+}) {
+  const cleanName = opts.firstName?.trim() || "";
+  const code = opts.discountCode?.trim() || "";
+  const isAccount = opts.type === "account";
 
-  const text = `Welcome to Simpletide!
+  const subject = code
+    ? `Welcome to Simpletide — here's your 10% off code`
+    : "Welcome to Simpletide";
 
-Thank you for subscribing to the Simpletide newsletter. You're now part of our research community.
+  const greeting = cleanName ? `Welcome, ${cleanName}!` : "Welcome to Simpletide";
+  const subtitle = isAccount
+    ? "Your Simpletide account is active. Track orders, browse third-party lab COAs, and reorder in seconds."
+    : "You're subscribed to the Simpletide research list — new batch releases, restock alerts, and subscriber-only offers.";
 
-WHAT YOU'LL GET
-- Early access to new compounds & research
-- Research insights & industry updates
-- Exclusive subscriber-only offers
+  const discountBlock = code
+    ? `
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">
+      <tr>
+        <td align="center" style="background-color:${COLORS.tintBg};border:1px solid ${COLORS.tintBorder};border-radius:14px;padding:18px 24px;">
+          <div style="font-size:11px;color:${COLORS.violet};text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:6px;">Your 10% Off First-Order Code</div>
+          <div style="font-size:26px;line-height:1.2;font-weight:800;color:${COLORS.ink};letter-spacing:.08em;font-family:'SFMono-Regular',Menlo,Consolas,monospace;">${escapeHtml(code)}</div>
+          <div style="font-size:12px;color:${COLORS.body};margin-top:6px;">Enter this code at checkout on your first order.</div>
+        </td>
+      </tr>
+    </table>`
+    : "";
 
-Browse products: ${SHOP_URL}
+  const bodyHtml = `
+    ${discountBlock}
 
-Questions? ${SUPPORT_EMAIL}
-Simpletide • Research Use Only (RUO) • Third-Party Lab Tested`
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${COLORS.line};border-radius:14px;overflow:hidden;">
+      <tr>
+        <td style="padding:18px 22px 8px 22px;background-color:#faf9fe;border-bottom:1px solid ${COLORS.line};">
+          <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${COLORS.violet};font-weight:800;">What to expect</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px;border-bottom:1px solid ${COLORS.line};font-size:14px;color:${COLORS.ink};">
+          <strong>Third-party verified purity</strong><br />
+          <span style="color:${COLORS.body};font-size:13px;">Every batch is independently tested by ILS Laboratories with public COAs in our <a href="${SITE_URL}/coa-archive" style="color:${COLORS.violet};text-decoration:none;font-weight:600;">COA Archive</a>.</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px;border-bottom:1px solid ${COLORS.line};font-size:14px;color:${COLORS.ink};">
+          <strong>Same-day priority shipping</strong><br />
+          <span style="color:${COLORS.body};font-size:13px;">Order by 4PM ET — ships same day with free USPS Priority delivery.</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 22px;font-size:14px;color:${COLORS.ink};">
+          <strong>Early restock &amp; batch alerts</strong><br />
+          <span style="color:${COLORS.body};font-size:13px;">First notice when new research compounds drop or popular vials restock.</span>
+        </td>
+      </tr>
+    </table>
 
-  const htmlContent = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
-  <style>
-    @media only screen and (max-width: 620px) {
-      .email-shell { width: 100% !important; }
-      .pad-32 { padding: 28px 22px !important; }
-      .hero-title { font-size: 26px !important; }
-      .brand-mark { font-size: 26px !important; letter-spacing: 0.14em !important; }
-    }
-  </style>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0e1116; line-height: 1.6;">
-  <span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;mso-hide:all;">You're in. Here's what to expect from the Simpletide newsletter.</span>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" align="center" style="background-color: #0e1116;">
-    <tr>
-      <td align="center" style="padding: 28px 12px;">
-        <table width="600" cellpadding="0" cellspacing="0" border="0" align="center" class="email-shell" style="max-width: 600px; width: 600px;">
-          <tr>
-            <td style="background-color: #161a21; border: 1px solid #232a34; border-radius: 18px; overflow: hidden;">
+    ${renderCtaButton("Shop Research Compounds", SHOP_URL)}
+  `;
 
-              <!-- Teal header banner -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center" style="background: linear-gradient(90deg, #4f97ec 0%, #2a6ad0 100%); padding: 42px 24px;">
-                    <span class="brand-mark" style="font-size: 30px; font-weight: 700; letter-spacing: 0.18em; color: #ffffff; text-transform: uppercase;">
-                      Simpletide
-                    </span>
-                  </td>
-                </tr>
-              </table>
+  const html = wrapEmailShell({
+    preheader: code
+      ? `Welcome to Simpletide — use code ${code} at checkout.`
+      : "Welcome to Simpletide. Third-party tested research compounds with same-day shipping.",
+    badge: isAccount ? "Account Ready" : "Welcome",
+    badgeTone: "violet",
+    title: greeting,
+    subtitle,
+    bodyHtml,
+  });
 
-              <!-- Body -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td class="pad-32" style="padding: 40px 36px 8px 36px;">
-                    <h1 class="hero-title" style="margin: 0 0 14px 0; font-size: 30px; line-height: 1.2; font-weight: 800; color: #f5f7fa;">
-                      Welcome to Simpletide!
-                    </h1>
-                    <p style="margin: 0; font-size: 16px; color: #9aa6b6; line-height: 1.65;">
-                      Thank you for subscribing to the Simpletide newsletter. You're now part of our research community.
-                    </p>
-                  </td>
-                </tr>
+  const text = [
+    greeting,
+    "",
+    subtitle,
+    ...(code ? ["", `YOUR 10% OFF CODE: ${code}`, "Enter this code at checkout on your first order."] : []),
+    "",
+    "WHAT TO EXPECT",
+    `- Third-party verified purity (ILS Laboratories COAs): ${SITE_URL}/coa-archive`,
+    "- Order by 4PM ET — ships same day. Free priority shipping.",
+    "- Early access to restocks, new batches, and subscriber offers.",
+    "",
+    `Browse products: ${SHOP_URL}`,
+    "",
+    `Questions? ${SUPPORT_EMAIL}`,
+    "Simpletide • For laboratory research use only. Not for human consumption.",
+  ].join("\n");
 
-                <!-- Divider -->
-                <tr>
-                  <td class="pad-32" style="padding: 28px 36px 0 36px;">
-                    <div style="border-top: 1px solid #262d38; font-size: 0; line-height: 0;">&nbsp;</div>
-                  </td>
-                </tr>
-
-                <!-- What you'll get -->
-                <tr>
-                  <td class="pad-32" style="padding: 26px 36px 0 36px;">
-                    <p style="margin: 0 0 6px 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #5aa6f2; font-weight: 700;">
-                      What you'll get
-                    </p>
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td style="padding: 18px 0; border-bottom: 1px solid #262d38; font-size: 15px; color: #dfe5ee;">
-                          Early access to new compounds &amp; research
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 18px 0; border-bottom: 1px solid #262d38; font-size: 15px; color: #dfe5ee;">
-                          Research insights &amp; industry updates
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 18px 0; border-bottom: 1px solid #262d38; font-size: 15px; color: #dfe5ee;">
-                          Exclusive subscriber-only offers
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-
-                <!-- CTA -->
-                <tr>
-                  <td align="center" class="pad-32" style="padding: 34px 36px 44px 36px;">
-                    <a href="${SHOP_URL}" style="display: inline-block; background: linear-gradient(90deg, #4f97ec 0%, #2a6ad0 100%); color: #ffffff !important; text-decoration: none; padding: 15px 56px; border-radius: 10px; font-size: 16px; font-weight: 700;">
-                      Browse Products
-                    </a>
-                  </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                  <td style="padding: 0 36px 34px 36px;" class="pad-32">
-                    <div style="border-top: 1px solid #262d38; padding-top: 22px; text-align: center; font-size: 12px; line-height: 1.7; color: #6b7686;">
-                      <a href="mailto:${SUPPORT_EMAIL}" style="color: #5aa6f2; text-decoration: none;">${SUPPORT_EMAIL}</a><br>
-                      Simpletide &bull; Research Use Only (RUO) &bull; Third-Party Lab Tested
-                    </div>
-                  </td>
-                </tr>
-              </table>
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
-
-  return { subject, text, htmlContent }
+  return { subject, text, html };
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: CORS_HEADERS })
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: CORS_HEADERS });
   }
 
   try {
-    const { email } = await req.json()
+    const body = await req.json();
+    const { email, firstName, type } = body ?? {};
 
-    if (!email || typeof email !== 'string' || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      throw new Error('A valid email address is required.')
+    if (!isValidEmail(email)) {
+      return new Response(
+        JSON.stringify({ success: false, error: "A valid email address is required." }),
+        { status: 400, headers: { "Content-Type": "application/json", ...CORS_HEADERS } },
+      );
     }
 
-    const emailUser = Deno.env.get('EMAIL_USER')
-    const emailPass = Deno.env.get('EMAIL_PASS')
-    if (!emailUser || !emailPass) {
-      throw new Error('Email credentials not configured. Set EMAIL_USER and EMAIL_PASS in Supabase Edge Function secrets.')
-    }
+    const normalizedEmail = email.trim().toLowerCase();
+    const source = type === "account" ? "account" : "newsletter";
 
-    const normalizedEmail = email.trim().toLowerCase()
-
-    // Storage steps are non-blocking: log failures but still send the welcome email.
     const [supabaseResult, omnisendResult] = await Promise.allSettled([
-      storeSubscriberInSupabase(normalizedEmail),
+      storeSubscriberInSupabase(normalizedEmail, source),
       pushContactToOmnisend(normalizedEmail),
-    ])
-    if (supabaseResult.status === 'rejected') {
-      console.error('⚠️ Supabase storage failed (non-blocking):', supabaseResult.reason)
+    ]);
+    if (supabaseResult.status === "rejected") {
+      console.error("Supabase storage failed (non-blocking):", supabaseResult.reason);
     }
-    if (omnisendResult.status === 'rejected') {
-      console.error('⚠️ Omnisend sync failed (non-blocking):', omnisendResult.reason)
+    if (omnisendResult.status === "rejected") {
+      console.error("Omnisend sync failed (non-blocking):", omnisendResult.reason);
     }
 
-    const { subject, text, htmlContent } = buildNewsletterEmail()
+    const discountCode = Deno.env.get("WELCOME_DISCOUNT_CODE")?.trim() || undefined;
+    const { subject, text, html } = buildWelcomeEmail({
+      firstName: typeof firstName === "string" ? firstName : undefined,
+      discountCode,
+      type: source,
+    });
 
-    const transporter = nodemailer.createTransport({
-      host: 'mail.privateemail.com',
-      port: 587,
-      secure: false,
-      auth: { user: emailUser, pass: emailPass },
-      tls: { rejectUnauthorized: false },
-    })
-
-    const info = await transporter.sendMail({
-      from: `"Simpletide" <${emailUser}>`,
+    const info = await sendViaPrivateEmail({
       to: normalizedEmail,
       subject,
       text,
-      html: htmlContent,
-    })
+      html,
+    });
 
-    console.log(`✅ Newsletter welcome email sent to: ${normalizedEmail}`)
+    console.log(`Welcome email sent to: ${normalizedEmail}`);
 
     return new Response(JSON.stringify({ success: true, messageId: info.messageId }), {
-      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+      headers: { "Content-Type": "application/json", ...CORS_HEADERS },
       status: 200,
-    })
+    });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    console.error('Error:', error)
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error sending welcome email:", error);
     return new Response(JSON.stringify({ success: false, error: message }), {
-      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+      headers: { "Content-Type": "application/json", ...CORS_HEADERS },
       status: 500,
-    })
+    });
   }
-})
+});
