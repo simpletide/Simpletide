@@ -1,5 +1,13 @@
 import { CATALOG, getProductBySlug, seoProductSlug, resolveCatalogSlug } from "@/lib/catalog";
-import { SITE_ORIGIN, DEFAULT_OG_IMAGE, normalizePath, absoluteUrl } from "@/lib/site-config";
+import {
+  SITE_ORIGIN,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_OG_IMAGE_ALT,
+  DEFAULT_OG_IMAGE_HEIGHT,
+  DEFAULT_OG_IMAGE_WIDTH,
+  normalizePath,
+  absoluteUrl,
+} from "@/lib/site-config";
 
 // Re-exported so existing `from "@/lib/site-seo"` imports keep working. Modules
 // that only need these (like the root layout) should import `site-config`
@@ -24,6 +32,7 @@ type PageSeoInput = {
 export function pageSeoHead({ path, title, description, ogImage, noindex }: PageSeoInput) {
   const url = absoluteUrl(path);
   const image = ogImage ? (ogImage.startsWith("http") ? ogImage : absoluteUrl(ogImage)) : DEFAULT_OG_IMAGE;
+  const isDefaultImage = image === DEFAULT_OG_IMAGE;
 
   return {
     meta: [
@@ -35,6 +44,14 @@ export function pageSeoHead({ path, title, description, ogImage, noindex }: Page
       { property: "og:type", content: "website" },
       { property: "og:url", content: url },
       { property: "og:image", content: image },
+      ...(isDefaultImage
+        ? [
+            { property: "og:image:type", content: "image/jpeg" },
+            { property: "og:image:width", content: DEFAULT_OG_IMAGE_WIDTH },
+            { property: "og:image:height", content: DEFAULT_OG_IMAGE_HEIGHT },
+            { property: "og:image:alt", content: DEFAULT_OG_IMAGE_ALT },
+          ]
+        : []),
       { property: "og:site_name", content: "Simpletide" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
@@ -51,13 +68,7 @@ export function productSeoHead(product: import("@/lib/catalog").CatalogProduct) 
   const description =
     product.description ??
     `${product.name} — premium research compound by Simpletide. Third-party lab tested.`;
-  // Art ships as WebP for page weight, but link scrapers don't reliably render
-  // it, so previews point at the original that still sits beside each file.
-  // Card art came from JPEG, hero vials from PNG.
-  const social = product.image.replace(/\.webp$/, product.image.includes("/hero-vials/") ? ".png" : ".jpg");
-  const ogImage = social.startsWith("http") ? social : absoluteUrl(social);
-
-  return pageSeoHead({ path, title, description, ogImage });
+  return pageSeoHead({ path, title, description, ogImage: DEFAULT_OG_IMAGE });
 }
 
 export type SitemapEntry = {

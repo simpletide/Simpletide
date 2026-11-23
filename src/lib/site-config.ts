@@ -12,9 +12,12 @@ export const SITE_ORIGIN = (
   (import.meta.env.VITE_SITE_URL as string | undefined)?.trim() || "https://simpletide.com"
 ).replace(/\/$/, "");
 
-/** Default social preview (hosted on your domain).
- *  Stays JPEG: Facebook/X/iMessage link scrapers don't reliably render WebP. */
-export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/cards/glp-3-rt.jpg`;
+/** Default social preview (1200×630 JPEG hosted on your domain).
+ *  Stays JPEG: Facebook/X/iMessage/WhatsApp link scrapers reliably render JPEG. */
+export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
+export const DEFAULT_OG_IMAGE_WIDTH = "1200";
+export const DEFAULT_OG_IMAGE_HEIGHT = "630";
+export const DEFAULT_OG_IMAGE_ALT = "Simpletide — High-purity lab-tested research compounds";
 
 export function normalizePath(path: string): string {
   const p = path.startsWith("/") ? path : `/${path}`;

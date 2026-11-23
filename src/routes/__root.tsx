@@ -22,7 +22,13 @@ import {
 import { Starfield } from "@/components/Starfield";
 import { RainbowMist } from "@/components/RainbowMist";
 import { Footer } from "@/components/Footer";
-import { DEFAULT_OG_IMAGE, SITE_ORIGIN } from "@/lib/site-config";
+import {
+  DEFAULT_OG_IMAGE,
+  DEFAULT_OG_IMAGE_ALT,
+  DEFAULT_OG_IMAGE_HEIGHT,
+  DEFAULT_OG_IMAGE_WIDTH,
+  SITE_ORIGIN,
+} from "@/lib/site-config";
 // Cart drawer, chat widget and toast host are code-split and mounted after
 // first paint; see DeferredWidgets.
 import { DeferredWidgets } from "@/components/DeferredWidgets";
@@ -109,7 +115,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Simpletide | Premium Research Compounds" },
       { name: "twitter:description", content: "Simpletide offers premium research compounds and lab-tested chemicals for scientific innovation." },
       { property: "og:image", content: DEFAULT_OG_IMAGE },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: DEFAULT_OG_IMAGE_WIDTH },
+      { property: "og:image:height", content: DEFAULT_OG_IMAGE_HEIGHT },
+      { property: "og:image:alt", content: DEFAULT_OG_IMAGE_ALT },
       { name: "twitter:image", content: DEFAULT_OG_IMAGE },
+      { name: "twitter:image:alt", content: DEFAULT_OG_IMAGE_ALT },
     ],
     links: [
       {
