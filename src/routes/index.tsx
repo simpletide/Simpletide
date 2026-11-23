@@ -238,39 +238,39 @@ export const Route = createFileRoute("/")({
 type Variant = { size: string; price: number };
 const HOME_VARIANTS: Record<string, Variant[]> = {
   "GLP-3 RT": [
-    { size: "10mg", price: 40 },
-    { size: "20mg", price: 120 },
-    { size: "30mg", price: 150 },
-    { size: "60mg", price: 260 },
+    { size: "10mg", price: 39.99 },
+    { size: "20mg", price: 119.99 },
+    { size: "30mg", price: 149.99 },
+    { size: "60mg", price: 259.99 },
   ],
   "GLP-2 TZ": [
-    { size: "10mg", price: 36 },
-    { size: "20mg", price: 60 },
-    { size: "30mg", price: 90 },
-    { size: "60mg", price: 140 },
+    { size: "10mg", price: 35.99 },
+    { size: "20mg", price: 59.99 },
+    { size: "30mg", price: 89.99 },
+    { size: "60mg", price: 139.99 },
   ],
   "CJC-1295 + Ipamorelin": [
-    { size: "10mg", price: 50 },
+    { size: "10mg", price: 49.99 },
   ],
   "MOTS-c": [
-    { size: "10mg", price: 40 },
-    { size: "40mg", price: 100 },
+    { size: "10mg", price: 39.99 },
+    { size: "40mg", price: 99.99 },
   ],
   "Wolverine": [
-    { size: "10mg", price: 40 },
-    { size: "20mg", price: 60 },
-    { size: "40mg", price: 110 },
+    { size: "10mg", price: 39.99 },
+    { size: "20mg", price: 59.99 },
+    { size: "40mg", price: 109.99 },
   ],
   "GHK-Cu": [
-    { size: "50mg", price: 32 },
-    { size: "100mg", price: 44 },
+    { size: "50mg", price: 31.99 },
+    { size: "100mg", price: 43.99 },
   ],
 };
 
 const BOGO_EXAMPLES = [
-  { name: "GLP-3 RT", size: "10mg", regular: "$40", perVial: "$20", bundle: "2 for $40", slug: "glp-3-rt" },
-  { name: "GLP-2 TZ", size: "10mg", regular: "$36", perVial: "$18", bundle: "2 for $36", slug: "glp-2-tz" },
-  { name: "GHK-Cu", size: "50mg", regular: "$32", perVial: "$16", bundle: "2 for $32", slug: "ghk-cu" },
+  { name: "GLP-3 RT", size: "10mg", regular: "$39.99", perVial: "$20", bundle: "2 for $39.99", slug: "glp-3-rt" },
+  { name: "GLP-2 TZ", size: "10mg", regular: "$35.99", perVial: "$18", bundle: "2 for $35.99", slug: "glp-2-tz" },
+  { name: "GHK-Cu", size: "50mg", regular: "$31.99", perVial: "$16", bundle: "2 for $31.99", slug: "ghk-cu" },
 ] as const;
 
 function SimpletideHome() {
@@ -325,14 +325,14 @@ function SimpletideHome() {
   ];
 
   const products: { name: string; tag: string; price: string; compareAt?: string; badge?: ShopBadge; image: string }[] = [
-    { name: "GLP-3 RT", tag: "Metabolic Research", price: "From $40.00", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.webp" },
-    { name: "Tesamorelin", tag: "Growth Hormone Research", price: "$70.00", image: "/images/cards/tesamorelin.webp" },
-    { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $36.00", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.webp" },
-    { name: "CJC-1295 + Ipamorelin", tag: "Research Blend", price: "$50.00", image: "/images/cards/cjc-1295-ipamorelin.webp" },
-    { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $40.00", badge: "BEST SELLING!", image: "/images/cards/mots-c.webp" },
-    { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $40.00", image: "/images/cards/wolverine.webp" },
-    { name: "BPC-157", tag: "Tissue Repair Research", price: "$46.00", image: "/images/cards/bpc-157.webp" },
-    { name: "GHK-Cu", tag: "Tissue Repair Research", price: "From $32.00", badge: "BEST SELLING!", image: "/images/cards/ghk-cu.webp" },
+    { name: "GLP-3 RT", tag: "Metabolic Research", price: "From $39.99", badge: "BEST SELLING!", image: "/images/cards/glp-3-rt.webp" },
+    { name: "Tesamorelin", tag: "Growth Hormone Research", price: "$59.99", image: "/images/cards/tesamorelin.webp" },
+    { name: "GLP-2 TZ", tag: "Metabolic Research", price: "From $35.99", badge: "BEST SELLING!", image: "/images/cards/glp-2-tz.webp" },
+    { name: "CJC-1295 + Ipamorelin", tag: "Research Blend", price: "$49.99", image: "/images/cards/cjc-1295-ipamorelin.webp" },
+    { name: "MOTS-c", tag: "Cellular Energy Research", price: "From $39.99", badge: "BEST SELLING!", image: "/images/cards/mots-c.webp" },
+    { name: "Wolverine", tag: "Tissue Repair Blend", price: "From $39.99", image: "/images/cards/wolverine.webp" },
+    { name: "BPC-157", tag: "Tissue Repair Research", price: "$45.99", image: "/images/cards/bpc-157.webp" },
+    { name: "GHK-Cu", tag: "Tissue Repair Research", price: "From $31.99", badge: "BEST SELLING!", image: "/images/cards/ghk-cu.webp" },
   ];
 
   return (

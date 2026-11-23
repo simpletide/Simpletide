@@ -89,7 +89,7 @@ export function BogoPromoBar() {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto flex min-h-[48px] sm:min-h-[52px] max-w-7xl items-center justify-center gap-2.5 sm:gap-4 px-3 sm:px-6 py-1.5">
+      <div className="relative mx-auto flex min-h-[42px] sm:min-h-[46px] max-w-7xl items-center justify-center gap-2.5 sm:gap-4 px-3 sm:px-6 py-1">
         {/* Crisp editorial Buy 1 Get 1 Free copy */}
         <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-2.5 text-left leading-tight [text-shadow:0_1px_2px_rgba(76,29,149,0.28)]">
           <span

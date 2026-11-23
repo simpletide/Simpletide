@@ -525,7 +525,7 @@ function CheckoutPage() {
                       <div className="text-right whitespace-nowrap">
                         {isGift ? (
                           <>
-                            <span className="block text-[11px] text-slate-400 line-through">$20.00</span>
+                            <span className="block text-[11px] text-slate-400 line-through">$19.99</span>
                             <span className="text-sm font-bold text-emerald-600">FREE</span>
                           </>
                         ) : (

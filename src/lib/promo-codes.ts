@@ -63,7 +63,7 @@ export function isSupportedPromoCode(raw: string): boolean {
 
 /** Formats the effective per-vial price under BOGO (50% off when paired), e.g. "$20" or "$17.50". */
 export function formatBogoUnitPrice(unitPrice: number): string {
-  const half = Number((unitPrice / 2).toFixed(2));
+  const half = Math.round(Math.round(unitPrice * 100) / 2) / 100;
   return Number.isInteger(half) ? `$${half}` : `$${half.toFixed(2)}`;
 }
 

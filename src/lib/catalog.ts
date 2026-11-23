@@ -577,10 +577,10 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: glp3RtHero10,
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 40, lot: "S-RT10", purity: "99.08%", testDate: "Oct 23, 2026" },
-      { size: "20mg", price: 120, lot: "S-RT20", purity: "99.33%", testDate: "Oct 16, 2026" },
-      { size: "30mg", price: 150, lot: "S-RT30", purity: "99.32%", testDate: "Oct 16, 2026" },
-      { size: "60mg", price: 260, lot: "S-RT60", purity: "99.35%", testDate: "Oct 16, 2026" },
+      { size: "10mg", price: 39.99, lot: "S-RT10", purity: "99.08%", testDate: "Oct 23, 2026" },
+      { size: "20mg", price: 119.99, lot: "S-RT20", purity: "99.33%", testDate: "Oct 16, 2026" },
+      { size: "30mg", price: 149.99, lot: "S-RT30", purity: "99.32%", testDate: "Oct 16, 2026" },
+      { size: "60mg", price: 259.99, lot: "S-RT60", purity: "99.35%", testDate: "Oct 16, 2026" },
     ],
     description:
       "GLP-3 RT (RETA) is a high-purity research-grade peptide manufactured for advanced metabolic and receptor signaling studies. Synthesized under tightly controlled laboratory conditions for batch-level consistency.",
@@ -646,10 +646,10 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: glp2TzHero10,
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 36, lot: "S-TZ10", purity: "99.54%", testDate: "Jul 26, 2026" },
-      { size: "20mg", price: 60, lot: "", purity: "", testDate: "" },
-      { size: "30mg", price: 90, lot: "S-TZ30", purity: "99.24%", testDate: "Oct 16, 2026" },
-      { size: "60mg", price: 140, lot: "S-TZ60", purity: "99.90%", testDate: "Oct 20, 2026" },
+      { size: "10mg", price: 35.99, lot: "S-TZ10", purity: "99.54%", testDate: "Jul 26, 2026" },
+      { size: "20mg", price: 59.99, lot: "", purity: "", testDate: "" },
+      { size: "30mg", price: 89.99, lot: "S-TZ30", purity: "99.24%", testDate: "Oct 16, 2026" },
+      { size: "60mg", price: 139.99, lot: "S-TZ60", purity: "99.90%", testDate: "Oct 20, 2026" },
     ],
     description:
       "High-purity GLP-2 TZ supplied for advanced peptide research. Manufactured to exacting laboratory specifications for purity and consistency.",
@@ -715,8 +715,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: ghkCuHero50,
     badge: "BEST SELLING!",
     variants: [
-      { size: "50mg", price: 32, lot: "S-GHK50", purity: "99.90%", testDate: "Sep 6, 2026" },
-      { size: "100mg", price: 44, lot: "S-GHK100", purity: "99.85%", testDate: "Sep 30, 2026" },
+      { size: "50mg", price: 31.99, lot: "S-GHK50", purity: "99.90%", testDate: "Sep 6, 2026" },
+      { size: "100mg", price: 43.99, lot: "S-GHK100", purity: "99.85%", testDate: "Sep 30, 2026" },
     ],
     description:
       "GHK-Cu is a copper-binding tripeptide supplied for laboratory study of tissue and matrix-related research applications.",
@@ -781,8 +781,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: motsCHero10,
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 40, lot: "S-MOTS10", purity: "99.90%", testDate: "Oct 29, 2026" },
-      { size: "40mg", price: 100, lot: "S-MOTS40", purity: "99.90%", testDate: "Oct 23, 2026" },
+      { size: "10mg", price: 39.99, lot: "S-MOTS10", purity: "99.90%", testDate: "Oct 29, 2026" },
+      { size: "40mg", price: 99.99, lot: "S-MOTS40", purity: "99.90%", testDate: "Oct 23, 2026" },
     ],
     description:
       "MOTS-c is a mitochondrial-derived peptide supplied for advanced cellular and metabolic research applications.",
@@ -847,7 +847,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: cjcIpaHero10,
     badge: "SALE!",
     variants: [
-      { size: "10mg", price: 50, lot: "S-CJCIPA10", purity: "99.85%", testDate: "Jun 10, 2026" },
+      { size: "10mg", price: 49.99, lot: "S-CJCIPA10", purity: "99.85%", testDate: "Jun 10, 2026" },
     ],
     description:
       "Pre-blended CJC-1295 and Ipamorelin formulated for laboratory study of endocrine signaling pathways.",
@@ -917,9 +917,9 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialWolverine.url,
     heroImage: wolverineHero10,
     variants: [
-      { size: "10mg", price: 40, lot: "", purity: "", testDate: "" },
-      { size: "20mg", price: 60, lot: "S-WOLV20", purity: "99.71%", testDate: "Oct 21, 2026" },
-      { size: "40mg", price: 110, lot: "", purity: "", testDate: "" },
+      { size: "10mg", price: 39.99, lot: "", purity: "", testDate: "" },
+      { size: "20mg", price: 59.99, lot: "S-WOLV20", purity: "99.71%", testDate: "Oct 21, 2026" },
+      { size: "40mg", price: 109.99, lot: "", purity: "", testDate: "" },
     ],
     description:
       "Co-formulated BPC-157 and TB-500 for tissue repair research workflows. Manufactured to high-purity standards.",
@@ -989,8 +989,8 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialNad.url,
     heroImage: nadPlusHero500,
     variants: [
-      { size: "500mg", price: 50, lot: "S-NAD500", purity: "99.71%", testDate: "Oct 23, 2026" },
-      { size: "1000mg", price: 70, lot: "", purity: "", testDate: "" },
+      { size: "500mg", price: 49.99, lot: "S-NAD500", purity: "99.71%", testDate: "Oct 23, 2026" },
+      { size: "1000mg", price: 69.99, lot: "", purity: "", testDate: "" },
     ],
     description:
       "High-purity NAD+ supplied for cellular metabolism and longevity research.",
@@ -1055,7 +1055,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/cards/tesamorelin.webp",
     badge: null,
     variants: [
-      { size: "10mg", price: 70, lot: "ST-TSM-55A", purity: "99.24%", testDate: "2026-02-25" },
+      { size: "10mg", price: 59.99, lot: "ST-TSM-55A", purity: "99.24%", testDate: "2026-02-25" },
     ],
     description:
       "Tesamorelin manufactured to high-purity laboratory specifications for endocrine research.",
@@ -1120,7 +1120,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     badge: "BEST SELLING!",
     variants: [
-      { size: "80mg", price: 100, lot: "S-Klow80", purity: "99.64%", testDate: "Oct 14, 2026" },
+      { size: "80mg", price: 99.99, lot: "S-Klow80", purity: "99.64%", testDate: "Oct 14, 2026" },
     ],
     description:
       "KLOW combines GHK-Cu, TB-500, BPC-157, and KPV into a single research-grade master stack.",
@@ -1190,7 +1190,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: GLOW_VIAL_IMAGE,
     heroImage: GLOW_VIAL_IMAGE,
     variants: [
-      { size: "70mg", price: 80, lot: "S-GLOW70", purity: "99.88%", testDate: "Jun 10, 2026" },
+      { size: "70mg", price: 79.99, lot: "S-GLOW70", purity: "99.88%", testDate: "Jun 10, 2026" },
     ],
     description:
       "GLOW combines GHK-Cu, TB-500, and BPC-157 into a single research-grade stack for matrix studies.",
@@ -1260,7 +1260,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialBacWater.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
-      { size: "10ML", price: 20, lot: "S-BW10ML", purity: "99.90%", testDate: "Oct 15, 2026" },
+      { size: "10ML", price: 19.99, lot: "S-BW10ML", purity: "99.90%", testDate: "Oct 15, 2026" },
     ],
     description:
       "Sterile bacteriostatic water with 0.9% benzyl alcohol for laboratory reconstitution of lyophilized research compounds.",
@@ -1326,7 +1326,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     heroImage: "/images/cards/adamax.webp",
     badge: "BEST SELLING!",
     variants: [
-      { size: "10mg", price: 70, lot: "", purity: "", testDate: "" },
+      { size: "10mg", price: 69.99, lot: "", purity: "", testDate: "" },
     ],
     description:
       "Adamax is an enhanced derivative of the nootropic Semax — an N-acetylated, adamantane-modified ACTH(4-10) analog studied for neuroprotective and cognitive-signaling research.",
@@ -1390,7 +1390,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialGlutathione.url,
     heroImage: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     variants: [
-      { size: "1500mg", price: 70, lot: "S-GLUTA1500", purity: "99.90%", testDate: "Jun 10, 2026" },
+      { size: "1500mg", price: 69.99, lot: "S-GLUTA1500", purity: "99.90%", testDate: "Jun 10, 2026" },
     ],
     description:
       "High-purity glutathione for oxidative-stress and cellular research applications.",
@@ -1454,7 +1454,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialMt1.url,
     heroImage: "/images/cards/mt1.webp",
     variants: [
-      { size: "10mg", price: 34, lot: "S-MT110", purity: "99.90%", testDate: "Jun 10, 2026" },
+      { size: "10mg", price: 33.99, lot: "S-MT110", purity: "99.90%", testDate: "Jun 10, 2026" },
     ],
     description:
       "MT-1 supplied for melanocortin receptor research at high laboratory purity.",
@@ -1518,7 +1518,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: vialMt2.url,
     heroImage: "/images/cards/melanotan-2.webp",
     variants: [
-      { size: "10mg", price: 30, lot: "S-MT210", purity: "99.82%", testDate: "Oct 16, 2026" },
+      { size: "10mg", price: 29.99, lot: "S-MT210", purity: "99.82%", testDate: "Oct 16, 2026" },
     ],
     description:
       "Melanotan 2 supplied for melanocortin receptor research at high laboratory purity.",
@@ -1582,7 +1582,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     image: "/images/hero-vials/simpletide-bpc157-10mg.webp",
     heroImage: dsipHero5,
     variants: [
-      { size: "10mg", price: 50, lot: "S-DSIP10", purity: "99.41%", testDate: "Jul 30, 2026" },
+      { size: "10mg", price: 49.99, lot: "S-DSIP10", purity: "99.41%", testDate: "Jul 30, 2026" },
     ],
     description:
       "DSIP (delta sleep-inducing peptide) is a naturally occurring nonapeptide studied for sleep-cycle regulation and neuroendocrine signaling in research models.",
@@ -1609,13 +1609,13 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     ],
   },
   // --- Remaining products (png-folder vials wired; $0 placeholder pricing) ---
-  ph("ara-290", "ARA-290", "Compounds", "10mg", 50),
-  ph("5-amino-1mq", "5-Amino-1MQ", "Compounds", "5mg", 42),
-  ph("ahk-cu", "AHK-Cu", "Compounds", "100mg", 44),
-  ph("kpv", "KPV", "Compounds", "10mg", 40),
-  ph("kpv-ghk-cu", "KPV + GHK-Cu", "Blends", "60mg", 70),
+  ph("ara-290", "ARA-290", "Compounds", "10mg", 49.99),
+  ph("5-amino-1mq", "5-Amino-1MQ", "Compounds", "5mg", 41.99),
+  ph("ahk-cu", "AHK-Cu", "Compounds", "100mg", 43.99),
+  ph("kpv", "KPV", "Compounds", "10mg", 39.99),
+  ph("kpv-ghk-cu", "KPV + GHK-Cu", "Blends", "60mg", 69.99),
   {
-    ...ph("trifecta", "Trifecta", "Bundles", "Stack", 280),
+    ...ph("trifecta", "Trifecta", "Bundles", "Stack", 279.99),
     tagline: "Three-peptide aesthetic and metabolic research stack.",
     subtitle: "3-Peptide Research Stack",
     bundleContents: "GHK-Cu 50mg, GLP-3 RT 10mg, MT2 10mg",
@@ -1654,7 +1654,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     ],
   },
   {
-    ...ph("trifecta-deluxe", "Trifecta Deluxe", "Bundles", "Stack", 480),
+    ...ph("trifecta-deluxe", "Trifecta Deluxe", "Bundles", "Stack", 479.99),
     tagline: "Higher-strength aesthetic and metabolic research stack.",
     subtitle: "3-Peptide Research Stack",
     bundleContents: "GHK-Cu 100mg, GLP-3 RT 30mg, MT2 10mg",
@@ -1693,7 +1693,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     ],
   },
   {
-    ...ph("neuro-duo", "Neuro Duo", "Blends", "Stack", 200),
+    ...ph("neuro-duo", "Neuro Duo", "Blends", "Stack", 199.99),
     tagline: "Two-peptide cognitive and neuro research stack.",
     subtitle: "2-Peptide Research Stack",
     bundleContents: "Selank 10mg, Semax 10mg",
@@ -1731,7 +1731,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     ],
   },
   {
-    ...ph("shred-plus", "Shred+", "Blends", "Stack", 400),
+    ...ph("shred-plus", "Shred+", "Blends", "Stack", 399.99),
     tagline: "Two-peptide metabolic and body-composition research stack.",
     subtitle: "2-Peptide Research Stack",
     bundleContents: "Tesamorelin 10mg, GLP-3 RT 20mg",
@@ -1769,7 +1769,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     ],
   },
   {
-    ...ph("peak-pulse", "Peak Pulse", "Blends", "Stack", 300),
+    ...ph("peak-pulse", "Peak Pulse", "Blends", "Stack", 299.99),
     tagline: "Two-peptide growth-hormone axis research stack.",
     subtitle: "2-Peptide Research Stack",
     bundleContents: "Ipamorelin 10mg, Tesamorelin 10mg",
@@ -1807,7 +1807,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
     ],
   },
   {
-    ...ph("metabolic-reset", "Metabolic Reset", "Blends", "Stack", 380),
+    ...ph("metabolic-reset", "Metabolic Reset", "Blends", "Stack", 379.99),
     tagline: "Three-compound metabolic and mitochondrial research stack.",
     subtitle: "3-Peptide Research Stack",
     bundleContents: "GLP-3 RT 10mg, NAD+ 500mg, MOTS-c 10mg",
@@ -1845,30 +1845,30 @@ const ALL_PRODUCTS: CatalogProduct[] = [
       },
     ],
   },
-  ph("semax", "Semax", "Compounds", "10mg", 50),
-  ph("selank", "Selank", "Compounds", "10mg", 50),
-  ph("ss-31", "SS-31", "Compounds", "10mg", 50),
-  ph("ll-37", "LL-37", "Compounds", "10mg", 140),
-  ph("bpc-157", "BPC-157", "Compounds", "10mg", 46),
-  ph("tb-500", "TB-500", "Compounds", "10mg", 70),
-  ph("sermorelin", "Sermorelin", "Compounds", "10mg", 56),
-  ph("ipamorelin", "Ipamorelin", "Compounds", "10mg", 50),
-  ph("igf1-lr3", "IGF1-LR3", "Compounds", "1mg", 90),
-  ph("cagrilintide", "Cagrilintide", "Compounds", "10mg", 130),
-  ph("hcg", "HCG", "Compounds", "5000iu", 130),
-  ph("epithalon", "Epithalon", "Compounds", "10mg", 80),
-  ph("kisspeptin", "Kisspeptin", "Compounds", "10mg", 64),
-  ph("pt-141", "PT-141", "Compounds", "10mg", 60),
-  ph("thymosin-alpha-1", "Thymosin Alpha-1", "Compounds", "10mg", 90),
+  ph("semax", "Semax", "Compounds", "10mg", 49.99),
+  ph("selank", "Selank", "Compounds", "10mg", 49.99),
+  ph("ss-31", "SS-31", "Compounds", "10mg", 49.99),
+  ph("ll-37", "LL-37", "Compounds", "10mg", 139.99),
+  ph("bpc-157", "BPC-157", "Compounds", "10mg", 45.99),
+  ph("tb-500", "TB-500", "Compounds", "10mg", 69.99),
+  ph("sermorelin", "Sermorelin", "Compounds", "10mg", 55.99),
+  ph("ipamorelin", "Ipamorelin", "Compounds", "10mg", 49.99),
+  ph("igf1-lr3", "IGF1-LR3", "Compounds", "1mg", 69.99),
+  ph("cagrilintide", "Cagrilintide", "Compounds", "10mg", 129.99),
+  ph("hcg", "HCG", "Compounds", "5000iu", 129.99),
+  ph("epithalon", "Epithalon", "Compounds", "10mg", 79.99),
+  ph("kisspeptin", "Kisspeptin", "Compounds", "10mg", 63.99),
+  ph("pt-141", "PT-141", "Compounds", "10mg", 59.99),
+  ph("thymosin-alpha-1", "Thymosin Alpha-1", "Compounds", "10mg", 89.99),
   ph("cjc-1295-with-dac", "CJC-1295 With Dac", "Compounds"),
   ph("cjc-1295-no-dac", "CJC-1295 No Dac", "Compounds"),
-  ph("aod-9604", "AOD-9604", "Compounds", "10mg", 110),
-  { ...ph("glp-1-sm", "GLP-1 SM", "Compounds", "10mg", 40), heroImage: "/images/cards/glp-1-sm.webp" },
-  { ...ph("elora", "Elora", "Compounds", "10mg", 150), heroImage: "/images/cards/elora.webp" },
-  { ...ph("selank-semax", "Selank + Semax", "Blends", "20mg", 70), heroImage: "/images/cards/selank-semax.webp" },
-  { ...ph("snap-8", "Snap 8", "Compounds", "10mg", 50), heroImage: "/images/cards/snap-8.webp" },
-  { ...ph("vip", "VIP", "Compounds", "10mg", 100), heroImage: "/images/cards/vip.webp" },
-  { ...ph("ss-31-mots-c", "SS-31 + MOTS-c", "Blends", "40mg", 120), heroImage: "/images/cards/ss-31-mots-c.webp" },
+  ph("aod-9604", "AOD-9604", "Compounds", "10mg", 109.99),
+  { ...ph("glp-1-sm", "GLP-1 SM", "Compounds", "10mg", 39.99), heroImage: "/images/cards/glp-1-sm.webp" },
+  { ...ph("elora", "Elora", "Compounds", "10mg", 149.99), heroImage: "/images/cards/elora.webp" },
+  { ...ph("selank-semax", "Selank + Semax", "Blends", "20mg", 69.99), heroImage: "/images/cards/selank-semax.webp" },
+  { ...ph("snap-8", "Snap 8", "Compounds", "10mg", 49.99), heroImage: "/images/cards/snap-8.webp" },
+  { ...ph("vip", "VIP", "Compounds", "10mg", 99.99), heroImage: "/images/cards/vip.webp" },
+  { ...ph("ss-31-mots-c", "SS-31 + MOTS-c", "Blends", "40mg", 119.99), heroImage: "/images/cards/ss-31-mots-c.webp" },
 ];
 
 /**

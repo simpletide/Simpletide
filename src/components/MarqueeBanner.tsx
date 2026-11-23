@@ -28,7 +28,7 @@ export function MarqueeBanner({ light = false }: { light?: boolean }) {
 
   return (
     <div
-      className={`w-full border-b overflow-hidden whitespace-nowrap py-2 min-h-[36px] flex items-center text-xs md:text-[13px] tracking-wide font-medium ${
+      className={`w-full border-b overflow-hidden whitespace-nowrap py-1.5 min-h-[32px] flex items-center text-xs md:text-[13px] tracking-wide font-medium ${
         light
           ? "bg-gradient-to-r from-[#fce7f3] via-[#ede9fe] to-[#e0f2fe] border-white text-slate-700"
           : "bg-[#0f2e5c] border-white/10 text-white"

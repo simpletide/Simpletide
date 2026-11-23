@@ -69,7 +69,7 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
   const logoLink = (
     <Link to="/" className="flex shrink-0 cursor-pointer items-center gap-2">
       <span
-        className={`text-xl sm:text-3xl font-light tracking-widest ${light ? "text-slate-800" : "text-white"}`}
+        className={`text-xl sm:text-[26px] font-light tracking-widest ${light ? "text-slate-800" : "text-white"}`}
         style={{ fontFamily: '"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
       >
         <span className="bg-gradient-to-r from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">SIMPLE</span>TIDE
@@ -149,7 +149,7 @@ export function Header({ opaque = false, light = true }: { opaque?: boolean; lig
     <header className={`relative z-50 transition-all duration-300 ${glass}`}>
       <MarqueeBanner light={light} />
       <div className="max-w-7xl mx-auto pl-5 pr-4 sm:pl-4 sm:pr-6 lg:pl-5 lg:pr-8">
-        <div className="flex items-center justify-between h-[4.25rem]">
+        <div className="flex items-center justify-between h-[3.5rem]">
           {logoLink}
           {desktopNav}
           {headerActions}
