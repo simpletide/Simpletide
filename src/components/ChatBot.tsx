@@ -126,8 +126,9 @@ export function ChatBot() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { items } = useCart();
+  const { items, isOpen: cartOpen } = useCart();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isCheckoutRoute = pathname === "/checkout" || pathname === "/cart";
   const productSlug = useMemo(() => {
     const m = pathname.match(/^\/(?:product|products)\/([a-z0-9-]+)$/i);
     return m && getProductBySlug(m[1]) ? m[1] : undefined;
@@ -207,6 +208,10 @@ export function ChatBot() {
   const showSuggestions = messages.length <= 1 && !loading;
   const suggestions = productSlug ? PRODUCT_SUGGESTIONS : DEFAULT_SUGGESTIONS;
 
+  // Hide chat bubble while the Shopping Cart drawer is open so it never covers
+  // the cart totals, promo input, or Proceed to Checkout button (especially on mobile).
+  if (cartOpen) return null;
+
   return (
     <>
       {/* Launcher bubble */}
@@ -214,7 +219,9 @@ export function ChatBot() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Open chat assistant"}
-        className="fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] text-white shadow-[0_8px_28px_rgba(167,139,250,0.45)] transition-transform duration-200 hover:scale-105 active:scale-95"
+        className={`fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#f9a8d4] via-[#c4b5fd] to-[#93c5fd] [text-shadow:0_1px_2px_rgba(91,33,182,0.35)] text-white shadow-[0_8px_28px_rgba(167,139,250,0.45)] transition-transform duration-200 hover:scale-105 active:scale-95 ${
+          isCheckoutRoute ? "hidden md:flex" : ""
+        }`}
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </button>
