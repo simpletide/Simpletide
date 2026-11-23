@@ -1,5 +1,6 @@
 import "./lib/error-capture";
 
+import { renderAgeGateHtml } from "./lib/age-gate-html";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 
@@ -40,6 +41,20 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      const cleanPath = url.pathname.replace(/\/+$/, "") || "/";
+      if (cleanPath === "/age" && (request.method === "GET" || request.method === "HEAD")) {
+        const html = renderAgeGateHtml(url.searchParams.get("return"));
+        return new Response(request.method === "HEAD" ? null : html, {
+          status: 200,
+          headers: {
+            "content-type": "text/html; charset=utf-8",
+            "cache-control": "no-store",
+            "x-robots-tag": "noindex, nofollow",
+          },
+        });
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
