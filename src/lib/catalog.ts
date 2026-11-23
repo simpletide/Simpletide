@@ -1845,7 +1845,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
       },
     ],
   },
-  ph("semax", "Semax", "Compounds", "10mg", 24),
+  ph("semax", "Semax", "Compounds", "10mg", 25),
   ph("selank", "Selank", "Compounds", "10mg", 25),
   ph("ss-31", "SS-31", "Compounds", "10mg", 25),
   ph("ll-37", "LL-37", "Compounds", "10mg", 70),

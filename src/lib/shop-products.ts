@@ -87,7 +87,7 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
   { name: "AHK-Cu", price: "$22.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/ahk-cu.webp" },
   { name: "BPC-157", price: "$23.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/bpc-157.webp" },
   { name: "TB-500", price: "$35.00", badge: null, category: "Tissue Repair Research", image: "/images/cards/tb-500.webp", outOfStock: true },
-  { name: "Semax", price: "$24.00", badge: null, category: "Neuro Research", image: "/images/cards/semax.webp" },
+  { name: "Semax", price: "$25.00", badge: null, category: "Neuro Research", image: "/images/cards/semax.webp" },
   { name: "Selank", price: "$25.00", badge: null, category: "Neuro Research", image: "/images/cards/selank.webp" },
   { name: "Selank + Semax", price: "$35.00", badge: null, category: "Neuro Research", image: "/images/cards/selank-semax.webp" },
   { name: "5-Amino-1MQ", price: "$21.00", badge: null, category: "Metabolic Research", image: "/images/cards/5-amino-1mq.webp" },
