@@ -479,6 +479,9 @@ function SimpletideHome() {
                     ) : <div className="min-w-0">{heading}</div>;
                   })()}
                   <span className="font-bold text-[13px] sm:text-base text-slate-800 whitespace-nowrap">{product.price}</span>
+                  {!isOutOfStock && (
+                    <span className="text-[11px] font-semibold text-violet-600">Buy One Get One</span>
+                  )}
                 </div>
                 <p className="text-[11px] tracking-wider text-slate-500 mb-2 sm:mb-2.5">{descriptorFor(product.name) ?? product.tag}</p>
                 {isOutOfStock ? (

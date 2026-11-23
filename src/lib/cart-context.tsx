@@ -1,9 +1,12 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-// Catalog-free so the cart doesn't pull the product data into every page's
-// first-load bundle. Correct for all products today (none override tiers); the
-// drawer and checkout use catalog.discountedLine, which honours overrides.
-import { discountedLineDefault } from "@/lib/bundle-pricing";
 import { trackAddToCart } from "@/lib/pixel-tracking";
+import {
+  BOGO_CODE,
+  calculateBogo,
+  isSupportedPromoCode,
+  normalizePromoCode,
+  type BogoSummary,
+} from "@/lib/promo-codes";
 
 export type CartItem = {
   id: string;
@@ -22,6 +25,11 @@ type CartContextValue = {
   subtotal: number;
   baseSubtotal: number;
   bundleSavings: number;
+  promoCode: string | null;
+  promoDiscount: number;
+  bogoPreview: BogoSummary;
+  applyPromoCode: (raw: string) => { ok: boolean; message: string };
+  clearPromoCode: () => void;
   addItem: (item: AddItemInput) => void;
   removeItem: (id: string) => void;
   setQty: (id: string, qty: number) => void;
@@ -32,16 +40,24 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "simpletide_cart_v1";
+const PROMO_STORAGE_KEY = "simpletide_promo_v1";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [promoCode, setPromoCode] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
-      const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) setItems(JSON.parse(raw));
+      if (typeof window !== "undefined") {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) setItems(JSON.parse(raw));
+        const savedPromo = window.localStorage.getItem(PROMO_STORAGE_KEY);
+        if (savedPromo && isSupportedPromoCode(savedPromo)) {
+          setPromoCode(normalizePromoCode(savedPromo));
+        }
+      }
     } catch {}
     setHydrated(true);
   }, []);
@@ -52,6 +68,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch {}
   }, [items, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      if (promoCode) {
+        window.localStorage.setItem(PROMO_STORAGE_KEY, promoCode);
+      } else {
+        window.localStorage.removeItem(PROMO_STORAGE_KEY);
+      }
+    } catch {}
+  }, [promoCode, hydrated]);
 
   const addItem: CartContextValue["addItem"] = (item) => {
     try {
@@ -70,18 +97,43 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const baseSubtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-  const subtotal = items.reduce(
-    (s, i) => s + discountedLineDefault(i.price, i.qty).lineTotal,
-    0,
-  );
+  const baseSubtotal = Number(items.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2));
+  const bogoPreview = calculateBogo(items);
+  const promoDiscount = promoCode === BOGO_CODE ? bogoPreview.discount : 0;
+  const subtotal = Math.max(0, Number((baseSubtotal - promoDiscount).toFixed(2)));
+
+  const applyPromoCode: CartContextValue["applyPromoCode"] = (raw) => {
+    const code = normalizePromoCode(raw);
+    if (!code) return { ok: false, message: "Enter a promo code." };
+    if (!isSupportedPromoCode(code)) {
+      return { ok: false, message: "Invalid or expired code" };
+    }
+    setPromoCode(code);
+    if (bogoPreview.totalUnits < 2) {
+      return {
+        ok: true,
+        message: "Code BOGO applied — add 1 more vial to unlock your free vial.",
+      };
+    }
+    return {
+      ok: true,
+      message: `Code BOGO applied — saving $${bogoPreview.discount.toFixed(2)}!`,
+    };
+  };
+
+  const clearPromoCode = () => setPromoCode(null);
 
   const value: CartContextValue = {
     items,
     count: items.reduce((s, i) => s + i.qty, 0),
     subtotal,
     baseSubtotal,
-    bundleSavings: Number((baseSubtotal - subtotal).toFixed(2)),
+    bundleSavings: 0,
+    promoCode,
+    promoDiscount,
+    bogoPreview,
+    applyPromoCode,
+    clearPromoCode,
     addItem,
     removeItem: (id) => setItems((prev) => prev.filter((i) => i.id !== id)),
     setQty: (id, qty) =>

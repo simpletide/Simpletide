@@ -80,6 +80,9 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             );
           })()}
           <span className={`font-bold text-gray-900 whitespace-nowrap ${compact ? "text-[13px]" : "text-[13px] sm:text-base"}`}>{product.price}</span>
+          {!compact && !isOutOfStock && (
+            <span className="text-[11px] font-semibold text-violet-600">Buy One Get One</span>
+          )}
         </div>
         {!compact && (
           <p className="text-[11px] tracking-wider text-gray-500 mb-2 sm:mb-2.5">

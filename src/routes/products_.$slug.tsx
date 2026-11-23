@@ -696,7 +696,10 @@ export function ProductDetail() {
                   <div className="flex items-baseline gap-2 sm:justify-end">
                     <span className="text-3xl font-extrabold tabular-nums text-slate-900">${lineTotal.toFixed(2)}</span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
+                  {!isOutOfStock && (
+                    <p className="mt-0.5 text-xs font-semibold text-violet-600">Buy One Get One</p>
+                  )}
+                  <p className="mt-0.5 text-xs text-slate-500">
                     {quantity} unit{quantity === 1 ? "" : "s"}
                   </p>
                 </div>

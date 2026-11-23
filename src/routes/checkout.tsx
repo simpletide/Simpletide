@@ -59,7 +59,18 @@ function parseExpiry(v: string): { mm: string; yyyy: string } {
 }
 
 function CheckoutPage() {
-  const { items, subtotal, baseSubtotal, bundleSavings } = useCart();
+  const {
+    items,
+    subtotal,
+    baseSubtotal,
+    bundleSavings,
+    promoCode,
+    promoDiscount,
+    applyPromoCode,
+    clearPromoCode,
+  } = useCart();
+  const [promoInput, setPromoInput] = useState("");
+  const [promoFeedback, setPromoFeedback] = useState<{ ok: boolean; message: string } | null>(null);
 
   // Re-run once the cart hydrates so the heading/summary reveal nodes animate.
   useReveal(items.length);
@@ -196,6 +207,8 @@ function CheckoutPage() {
         items: orderItems,
         subtotal: round2(subtotal),
         shipping_cost: 0,
+        affiliate_code: promoCode,
+        affiliate_discount: round2(promoDiscount),
         total: round2(total),
         user_id: userId,
         shipping_method: "priority",
@@ -245,6 +258,7 @@ function CheckoutPage() {
         try {
           window.localStorage.setItem("simpletide_confirmed_order", JSON.stringify(confirmed));
           window.localStorage.setItem("simpletide_cart_v1", JSON.stringify([]));
+          window.localStorage.removeItem("simpletide_promo_v1");
         } catch {
           /* ignore */
         }
@@ -506,11 +520,78 @@ function CheckoutPage() {
                 })}
               </ul>
 
-              <div className="mt-4 space-y-1.5 border-t border-slate-200 pt-3" data-reveal>
+              {/* Promo code on checkout */}
+              <div className="mt-4 border-t border-slate-200 pt-3">
+                {promoCode ? (
+                  <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50/70 px-3 py-2 text-xs">
+                    <span className="font-semibold text-emerald-800">
+                      Code <strong className="font-bold">{promoCode}</strong> applied
+                      {promoDiscount > 0 ? ` (-${fmt(promoDiscount)})` : " — add 1 more vial for BOGO"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        clearPromoCode();
+                        setPromoFeedback(null);
+                      }}
+                      className="font-semibold text-slate-600 underline underline-offset-2 hover:text-slate-900"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoInput}
+                        onChange={(e) => {
+                          setPromoInput(e.target.value);
+                          if (promoFeedback) setPromoFeedback(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            const res = applyPromoCode(promoInput);
+                            setPromoFeedback(res);
+                            if (res.ok) setPromoInput("");
+                          }
+                        }}
+                        placeholder="Promo code (e.g. BOGO)"
+                        className="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const res = applyPromoCode(promoInput);
+                          setPromoFeedback(res);
+                          if (res.ok) setPromoInput("");
+                        }}
+                        className="shrink-0 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                    {promoFeedback && (
+                      <p className={`mt-1 text-xs font-medium ${promoFeedback.ok ? "text-emerald-600" : "text-red-600"}`}>
+                        {promoFeedback.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-3 space-y-1.5 border-t border-slate-200 pt-3" data-reveal>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-600">Subtotal</span>
                   <span className="font-semibold text-slate-900">{fmt(baseSubtotal)}</span>
                 </div>
+                {promoCode && promoDiscount > 0 && (
+                  <div className="flex items-center justify-between text-sm text-emerald-600">
+                    <span className="font-semibold">Promo ({promoCode})</span>
+                    <span className="font-bold">-{fmt(promoDiscount)}</span>
+                  </div>
+                )}
                 {bundleSavings > 0 && (
                   <div className="flex items-center justify-between text-sm text-emerald-600">
                     <span className="font-semibold">Bundle savings</span>
