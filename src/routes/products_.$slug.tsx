@@ -636,10 +636,10 @@ export function ProductDetail() {
                             type="button"
                             onClick={() => setSelectedSize(v.size)}
                             aria-pressed={active}
-                            className={`h-9 min-w-[64px] rounded-lg px-3 text-xs font-bold uppercase transition-colors ${
+                            className={`h-9 min-w-[64px] rounded-lg px-3 text-xs font-bold uppercase transition-all ${
                               active
-                                ? "bg-slate-900 text-white"
-                                : "border border-slate-200 bg-white text-slate-700 hover:border-slate-400"
+                                ? "border-2 border-[#7c3aed] bg-violet-50 text-[#5b21b6] shadow-xs"
+                                : "border border-slate-200 bg-white text-slate-700 hover:border-violet-300"
                             }`}
                           >
                             {v.size}
@@ -705,16 +705,17 @@ export function ProductDetail() {
                 </div>
               </div>
 
-              <div className="mt-5 flex gap-2.5">
+              <div className="mt-5 flex flex-col-reverse gap-2.5 sm:flex-row">
                 {showCoa && (
                   <button
                     type="button"
                     onClick={openSelectedCoa}
                     aria-label="View Certificate of Analysis"
-                    className="inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-full border border-slate-300 bg-white px-5 text-sm font-bold text-slate-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-900 hover:bg-slate-50"
+                    className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded-full border border-slate-300 bg-white px-5 text-xs font-bold text-slate-800 shadow-xs transition-all hover:-translate-y-0.5 hover:border-slate-900 hover:bg-slate-50 sm:h-13 sm:w-auto sm:text-sm"
                   >
                     <FileText className="h-4 w-4 text-[#7c3aed]" />
-                    COA
+                    <span className="sm:hidden">View Certificate of Analysis (COA)</span>
+                    <span className="hidden sm:inline">COA</span>
                   </button>
                 )}
                 <button
@@ -723,15 +724,18 @@ export function ProductDetail() {
                   onClick={handleAddToCart}
                   className={
                     isOutOfStock
-                      ? "relative flex h-12 flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-100 text-sm font-bold uppercase tracking-wider text-slate-400"
-                      : "relative flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-slate-900 text-sm font-bold text-white transition-colors hover:bg-slate-800"
+                      ? "relative flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-100 text-sm font-bold uppercase tracking-wider text-slate-400 sm:h-13 sm:flex-1"
+                      : "relative flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-slate-950 px-6 text-[15px] font-bold tracking-tight text-white shadow-[0_10px_24px_rgba(15,23,42,0.22)] transition-all hover:-translate-y-0.5 hover:bg-slate-900 hover:shadow-[0_14px_28px_rgba(15,23,42,0.28)] active:scale-[0.99] sm:h-13 sm:flex-1"
                   }
                 >
                   {isOutOfStock ? (
                     "Out of Stock"
                   ) : (
                     <>
-                      Add to cart · ${lineTotal.toFixed(2)} <ShoppingCart className="h-4 w-4" />
+                      <span>Add to Cart</span>
+                      <span aria-hidden="true" className="text-white/40">·</span>
+                      <span className="tabular-nums">${lineTotal.toFixed(2)}</span>
+                      <ShoppingCart className="h-4 w-4" />
                       {sessionAddedTotal > 0 && (
                         <span
                           aria-live="polite"
