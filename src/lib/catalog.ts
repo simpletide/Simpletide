@@ -1612,7 +1612,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
   // --- Remaining products (png-folder vials wired; $0 placeholder pricing) ---
   ph("ara-290", "ARA-290", "Compounds", "10mg", 55),
   ph("5-amino-1mq", "5-Amino-1MQ", "Compounds", "5mg", 30),
-  ph("ahk-cu", "AHK-Cu", "Compounds", "50mg", 30),
+  ph("ahk-cu", "AHK-Cu", "Compounds", "100mg", 30),
   ph("kpv", "KPV", "Compounds", "10mg", 40),
   ph("kpv-ghk-cu", "KPV + GHK-Cu", "Blends", "60mg", 55),
   {
@@ -1854,7 +1854,7 @@ const ALL_PRODUCTS: CatalogProduct[] = [
   ph("tb-500", "TB-500", "Compounds", "10mg", 35),
   ph("sermorelin", "Sermorelin", "Compounds", "10mg", 45),
   ph("ipamorelin", "Ipamorelin", "Compounds", "10mg", 40),
-  ph("igf1-lr3", "IGF1-LR3", "Compounds", "10mg", 60),
+  ph("igf1-lr3", "IGF1-LR3", "Compounds", "1mg", 60),
   ph("cagrilintide", "Cagrilintide", "Compounds", "10mg", 65),
   ph("hcg", "HCG", "Compounds", "5000iu", 65),
   ph("epithalon", "Epithalon", "Compounds", "10mg", 40),
