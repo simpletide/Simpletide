@@ -51,24 +51,6 @@ function HeadsetIcon({ className }: { className?: string }) {
   );
 }
 
-// Peptora /icons/call-02.svg — outline phone handset (Phone card).
-function PhoneIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 40 40"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M15.2642 9.52028L14.5932 8.01031C14.1544 7.02303 13.935 6.52936 13.6068 6.15158C13.1956 5.67813 12.6596 5.32979 12.06 5.14631C11.5815 4.99989 11.0413 4.99989 9.96083 4.99989C8.38033 4.99989 7.59008 4.99989 6.9267 5.30371C6.14527 5.66159 5.43955 6.43869 5.15837 7.25089C4.91967 7.94038 4.98805 8.64894 5.12478 10.0661C6.58033 25.1502 14.8502 33.42 29.9343 34.8757C31.3514 35.0123 32.0601 35.0807 32.7494 34.842C33.5617 34.5608 34.3388 33.8552 34.6968 33.0737C35.0004 32.4103 35.0004 31.62 35.0004 30.0395C35.0004 28.9592 35.0004 28.419 34.8541 27.9405C34.6706 27.3408 34.3223 26.8048 33.8488 26.3935C33.4711 26.0655 32.9774 25.846 31.9901 25.4072L30.4801 24.7362C29.4109 24.261 28.8762 24.0233 28.3331 23.9717C27.8131 23.9222 27.2889 23.9952 26.8023 24.1847C26.2938 24.3827 25.8444 24.7572 24.9454 25.5063C24.0507 26.2518 23.6034 26.6247 23.0567 26.8243C22.5721 27.0015 21.9314 27.067 21.4211 26.9918C20.8452 26.907 20.4044 26.6713 19.5226 26.2002C16.7792 24.734 15.2664 23.2212 13.8003 20.4778C13.3291 19.596 13.0935 19.1552 13.0086 18.5793C12.9334 18.069 12.999 17.4283 13.176 16.9437C13.3757 16.397 13.7485 15.9497 14.4941 15.0549C15.2432 14.156 15.6177 13.7066 15.8157 13.1981C16.0052 12.7115 16.0782 12.1872 16.0287 11.6674C15.9771 11.1241 15.7394 10.5895 15.2642 9.52028Z" />
-    </svg>
-  );
-}
-
 import { pageSeoHead } from "@/lib/site-seo";
 
 export const Route = createFileRoute("/contact")({
@@ -156,14 +138,6 @@ function ContactPage() {
       value: SALES_EMAIL,
       href: `mailto:${SALES_EMAIL}`,
     },
-    {
-      icon: PhoneIcon,
-      title: "Phone",
-      desc: "Monday-Friday from 10am-7pm EST.",
-      caption: "Text or Call:",
-      value: "(000) 000-0000",
-      href: "tel:0000000000" as string | undefined,
-    },
   ];
 
   const faqs = [
@@ -234,10 +208,10 @@ function ContactPage() {
           </div>
         </section>
 
-        {/* ─── CONTACT CHANNELS — white (Peptora's Support / Sales / Phone cards) ─── */}
+        {/* ─── CONTACT CHANNELS — white (Support & Sales cards) ─── */}
         <section className="bg-white px-5 pt-8 pb-12 md:px-20 md:py-16">
-          <div className="mx-auto max-w-[1280px]">
-            <div className="grid grid-cols-1 gap-2.5 md:grid-cols-3 md:gap-4 lg:gap-6">
+          <div className="mx-auto max-w-[860px]">
+            <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 md:gap-4 lg:gap-6">
               {channels.map((c, i) => (
                 <div
                   key={c.title}

@@ -18,7 +18,6 @@ export type BotAnswer = { reply: string; productSlugs: string[] };
 
 export const SUPPORT_EMAIL = "support@simpletide.com";
 export const SALES_EMAIL = "sales@simpletide.com";
-export const PHONE = "(000) 000-0000";
 
 // Tokens too generic to identify a specific product by name.
 const STOP = new Set([
@@ -256,7 +255,7 @@ export function answerLocal(message: string, context?: BotContext): BotAnswer {
 
   if (has("contact", "human", "agent", "representative", "speak", "talk to", "phone", "call", "email", "reach", "support team")) {
     return out(
-      `You can reach our team at ${SUPPORT_EMAIL} (support) or ${SALES_EMAIL} (sales), or text/call ${PHONE} (Mon–Fri, 10am–7pm EST). We typically respond within 24 hours.`,
+      `You can reach our team at ${SUPPORT_EMAIL} (support) or ${SALES_EMAIL} (sales). We typically respond within 24 hours.`,
     );
   }
 
@@ -387,7 +386,7 @@ KEY FACTS:
 - Payments accepted: credit/debit card and Venmo.
 - Bundle discounts (applied automatically at checkout): 2 vials = 5% off, 3 vials = 7% off, 5+ vials = 10% off. Bulk/wholesale: email ${SALES_EMAIL}.
 - COAs: every batch is lab tested; the full archive is at /coa-archive.
-- Contact: ${SUPPORT_EMAIL} (support), ${SALES_EMAIL} (sales), phone/text ${PHONE} (Mon–Fri 10am–7pm EST). Replies within 24 hours.
+- Contact: ${SUPPORT_EMAIL} (support), ${SALES_EMAIL} (sales). Replies within 24 hours.
 - Returns/issues: email ${SUPPORT_EMAIL} with the order number.
 
 PRODUCTS (name, price range, page link, tagline):

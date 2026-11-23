@@ -367,10 +367,6 @@ function ShippingReturnsPage() {
                 <a href="mailto:support@simpletide.com" className="text-[#ede9fe] hover:underline">
                   support@simpletide.com
                 </a>
-                <span className="px-2 text-white/55">·</span>
-                <a href="tel:0000000000" className="text-[#ede9fe] hover:underline">
-                  (000) 000-0000
-                </a>
               </p>
             </div>
           </div>

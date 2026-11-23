@@ -94,7 +94,7 @@ const FAQS: FaqItem[] = [
   },
   {
     q: "How do I contact customer support?",
-    a: "Email us at support@simpletide.com for any questions or concerns. We typically respond within 24 hours on business days. You can also call or text us at (000) 000-0000.",
+    a: "Email us at support@simpletide.com for any questions or concerns. We typically respond within 24 hours on business days.",
   },
   {
     q: "Do you offer bulk or wholesale pricing?",
@@ -217,10 +217,6 @@ function FaqPage() {
               <p className="text-[13px] font-semibold lg:text-[15px]">
                 <a href="mailto:support@simpletide.com" className="text-[#ede9fe] hover:underline">
                   support@simpletide.com
-                </a>
-                <span className="px-2 text-white/55">·</span>
-                <a href="tel:0000000000" className="text-[#ede9fe] hover:underline">
-                  (000) 000-0000
                 </a>
               </p>
             </div>
