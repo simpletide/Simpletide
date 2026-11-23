@@ -42,7 +42,15 @@ export function AuthForm({
   const authSearch = redirectTo ? { redirect: redirectTo } : undefined;
   // Computed lazily inside client-only handlers so SSR never references `window`.
   const getOAuthRedirectTo = () =>
-    redirectTo ? `${window.location.origin}${redirectTo}` : window.location.origin;
+    `${window.location.origin}${postAuthDestination}`;
+
+  const goPostAuth = () => {
+    if (redirectTo) {
+      window.location.assign(redirectTo);
+      return;
+    }
+    navigate({ to: "/account", search: { section: "dashboard", profileTab: "profile" } });
+  };
 
   useEffect(() => {
     preloadAuthHeroImages();
@@ -90,7 +98,7 @@ export function AuthForm({
           return;
         }
         toast.success("Welcome back");
-        navigate({ to: postAuthDestination });
+        goPostAuth();
       } else {
         const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
         const { data, error } = await supabase.auth.signUp({
@@ -108,9 +116,23 @@ export function AuthForm({
           toast.error(error.message);
           return;
         }
+
+        // Send the branded Simpletide Welcome Email (non-blocking).
+        void supabase.functions
+          .invoke("send-newsletter-welcome-email", {
+            body: {
+              email: email.trim(),
+              firstName: firstName.trim() || undefined,
+              type: "account",
+            },
+          })
+          .catch(() => {
+            /* non-blocking — never delay account sign-in */
+          });
+
         if (data.session) {
-          toast.success("Account created — you're all set!");
-          navigate({ to: postAuthDestination });
+          toast.success("Welcome to Simpletide — your account is ready!");
+          goPostAuth();
         } else {
           setSentTo(email);
           toast.success("Account created. Check your inbox to confirm your email.");

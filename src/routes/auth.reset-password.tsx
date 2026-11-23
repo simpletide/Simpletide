@@ -38,6 +38,7 @@ function ResetPasswordPage() {
     let active = true;
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
+    const tokenHash = params.get("token_hash");
     const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const hasHashRecovery =
       hashParams.get("type") === "recovery" || Boolean(hashParams.get("access_token"));
@@ -51,6 +52,20 @@ function ResetPasswordPage() {
 
     const resolveSession = async () => {
       try {
+        if (tokenHash) {
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: "recovery",
+          });
+          if (!active) return;
+          if (error) {
+            setState("invalid");
+            return;
+          }
+          setState("ready");
+          return;
+        }
+
         if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code);
           if (!active) return;
